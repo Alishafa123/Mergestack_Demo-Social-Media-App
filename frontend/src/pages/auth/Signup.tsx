@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useLogin } from "../../hooks/useAuth";
+import { useSignup } from "../../hooks/useAuth";
 import Alert from "../../components/Alert";
 import AuthIcon from "../../components/AuthIcon";
 import PrimaryButton from "../../components/PrimaryButton";
-import { EmailField, PasswordField } from "../../components/form";
-import { loginSchema } from "../../schemas/authSchemas";
-import type { LoginFormData } from "../../schemas/authSchemas";
+import { EmailField, PasswordField, TextField } from "../../components/form";
+import { signupSchema } from "../../schemas/authSchemas";
+import type { SignupFormData } from "../../schemas/authSchemas";
 
 interface AlertState {
   show: boolean;
@@ -15,21 +15,21 @@ interface AlertState {
   message: string;
 }
 
-export default function Login() {
+export default function Signup() {
   const [alert, setAlert] = useState<AlertState>({
     show: false,
     variant: 'success',
     message: ''
   });
   
-  const loginMutation = useLogin();
+  const signupMutation = useSignup();
   
   const {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<LoginFormData>({
-    resolver: yupResolver(loginSchema)
+  } = useForm<SignupFormData>({
+    resolver: yupResolver(signupSchema)
   });
 
   const showAlert = (variant: 'success' | 'error', message: string) => {
@@ -39,13 +39,13 @@ export default function Login() {
     }, 5000);
   };
 
-  const onSubmit = (data: LoginFormData) => {
-    loginMutation.mutate(data, {
+  const onSubmit = (data: SignupFormData) => {
+    signupMutation.mutate(data, {
       onSuccess: () => {
-        showAlert('success', 'Login successful! Welcome back.');
+        showAlert('success', 'Account created successfully! Welcome aboard.');
       },
       onError: (error: any) => {
-        const errorMessage = error?.response?.data?.message || 'Invalid credentials. Please try again.';
+        const errorMessage = error?.response?.data?.message || 'Failed to create account. Please try again.';
         showAlert('error', errorMessage);
       }
     });
@@ -64,8 +64,8 @@ export default function Login() {
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
           <div className="text-center mb-8">
             <AuthIcon />
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Welcome Back</h2>
-            <p className="mt-2 text-sm text-gray-600">Sign in to your account to continue</p>
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Create Account</h2>
+            <p className="mt-2 text-sm text-gray-600">Join us and start your journey</p>
           </div>
           
           {alert.show && (
@@ -73,18 +73,35 @@ export default function Login() {
           )}
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <TextField 
+              name="name" 
+              label="Full Name" 
+              placeholder="Enter your full name"
+              register={register} 
+              errors={errors} 
+            />
+            
             <EmailField register={register} errors={errors} />
+            
             <PasswordField register={register} errors={errors} />
+            
+            <PasswordField 
+              name="confirmPassword"
+              label="Confirm Password"
+              placeholder="Confirm your password"
+              register={register} 
+              errors={errors} 
+            />
 
-            <PrimaryButton type="submit" loading={loginMutation.isPending}>
-              {loginMutation.isPending ? "Signing in..." : "Sign in"}
+            <PrimaryButton type="submit" loading={signupMutation.isPending}>
+              {signupMutation.isPending ? "Creating Account..." : "Create Account"}
             </PrimaryButton>
             
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-500">
-                Don't have an account?{' '}
-                <a href="/signup" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
-                  Sign up here
+                Already have an account?{' '}
+                <a href="/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
+                  Sign in here
                 </a>
               </p>
             </div>

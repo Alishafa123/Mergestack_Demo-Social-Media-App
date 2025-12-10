@@ -1,21 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import { signToken } from "../utils/jwt.util.js";
-
-interface CustomError extends Error {
-  status?: number;
-}
-
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-interface SignupCredentials {
-  email: string;
-  password: string;
-  name: string;
-}
+import type { CustomError, LoginCredentials, SignupCredentials } from "../types/index.js";
 
 export const login = async ({ email, password }: LoginCredentials) => {
   if (!email || !password) {
@@ -58,7 +44,6 @@ export const signup = async ({ email, password, name }: SignupCredentials) => {
     throw err;
   }
 
-  // Check if user already exists
   const existingUser = await User.findOne({ where: { email } });
   if (existingUser) {
     const err = new Error("User already exists with this email") as CustomError;
@@ -66,11 +51,9 @@ export const signup = async ({ email, password, name }: SignupCredentials) => {
     throw err;
   }
 
-  // Hash password
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  // Create user
   const user = await User.create({
     email,
     password: hashedPassword,

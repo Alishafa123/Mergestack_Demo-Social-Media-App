@@ -1,3 +1,9 @@
 import { atom } from "jotai";
 
-export const userAtom = atom(null);
+export interface User {
+  id: number;
+  email: string;
+  name: string;
+}
+
+export const userAtom = atom<User | null>(null);
