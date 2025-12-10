@@ -1,0 +1,30 @@
+import { Request, Response, NextFunction } from "express";
+import * as authService from "../services/auth.service.js";
+
+export const login = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email, password } = req.body;
+    const result = await authService.login({ email, password });
+    return res.json({
+      success: true,
+      user: result.user,
+      token: result.token,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const signup = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email, password, name } = req.body;
+    const result = await authService.signup({ email, password, name });
+    return res.status(201).json({
+      success: true,
+      user: result.user,
+      token: result.token,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
