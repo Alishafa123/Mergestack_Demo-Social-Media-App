@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.routes.js";
-import protectedRoutes from "./routes/protected.routes.js";
 import errorHandler from "./middleware/error.middleware.js";
 
 dotenv.config();
@@ -17,7 +16,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/user", protectedRoutes);
 
 app.get("/", (req, res) => res.json({ ok: true, env: process.env.NODE_ENV }));
 
