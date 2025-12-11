@@ -8,6 +8,8 @@ import PrimaryButton from "../../components/buttons/PrimaryButton";
 import { EmailField, PasswordField } from "../../components/form";
 import { loginSchema } from "../../schemas/authSchemas";
 import type { LoginFormData } from "../../schemas/authSchemas";
+import { userController } from "../../jotai/user.atom";
+import { Link } from "react-router-dom";
 
 interface AlertState {
   show: boolean;
@@ -41,8 +43,9 @@ export default function Login() {
 
   const onSubmit = (data: LoginFormData) => {
     loginMutation.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (response) => {
         showAlert('success', 'Login successful! Welcome back.');
+        
       },
       onError: (error: any) => {
         const errorMessage = error?.response?.data?.message || 'Invalid credentials. Please try again.';
@@ -79,13 +82,15 @@ export default function Login() {
             <PrimaryButton type="submit" loading={loginMutation.isPending}>
               {loginMutation.isPending ? "Signing in..." : "Sign in"}
             </PrimaryButton>
+
+            
             
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-500">
                 Don't have an account?{' '}
-                <a href="/signup" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
+                <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
                   Sign up here
-                </a>
+                </Link>
               </p>
             </div>
           </form>
