@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useSignup } from "../../hooks/useAuth";
 import Alert from "../../components/Alert";
 import AuthIcon from "../../components/AuthIcon";
-import PrimaryButton from "../../components/PrimaryButton";
+import PrimaryButton from "../../components/buttons/PrimaryButton";
 import { EmailField, PasswordField, TextField } from "../../components/form";
 import { signupSchema } from "../../schemas/authSchemas";
 import type { SignupFormData } from "../../schemas/authSchemas";
