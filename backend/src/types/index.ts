@@ -16,7 +16,7 @@ export interface SignupCredentials {
 
 export interface AuthResponse {
   user: {
-    id: number;
+    id: string;
     email: string;
     name: string;
   };
@@ -24,18 +24,17 @@ export interface AuthResponse {
 }
 
 export interface UserData {
-  id: number;
+  id: string;
   email: string;
   name: string;
-  password?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-
-export interface JWTPayload {
-  id: number;
+export interface SupabaseUser {
+  id: string;
   email: string;
+  name?: string;
 }
 
 

@@ -1,6 +1,4 @@
-import User from "../models/user.model.js";
-import bcrypt from "bcrypt";
-import { signToken } from "../utils/jwt.util.js";
+import { supabase } from "../config/supabase.js";
 import type { CustomError, LoginCredentials, SignupCredentials } from "../types/index.js";
 
 export const login = async ({ email, password }: LoginCredentials) => {
@@ -10,30 +8,30 @@ export const login = async ({ email, password }: LoginCredentials) => {
     throw err;
   }
 
-  const user = await User.findOne({ where: { email } });
-  console.log(email);
-  if (!user) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
     const err = new Error("Invalid credentials") as CustomError;
     err.status = 401;
     throw err;
   }
 
-  const isMatch = await bcrypt.compare(password, (user as any).password);
-  if (!isMatch) {
-    const err = new Error("Invalid credentials") as CustomError;
+  if (!data.user || !data.session) {
+    const err = new Error("Authentication failed") as CustomError;
     err.status = 401;
     throw err;
   }
-
-  const token = signToken({ id: (user as any).id, email: (user as any).email });
 
   return {
     user: {
-      id: (user as any).id,
-      email: (user as any).email,
-      name: (user as any).name
+      id: data.user.id,
+      email: data.user.email!,
+      name: data.user.user_metadata?.name || data.user.email!.split('@')[0]
     },
-    token,
+    token: data.session.access_token,
   };
 };
 
@@ -44,30 +42,39 @@ export const signup = async ({ email, password, name }: SignupCredentials) => {
     throw err;
   }
 
-  const existingUser = await User.findOne({ where: { email } });
-  if (existingUser) {
-    const err = new Error("User already exists with this email") as CustomError;
-    err.status = 409;
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        name: name
+      }
+    }
+  });
+
+  if (error) {
+    if (error.message.includes('already registered')) {
+      const err = new Error("User already exists with this email") as CustomError;
+      err.status = 409;
+      throw err;
+    }
+    const err = new Error(error.message) as CustomError;
+    err.status = 400;
     throw err;
   }
 
-  const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-  const user = await User.create({
-    email,
-    password: hashedPassword,
-    name,
-  });
-
-  const token = signToken({ id: (user as any).id, email: (user as any).email });
+  if (!data.user || !data.session) {
+    const err = new Error("Registration failed") as CustomError;
+    err.status = 400;
+    throw err;
+  }
 
   return {
     user: {
-      id: (user as any).id,
-      email: (user as any).email,
-      name: (user as any).name
+      id: data.user.id,
+      email: data.user.email!,
+      name: data.user.user_metadata?.name || name
     },
-    token,
+    token: data.session.access_token,
   };
 };
