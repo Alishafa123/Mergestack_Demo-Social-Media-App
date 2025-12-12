@@ -14,6 +14,20 @@ export interface SignupCredentials {
   name: string;
 }
 
+export interface AuthenticatedUser {
+  id: string;
+  email: string;
+  name?: string;
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: AuthenticatedUser;
+    }
+  }
+}
+
 export interface AuthResponse {
   user: {
     id: string;
@@ -35,6 +49,35 @@ export interface SupabaseUser {
   id: string;
   email: string;
   name?: string;
+}
+
+export interface UserModel {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  profile?: ProfileModel;
+  toJSON(): any;
+  getDataValue(key: string): any;
+}
+
+export interface ProfileModel {
+  id: number;
+  user_id: string;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  date_of_birth?: Date;
+  gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say';
+  bio?: string;
+  profile_url?: string;
+  city?: string;
+  country?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  toJSON(): any;
+  getDataValue(key: string): any;
 }
 
 

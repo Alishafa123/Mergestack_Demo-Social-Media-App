@@ -2,16 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { supabase } from '../config/supabase.js';
 import type { CustomError } from '../types/index.js';
 
-interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    name?: string;
-  };
-}
-
 export const authenticateSupabaseToken = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {

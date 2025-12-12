@@ -1,5 +1,6 @@
 import { supabase } from "../config/supabase.js";
-import type { CustomError, LoginCredentials, SignupCredentials } from "../types/index.js";
+import { User, Profile } from "../models/index.js";
+import type { CustomError, LoginCredentials, SignupCredentials, UserModel } from "../types/index.js";
 
 export const login = async ({ email, password }: LoginCredentials) => {
   if (!email || !password) {
@@ -24,7 +25,6 @@ export const login = async ({ email, password }: LoginCredentials) => {
     err.status = 401;
     throw err;
   }
-
   return {
     user: {
       id: data.user.id,
@@ -67,6 +67,27 @@ export const signup = async ({ email, password, name }: SignupCredentials) => {
     const err = new Error("Registration failed") as CustomError;
     err.status = 400;
     throw err;
+  }
+
+  try {
+    
+    const newUser = await User.create({
+      id: data.user.id,
+      email: data.user.email!,
+      name: data.user.user_metadata?.name || name
+    });
+    
+
+    const profile = await Profile.create({
+      user_id: data.user.id,
+      first_name: (data.user.user_metadata?.name || name).split(' ')[0] || null,
+      last_name: (data.user.user_metadata?.name || name).split(' ').slice(1).join(' ') || null
+    });
+
+    console.log('Profile created successfully:', profile.toJSON());
+    
+  } catch (dbError: any) {
+    console.error('Error saving user to custom table:', dbError);
   }
 
   return {
