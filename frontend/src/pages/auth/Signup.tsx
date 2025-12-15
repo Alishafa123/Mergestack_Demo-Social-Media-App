@@ -3,10 +3,10 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import { useSignup } from "../../hooks/useAuth";
-import Alert from "../../components/Alert";
-import AuthIcon from "../../components/AuthIcon";
-import PrimaryButton from "../../components/buttons/PrimaryButton";
-import { EmailField, PasswordField, TextField } from "../../components/form";
+import Alert from "../../components/shared/Alert";
+import AuthIcon from "../../components/shared/AuthIcon";
+import Button from "../../components/shared/buttons/Button";
+import { EmailField, PasswordField, TextField } from "../../components/shared/form";
 import { signupSchema } from "../../schemas/authSchemas";
 import type { SignupFormData } from "../../schemas/authSchemas";
 import { Link } from "react-router-dom";
@@ -99,9 +99,14 @@ export default function Signup() {
               errors={errors} 
             />
 
-            <PrimaryButton type="submit" loading={signupMutation.isPending}>
+            <Button 
+              type="submit" 
+              loading={signupMutation.isPending}
+              fullWidth
+              size="lg"
+            >
               {signupMutation.isPending ? "Creating Account..." : "Create Account"}
-            </PrimaryButton>
+            </Button>
             
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-500">

@@ -1,15 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAtomValue } from 'jotai';
-import { userAtom } from '../../jotai/user.atom';
-import { useLogout } from '../../hooks/useAuth';
+import { userController } from '../../../jotai/user.atom';
+import { useLogout } from '../../../hooks/useAuth';
 
 export default function ProfileDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const user = useAtomValue(userAtom);
   const logoutMutation = useLogout();
+  const {name,email} = userController.useState(['name', 'email'])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -46,7 +45,7 @@ export default function ProfileDropdown() {
       >
         <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
           <span className="text-white text-sm font-medium">
-            {user?.name?.charAt(0).toUpperCase() || 'U'}
+            {name?.charAt(0).toUpperCase() || 'U'}
           </span>
         </div>
       </button>
@@ -56,10 +55,10 @@ export default function ProfileDropdown() {
           <div className="py-1">
             <div className="px-4 py-2 border-b border-gray-100">
               <p className="text-sm font-medium text-gray-900">
-                {user?.name || 'User'}
+                {name || 'User'}
               </p>
               <p className="text-sm text-gray-500 truncate">
-                {user?.email || ''}
+                {email || ''}
               </p>
             </div>
 

@@ -2,11 +2,10 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
-import Alert from "../../components/Alert";
-import PrimaryButton from "../../components/buttons/PrimaryButton";
-import SecondaryButton from "../../components/buttons/SecondaryButton";
-import { TextField, TextAreaField, SelectField, DateField } from "../../components/form";
-import ProfileImageUpload from "../../components/form/ProfileImageUpload";
+import Alert from "../../components/shared/Alert";
+import Button from "../../components/shared/buttons/Button";
+import { TextField, TextAreaField, SelectField, DateField } from "../../components/shared/form";
+import ProfileImageUpload from "../../components/shared/form/ProfileImageUpload";
 import { profileSchema } from "../../schemas/profileSchemas";
 import type { ProfileFormData } from "../../schemas/profileSchemas";
 import { useUpdateProfile, useGetProfile } from "../../hooks/useProfile";
@@ -20,6 +19,8 @@ interface AlertState {
 const genderOptions = [
   { value: 'male', label: 'Male' },
   { value: 'female', label: 'Female' },
+  { value: 'other', label: 'Other' },
+  { value: 'prefer_not_to_say', label: 'Prefer not to say' },
 ];
 
 export default function Profile() {
@@ -182,23 +183,25 @@ export default function Profile() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <SecondaryButton
-                  title="Back to Dashboard"
-                  type="button"
-                  onClick={handleBackToDashboard}
-                />
-              </div>
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={handleBackToDashboard}
+                fullWidth
+                size="lg"
+              >
+                Back to Dashboard
+              </Button>
               
-              <div className="flex-1">
-                <PrimaryButton 
-                  type="submit" 
-                  loading={updateProfileMutation.isPending}
-                  disabled={updateProfileMutation.isPending}
-                >
-                  {updateProfileMutation.isPending ? "Updating Profile..." : "Update Profile"}
-                </PrimaryButton>
-              </div>
+              <Button 
+                type="submit" 
+                loading={updateProfileMutation.isPending}
+                disabled={updateProfileMutation.isPending}
+                fullWidth
+                size="lg"
+              >
+                {updateProfileMutation.isPending ? "Updating Profile..." : "Update Profile"}
+              </Button>
             </div>
           </form>
           )}
