@@ -1,9 +1,6 @@
-import { useAtomValue } from 'jotai';
-import { userAtom } from '../../jotai/user.atom';
-import Navbar from '../../components/navbar/Navbar';
+import Navbar from '../../components/shared/navbar/Navbar';
 
 export default function Dashboard() {
-  const user = useAtomValue(userAtom);
 
   return (
     <div className="min-h-screen bg-gray-50">

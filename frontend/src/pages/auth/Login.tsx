@@ -3,13 +3,12 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "../../hooks/useAuth";
-import Alert from "../../components/Alert";
-import AuthIcon from "../../components/AuthIcon";
-import PrimaryButton from "../../components/buttons/PrimaryButton";
-import { EmailField, PasswordField } from "../../components/form";
+import Alert from "../../components/shared/Alert";
+import AuthIcon from "../../components/shared/AuthIcon";
+import Button from "../../components/shared/buttons/Button";
+import { EmailField, PasswordField } from "../../components/shared/form";
 import { loginSchema } from "../../schemas/authSchemas";
 import type { LoginFormData } from "../../schemas/authSchemas";
-import { userController } from "../../jotai/user.atom";
 import { Link } from "react-router-dom";
 
 interface AlertState {
@@ -45,9 +44,11 @@ export default function Login() {
 
   const onSubmit = (data: LoginFormData) => {
     loginMutation.mutate(data, {
-      onSuccess: (response) => {
+      onSuccess: () => {
         showAlert('success', 'Login successful! Welcome back.');
-        
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1000);
       },
       onError: (error: any) => {
         const errorMessage = error?.response?.data?.message || 'Invalid credentials. Please try again.';
@@ -81,9 +82,14 @@ export default function Login() {
             <EmailField register={register} errors={errors} />
             <PasswordField register={register} errors={errors} />
 
-            <PrimaryButton type="submit" loading={loginMutation.isPending}>
+            <Button 
+              type="submit" 
+              loading={loginMutation.isPending}
+              fullWidth
+              size="lg"
+            >
               {loginMutation.isPending ? "Signing in..." : "Sign in"}
-            </PrimaryButton>
+            </Button>
 
             
             
