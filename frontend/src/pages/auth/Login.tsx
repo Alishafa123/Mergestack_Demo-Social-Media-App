@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useNavigate } from "react-router-dom";
 import { useLogin } from "../../hooks/useAuth";
 import Alert from "../../components/Alert";
 import AuthIcon from "../../components/AuthIcon";
@@ -18,6 +19,7 @@ interface AlertState {
 }
 
 export default function Login() {
+  const navigate = useNavigate();
   const [alert, setAlert] = useState<AlertState>({
     show: false,
     variant: 'success',
