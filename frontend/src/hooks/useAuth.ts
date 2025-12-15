@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { useSetAtom } from 'jotai';
 import { userAtom } from '../jotai/user.atom';
 import type { User } from '../jotai/user.atom';
@@ -43,11 +44,13 @@ export const useSignup = () => {
 
 export const useLogout = () => {
   const setUser = useSetAtom(userAtom);
+    const navigate = useNavigate();
 
   return useMutation({
     mutationFn: async () => {
       localStorage.removeItem('access_token');
       setUser(null);
+      navigate('/login');
     },
     onSuccess: () => {
       console.log('Logged out successfully');
