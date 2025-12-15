@@ -4,10 +4,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useSignup } from "../../hooks/useAuth";
 import Alert from "../../components/Alert";
 import AuthIcon from "../../components/AuthIcon";
-import PrimaryButton from "../../components/PrimaryButton";
+import PrimaryButton from "../../components/buttons/PrimaryButton";
 import { EmailField, PasswordField, TextField } from "../../components/form";
 import { signupSchema } from "../../schemas/authSchemas";
 import type { SignupFormData } from "../../schemas/authSchemas";
+import { Link } from "react-router-dom";
 
 interface AlertState {
   show: boolean;
@@ -21,7 +22,7 @@ export default function Signup() {
     variant: 'success',
     message: ''
   });
-  
+
   const signupMutation = useSignup();
   
   const {
@@ -100,9 +101,9 @@ export default function Signup() {
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-500">
                 Already have an account?{' '}
-                <a href="/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
+                <Link to={'/login'} className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
                   Sign in here
-                </a>
+                </Link>
               </p>
             </div>
           </form>
