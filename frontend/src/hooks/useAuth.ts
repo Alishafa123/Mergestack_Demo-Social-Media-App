@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useSetAtom } from 'jotai';
-import { userAtom } from '../jotai/user.atom';
+import { userController } from '../jotai/user.atom';
 import type { User } from '../jotai/user.atom';
 import { loginUser, signupUser } from '../api/auth.api';
 import type { LoginFormData, SignupFormData } from '../schemas/authSchemas';
@@ -13,13 +13,14 @@ interface AuthResponse {
 }
 
 export const useLogin = () => {
-  const setUser = useSetAtom(userAtom);
 
   return useMutation<AuthResponse, Error, LoginFormData>({
     mutationFn: loginUser,
     onSuccess: (data) => {
       localStorage.setItem('access_token', data.token);
-      setUser(data.user);
+      userController.updateState({
+        id: data.user.id, name: data.user.name, email: data.user.email
+      })
     },
     onError: (error) => {
       console.error('Login failed:', error);
@@ -28,13 +29,12 @@ export const useLogin = () => {
 };
 
 export const useSignup = () => {
-  const setUser = useSetAtom(userAtom);
 
   return useMutation<AuthResponse, Error, SignupFormData>({
     mutationFn: signupUser,
     onSuccess: (data) => {
       localStorage.setItem('access_token', data.token);
-      setUser(data.user);
+      userController.login(data.user.id, data.user.name, data.user.email);
     },
     onError: (error) => {
       console.error('Signup failed:', error);
@@ -43,14 +43,11 @@ export const useSignup = () => {
 };
 
 export const useLogout = () => {
-  const setUser = useSetAtom(userAtom);
-    const navigate = useNavigate();
 
   return useMutation({
     mutationFn: async () => {
       localStorage.removeItem('access_token');
-      setUser(null);
-      navigate('/login');
+      userController.logout();
     },
     onSuccess: () => {
       console.log('Logged out successfully');
