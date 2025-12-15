@@ -80,6 +80,39 @@ export interface ProfileModel {
   getDataValue(key: string): any;
 }
 
+export interface PostModel {
+  id: string;
+  user_id: string;
+  content?: string;
+  likes_count: number;
+  comments_count: number;
+  createdAt: Date;
+  updatedAt: Date;
+  // Associated models (populated by includes)
+  user?: UserModel;
+  images?: PostImageModel[];
+  likes?: PostLikeModel[];
+}
+
+export interface PostImageModel {
+  id: string;
+  post_id: string;
+  image_url: string;
+  image_order: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface PostLikeModel {
+  id: string;
+  post_id: string;
+  user_id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  // Associated models (populated by includes)
+  user?: UserModel;
+}
+
 
 export interface ApiResponse<T = any> {
   success: boolean;
