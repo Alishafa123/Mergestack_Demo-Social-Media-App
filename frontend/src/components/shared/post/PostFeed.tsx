@@ -1,18 +1,25 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import PostCardWithSlider from './PostCardWithSlider';
 import PostSkeleton from './PostSkeleton';
 import Button from '../buttons/Button';
-import { useInfinitePosts, useToggleLike } from '../../../hooks/usePost';
+import ShareModal from './ShareModal';
+import { useInfinitePosts, useToggleLike, useToggleShare } from '../../../hooks/usePost';
 import { AuthUtils } from '../../../utils/auth';
 
 interface PostFeedProps {
   userId?: string; // Filter posts by specific user (optional)
+  enableShareModal?: boolean; // Enable share modal for enhanced sharing
+  useShareDropdown?: boolean; // Use dropdown for share options (Twitter-style)
 }
 
-const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
+const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, useShareDropdown = false }) => {
   const currentUser = AuthUtils.getCurrentUser();
   const toggleLikeMutation = useToggleLike();
+  const toggleShareMutation = useToggleShare();
+  
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<any>(null);
 
   const {
     data,
@@ -33,9 +40,45 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
     // Comment functionality is now handled within PostCardWithSlider
   };
 
-  const handleShare = (postId: string) => {
-    console.log('Share post:', postId);
-    // TODO: Implement share functionality when sharing is added
+  const handleShare = (postId: string, isCurrentlyShared: boolean) => {
+    if (isCurrentlyShared) {
+      // Unshare the post
+      toggleShareMutation.mutate({ 
+        postId, 
+        isCurrentlyShared: true 
+      });
+    } else {
+      // Check if we should show modal or share directly
+      if (enableShareModal) {
+        const post = allPosts.find(p => p.id === postId);
+        setSelectedPost(post);
+        setShareModalOpen(true);
+      } else {
+        // Share directly without message
+        toggleShareMutation.mutate({ 
+          postId, 
+          isCurrentlyShared: false 
+        });
+      }
+    }
+  };
+
+  const handleModalShare = (message?: string) => {
+    if (selectedPost) {
+      toggleShareMutation.mutate({ 
+        postId: selectedPost.id, 
+        sharedContent: message,
+        isCurrentlyShared: false 
+      });
+      setShareModalOpen(false);
+      setSelectedPost(null);
+    }
+  };
+
+  const handleShareWithComment = (postId: string) => {
+    const post = allPosts.find(p => p.id === postId);
+    setSelectedPost(post);
+    setShareModalOpen(true);
   };
 
   // Auto-load more posts when scrolling near bottom
@@ -126,8 +169,11 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
           onLike={handleLike}
           onComment={handleComment}
           onShare={handleShare}
-          isLiked={post.isLiked || false} // Use real like status from API
+          onShareWithComment={handleShareWithComment}
+          isLiked={post.isLiked || false} 
+          isShared={post.isShared || false} 
           currentUserId={currentUser?.id}
+          useShareDropdown={useShareDropdown}
         />
       ))}
 
@@ -158,6 +204,25 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
             You've reached the end of the feed! 🎉
           </p>
         </div>
+      )}
+
+      {/* Share Modal */}
+      {(enableShareModal || useShareDropdown) && (
+        <ShareModal
+          isOpen={shareModalOpen}
+          onClose={() => {
+            setShareModalOpen(false);
+            setSelectedPost(null);
+          }}
+          onShare={handleModalShare}
+          isLoading={toggleShareMutation.isPending}
+          postContent={selectedPost?.content}
+          authorName={
+            selectedPost?.user.profile?.first_name && selectedPost?.user.profile?.last_name
+              ? `${selectedPost.user.profile.first_name} ${selectedPost.user.profile.last_name}`
+              : selectedPost?.user.name
+          }
+        />
       )}
     </div>
   );

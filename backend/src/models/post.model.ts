@@ -7,6 +7,7 @@ class Post extends Model {
   declare content: string | null;
   declare likes_count: number;
   declare comments_count: number;
+  declare shares_count: number;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -38,6 +39,11 @@ Post.init(
       allowNull: false,
     },
     comments_count: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      allowNull: false,
+    },
+    shares_count: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
       allowNull: false,

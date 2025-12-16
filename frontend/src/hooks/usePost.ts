@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
-import { createPost, getPosts, getPost, updatePost, deletePost, toggleLike } from '../api/post.api';
+import { createPost, getPosts, getPost, updatePost, deletePost, toggleLike, sharePost, unsharePost } from '../api/post.api';
 import type { CreatePostData, PostsResponse } from '../api/post.api';
 
 export const POST_QUERY_KEY = ['posts'];
@@ -128,6 +128,70 @@ export const useToggleLike = () => {
         });
       }
       console.error('Like toggle failed:', err);
+    },
+    onSettled: () => {
+      // Always refetch after error or success to ensure we have the latest data
+      queryClient.invalidateQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
+    },
+  });
+};
+
+export const useToggleShare = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ postId, sharedContent, isCurrentlyShared }: { 
+      postId: string; 
+      sharedContent?: string; 
+      isCurrentlyShared: boolean;
+    }) => {
+      return isCurrentlyShared ? unsharePost(postId) : sharePost(postId, sharedContent);
+    },
+    onMutate: async ({ postId, isCurrentlyShared }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
+
+      // Snapshot the previous value
+      const previousData = queryClient.getQueriesData({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
+
+      // Optimistically update the cache
+      queryClient.setQueriesData(
+        { queryKey: [...POST_QUERY_KEY, 'infinite'] },
+        (old: any) => {
+          if (!old) return old;
+
+          return {
+            ...old,
+            pages: old.pages.map((page: any) => ({
+              ...page,
+              posts: page.posts.map((post: any) => {
+                if (post.id === postId) {
+                  return {
+                    ...post,
+                    isShared: !isCurrentlyShared,
+                    shares_count: isCurrentlyShared 
+                      ? Math.max(0, post.shares_count - 1)
+                      : post.shares_count + 1
+                  };
+                }
+                return post;
+              })
+            }))
+          };
+        }
+      );
+
+      // Return a context object with the snapshotted value
+      return { previousData };
+    },
+    onError: (err, _variables, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousData) {
+        context.previousData.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+      console.error('Share toggle failed:', err);
     },
     onSettled: () => {
       // Always refetch after error or success to ensure we have the latest data
