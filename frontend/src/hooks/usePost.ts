@@ -148,13 +148,10 @@ export const useToggleShare = () => {
       return isCurrentlyShared ? unsharePost(postId) : sharePost(postId, sharedContent);
     },
     onMutate: async ({ postId, isCurrentlyShared }) => {
-      // Cancel any outgoing refetches
       await queryClient.cancelQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
 
-      // Snapshot the previous value
       const previousData = queryClient.getQueriesData({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
 
-      // Optimistically update the cache
       queryClient.setQueriesData(
         { queryKey: [...POST_QUERY_KEY, 'infinite'] },
         (old: any) => {
@@ -181,11 +178,9 @@ export const useToggleShare = () => {
         }
       );
 
-      // Return a context object with the snapshotted value
       return { previousData };
     },
     onError: (err, _variables, context) => {
-      // If the mutation fails, use the context returned from onMutate to roll back
       if (context?.previousData) {
         context.previousData.forEach(([queryKey, data]) => {
           queryClient.setQueryData(queryKey, data);
@@ -194,7 +189,6 @@ export const useToggleShare = () => {
       console.error('Share toggle failed:', err);
     },
     onSettled: () => {
-      // Always refetch after error or success to ensure we have the latest data
       queryClient.invalidateQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
     },
   });

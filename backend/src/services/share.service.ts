@@ -8,7 +8,6 @@ export const sharePost = async (
   sharedContent?: string
 ): Promise<PostShareModel> => {
   try {
-    // Check if post exists
     const post = await Post.findByPk(postId);
     if (!post) {
       const err = new Error("Post not found") as CustomError;
@@ -41,7 +40,6 @@ export const sharePost = async (
 
     await Post.increment('shares_count', { where: { id: postId } });
 
-    // Return share with user data
     return await getShare(share.id);
   } catch (error) {
     throw error;
@@ -63,12 +61,10 @@ export const unsharePost = async (
       throw err;
     }
 
-    // Delete the share
     await PostShare.destroy({
       where: { post_id: postId, user_id: userId }
     });
 
-    // Decrement shares count
     await Post.decrement('shares_count', { where: { id: postId } });
 
     return { message: "Post unshared successfully" };
@@ -226,7 +222,6 @@ export const getUserTimeline = async (
   try {
     const offset = (page - 1) * limit;
 
-    // Get user's original posts and shared posts
     const originalPosts = await Post.findAll({
       where: { user_id: userId },
       include: [
@@ -261,7 +256,6 @@ export const getUserTimeline = async (
       ]
     });
 
-    // Combine and sort by date
     const timeline = [
       ...originalPosts.map(post => ({
         ...post.toJSON(),
@@ -280,7 +274,6 @@ export const getUserTimeline = async (
       })
     ].sort((a, b) => new Date(b.timeline_date).getTime() - new Date(a.timeline_date).getTime());
 
-    // Apply pagination
     const paginatedTimeline = timeline.slice(offset, offset + limit);
 
     return {

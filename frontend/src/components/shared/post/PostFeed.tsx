@@ -9,8 +9,8 @@ import { AuthUtils } from '../../../utils/auth';
 
 interface PostFeedProps {
   userId?: string; // Filter posts by specific user (optional)
-  enableShareModal?: boolean; // Enable share modal for enhanced sharing
-  useShareDropdown?: boolean; // Use dropdown for share options (Twitter-style)
+  enableShareModal?: boolean;
+  useShareDropdown?: boolean; 
 }
 
 const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, useShareDropdown = false }) => {
@@ -42,19 +42,16 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
 
   const handleShare = (postId: string, isCurrentlyShared: boolean) => {
     if (isCurrentlyShared) {
-      // Unshare the post
       toggleShareMutation.mutate({ 
         postId, 
         isCurrentlyShared: true 
       });
     } else {
-      // Check if we should show modal or share directly
       if (enableShareModal) {
         const post = allPosts.find(p => p.id === postId);
         setSelectedPost(post);
         setShareModalOpen(true);
       } else {
-        // Share directly without message
         toggleShareMutation.mutate({ 
           postId, 
           isCurrentlyShared: false 
@@ -206,7 +203,6 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
         </div>
       )}
 
-      {/* Share Modal */}
       {(enableShareModal || useShareDropdown) && (
         <ShareModal
           isOpen={shareModalOpen}

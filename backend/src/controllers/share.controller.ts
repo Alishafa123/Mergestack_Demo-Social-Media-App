@@ -14,7 +14,6 @@ export const sharePost = async (req: Request, res: Response, next: NextFunction)
       });
     }
 
-    // Validate shared content length if provided
     if (sharedContent && sharedContent.length > 500) {
       return res.status(400).json({
         success: false,

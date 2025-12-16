@@ -36,7 +36,6 @@ const ShareModal: React.FC<ShareModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900">Share Post</h3>
           <button
@@ -48,9 +47,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
           </button>
         </div>
 
-        {/* Content */}
         <div className="p-4">
-          {/* Original Post Preview */}
           {(postContent || authorName) && (
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
               {authorName && (
@@ -66,7 +63,6 @@ const ShareModal: React.FC<ShareModalProps> = ({
             </div>
           )}
 
-          {/* Share Message */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Add a message (optional)
@@ -86,7 +82,6 @@ const ShareModal: React.FC<ShareModalProps> = ({
           </div>
         </div>
 
-        {/* Footer */}
         <div className="flex items-center justify-end space-x-3 p-4 border-t border-gray-200">
           <Button
             variant="ghost"

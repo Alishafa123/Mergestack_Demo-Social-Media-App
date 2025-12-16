@@ -6,7 +6,6 @@ import PostLike from "./post-like.model.js";
 import PostComment from "./post-comment.model.js";
 import PostShare from "./post-share.model.js";
 
-// User - Profile relationship
 User.hasOne(Profile, {
   foreignKey: 'user_id',
   as: 'profile',
@@ -19,7 +18,6 @@ Profile.belongsTo(User, {
   onDelete: 'CASCADE'
 });
 
-// User - Posts relationship
 User.hasMany(Post, {
   foreignKey: 'user_id',
   as: 'posts',
@@ -32,7 +30,6 @@ Post.belongsTo(User, {
   onDelete: 'CASCADE'
 });
 
-// Post - PostImages relationship
 Post.hasMany(PostImage, {
   foreignKey: 'post_id',
   as: 'images',
@@ -45,14 +42,12 @@ PostImage.belongsTo(Post, {
   onDelete: 'CASCADE'
 });
 
-// Post - PostLikes relationship
 Post.hasMany(PostLike, {
   foreignKey: 'post_id',
   as: 'likes',
   onDelete: 'CASCADE'
 });
 
-// Post - Single User Like (for checking if current user liked)
 Post.hasOne(PostLike, {
   foreignKey: 'post_id',
   as: 'userLike',
@@ -65,7 +60,6 @@ PostLike.belongsTo(Post, {
   onDelete: 'CASCADE'
 });
 
-// User - PostLikes relationship
 User.hasMany(PostLike, {
   foreignKey: 'user_id',
   as: 'likedPosts',
@@ -78,7 +72,6 @@ PostLike.belongsTo(User, {
   onDelete: 'CASCADE'
 });
 
-// Post - PostComments relationship
 Post.hasMany(PostComment, {
   foreignKey: 'post_id',
   as: 'comments',
@@ -91,7 +84,6 @@ PostComment.belongsTo(Post, {
   onDelete: 'CASCADE'
 });
 
-// User - PostComments relationship
 User.hasMany(PostComment, {
   foreignKey: 'user_id',
   as: 'comments',
@@ -104,7 +96,6 @@ PostComment.belongsTo(User, {
   onDelete: 'CASCADE'
 });
 
-// PostComment - Self-referencing relationship (for replies)
 PostComment.hasMany(PostComment, {
   foreignKey: 'parent_comment_id',
   as: 'replies',
@@ -117,14 +108,12 @@ PostComment.belongsTo(PostComment, {
   onDelete: 'CASCADE'
 });
 
-// Post - PostShares relationship
 Post.hasMany(PostShare, {
   foreignKey: 'post_id',
   as: 'shares',
   onDelete: 'CASCADE'
 });
 
-// Post - Single User Share (for checking if current user shared)
 Post.hasOne(PostShare, {
   foreignKey: 'post_id',
   as: 'userShare',
@@ -137,7 +126,6 @@ PostShare.belongsTo(Post, {
   onDelete: 'CASCADE'
 });
 
-// User - PostShares relationship
 User.hasMany(PostShare, {
   foreignKey: 'user_id',
   as: 'sharedPosts',
