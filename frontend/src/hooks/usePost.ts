@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { createPost, getPosts, getPost, updatePost, deletePost, toggleLike } from '../api/post.api';
-import type { CreatePostData } from '../api/post.api';
+import type { CreatePostData, PostsResponse } from '../api/post.api';
 
 export const POST_QUERY_KEY = ['posts'];
 
@@ -24,6 +24,20 @@ export const useGetPosts = (page: number = 1, limit: number = 10, userId?: strin
     queryKey: [...POST_QUERY_KEY, { page, limit, userId }],
     queryFn: () => getPosts(page, limit, userId),
     staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+// Infinite query for posts feed
+export const useInfinitePosts = (limit: number = 10, userId?: string) => {
+  return useInfiniteQuery({
+    queryKey: [...POST_QUERY_KEY, 'infinite', { limit, userId }],
+    queryFn: ({ pageParam = 1 }) => getPosts(pageParam, limit, userId),
+    getNextPageParam: (lastPage: PostsResponse, allPages) => {
+      // If hasMore is true, return next page number
+      return lastPage.hasMore ? allPages.length + 1 : undefined;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    initialPageParam: 1,
   });
 };
 
@@ -69,11 +83,55 @@ export const useToggleLike = () => {
 
   return useMutation({
     mutationFn: (postId: string) => toggleLike(postId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: POST_QUERY_KEY });
+    onMutate: async (postId: string) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
+
+      // Snapshot the previous value
+      const previousData = queryClient.getQueriesData({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
+
+      // Optimistically update the cache
+      queryClient.setQueriesData(
+        { queryKey: [...POST_QUERY_KEY, 'infinite'] },
+        (old: any) => {
+          if (!old) return old;
+
+          return {
+            ...old,
+            pages: old.pages.map((page: any) => ({
+              ...page,
+              posts: page.posts.map((post: any) => {
+                if (post.id === postId) {
+                  return {
+                    ...post,
+                    isLiked: !post.isLiked,
+                    likes_count: post.isLiked 
+                      ? Math.max(0, post.likes_count - 1)
+                      : post.likes_count + 1
+                  };
+                }
+                return post;
+              })
+            }))
+          };
+        }
+      );
+
+      // Return a context object with the snapshotted value
+      return { previousData };
     },
-    onError: (error) => {
-      console.error('Like toggle failed:', error);
+    onError: (err, _postId, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousData) {
+        context.previousData.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+      console.error('Like toggle failed:', err);
+    },
+    onSettled: () => {
+      // Always refetch after error or success to ensure we have the latest data
+      queryClient.invalidateQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
     },
   });
 };

@@ -88,10 +88,12 @@ export interface PostModel {
   comments_count: number;
   createdAt: Date;
   updatedAt: Date;
+  isLiked?: boolean; 
   // Associated models (populated by includes)
   user?: UserModel;
   images?: PostImageModel[];
   likes?: PostLikeModel[];
+  comments?: PostCommentModel[];
 }
 
 export interface PostImageModel {
@@ -111,6 +113,19 @@ export interface PostLikeModel {
   updatedAt: Date;
   // Associated models (populated by includes)
   user?: UserModel;
+}
+
+export interface PostCommentModel {
+  id: string;
+  post_id: string;
+  user_id: string;
+  parent_comment_id?: string | null;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  user?: UserModel;
+  replies?: PostCommentModel[];
+  parentComment?: PostCommentModel;
 }
 
 

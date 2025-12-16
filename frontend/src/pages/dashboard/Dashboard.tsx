@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import Navbar from '../../components/shared/navbar/Navbar';
 import Button from '../../components/shared/buttons/Button';
+import PostFeed from '../../components/shared/post/PostFeed';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -39,24 +40,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Placeholder for posts feed */}
-        <div className="text-center py-12">
-          <h1 className="text-2xl font-semibold text-gray-700 mb-2">
-            Your feed will appear here! 🚀
-          </h1>
-          <p className="text-gray-500 mb-6">
-            Start by creating your first post
-          </p>
-          <Button
-            onClick={handleCreatePost}
-            variant="outline"
-            size="lg"
-            className="flex items-center space-x-2 mx-auto"
-          >
-            <Plus size={20} />
-            <span>Create Your First Post</span>
-          </Button>
-        </div>
+        {/* Posts Feed */}
+        <PostFeed />
       </main>
     </div>
   );

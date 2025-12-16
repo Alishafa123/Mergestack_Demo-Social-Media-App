@@ -49,8 +49,9 @@ export const getPosts = async (req: Request, res: Response, next: NextFunction) 
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
     const userId = req.query.userId as string;
+    const currentUserId = req.user!.id; // Get current authenticated user ID
 
-    const result = await postService.getPosts(page, limit, userId);
+    const result = await postService.getPosts(page, limit, userId, currentUserId);
 
     res.json({
       success: true,

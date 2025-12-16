@@ -13,20 +13,36 @@ export interface Post {
   comments_count: number;
   createdAt: string;
   updatedAt: string;
+  isLiked?: boolean; // Whether current user has liked this post
   user: {
     id: string;
     name: string;
     email: string;
+    createdAt: string;
+    updatedAt: string;
     profile?: {
-      profile_url?: string;
+      id: number;
+      user_id: string;
       first_name?: string;
       last_name?: string;
+      phone?: string;
+      date_of_birth?: string;
+      gender?: string;
+      bio?: string;
+      profile_url?: string;
+      city?: string;
+      country?: string;
+      createdAt: string;
+      updatedAt: string;
     };
   };
   images?: {
     id: string;
+    post_id: string;
     image_url: string;
     image_order: number;
+    createdAt: string;
+    updatedAt: string;
   }[];
 }
 

@@ -80,7 +80,8 @@ export const getPost = async (postId: string): Promise<PostModel> => {
 export const getPosts = async (
   page: number = 1, 
   limit: number = 10,
-  userId?: string
+  userId?: string,
+  currentUserId?: string
 ): Promise<{ posts: PostModel[], total: number, hasMore: boolean }> => {
   try {
     const offset = (page - 1) * limit;
@@ -102,7 +103,14 @@ export const getPosts = async (
           model: PostImage,
           as: 'images',
           order: [['image_order', 'ASC']]
-        }
+        },
+        ...(currentUserId ? [{
+          model: PostLike,
+          as: 'userLike',
+          where: { user_id: currentUserId },
+          required: false,
+          attributes: ['id'] 
+        }] : [])
       ],
       order: [['createdAt', 'DESC']],
       limit,
@@ -110,7 +118,12 @@ export const getPosts = async (
     });
 
     return {
-      posts: rows.map(row => row.toJSON() as PostModel),
+      posts: rows.map(row => {
+        const post = row.toJSON() as any;
+        post.isLiked = currentUserId ? !!(post.userLike) : false;
+        delete post.userLike;
+        return post as PostModel;
+      }),
       total: count,
       hasMore: offset + limit < count
     };
