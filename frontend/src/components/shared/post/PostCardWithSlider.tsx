@@ -94,21 +94,18 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
         </div>
       </div>
 
-      {/* Post Content */}
       {post.content && (
         <div className="px-4 pb-3">
           <p className="text-gray-900 whitespace-pre-wrap">{post.content}</p>
         </div>
       )}
 
-      {/* Post Images */}
       {post.images && post.images.length > 0 && (
         <div className="overflow-hidden">
           <PostImageSlider images={post.images} />
         </div>
       )}
 
-      {/* Post Stats */}
       <div className="px-4 py-3">
         <div className="flex items-center justify-between text-sm text-gray-500">
           <div className="flex items-center space-x-4">
@@ -187,7 +184,6 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
         </div>
       </div>
 
-      {/* Comments Section */}
       <CommentSection
         postId={post.id}
         commentsCount={post.comments_count}

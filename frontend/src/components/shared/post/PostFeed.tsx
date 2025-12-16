@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 import PostCardWithSlider from './PostCardWithSlider';
 import PostSkeleton from './PostSkeleton';
 import Button from '../buttons/Button';
@@ -78,12 +79,11 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
     setShareModalOpen(true);
   };
 
-  // Auto-load more posts when scrolling near bottom
   useEffect(() => {
     const handleScroll = () => {
       if (
         window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - 1000 // Load when 1000px from bottom
+        document.documentElement.offsetHeight - 1000 
       ) {
         if (hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
@@ -95,7 +95,6 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
     return () => window.removeEventListener('scroll', handleScroll);
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -106,7 +105,6 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
     );
   }
 
-  // Error state
   if (isError) {
     return (
       <div className="text-center py-12">
@@ -129,7 +127,6 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
     );
   }
 
-  // No posts state
   const allPosts = data?.pages.flatMap(page => page.posts) || [];
   
   if (allPosts.length === 0) {
@@ -144,7 +141,7 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
           </p>
           {!userId && (
             <Button
-              onClick={() => window.location.href = '/posts/create'}
+              onClick={() => navigate('/posts-create')}
               variant="primary"
               size="md"
             >
@@ -158,7 +155,6 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
 
   return (
     <div className="space-y-6">
-      {/* Posts */}
       {allPosts.map((post) => (
         <PostCardWithSlider
           key={post.id}

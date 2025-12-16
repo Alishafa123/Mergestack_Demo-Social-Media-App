@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as postService from "../services/post.service.js";
 import { StorageService } from "../services/storage.service.js";
-import { v4 as uuidv4 } from 'uuid';
 
 export const createPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -9,7 +8,6 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
     const { content } = req.body;
     const files = req.files as Express.Multer.File[];
 
-    // Validate that post has either content or images
     if (!content && (!files || files.length === 0)) {
       return res.status(400).json({
         success: false,
@@ -49,7 +47,7 @@ export const getPosts = async (req: Request, res: Response, next: NextFunction) 
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
     const userId = req.query.userId as string;
-    const currentUserId = req.user!.id; // Get current authenticated user ID
+    const currentUserId = req.user!.id;
 
     const result = await postService.getPosts(page, limit, userId, currentUserId);
 

@@ -10,7 +10,6 @@ export const useCreatePost = () => {
   return useMutation({
     mutationFn: (data: CreatePostData) => createPost(data),
     onSuccess: () => {
-      // Invalidate posts query to refresh the feed
       queryClient.invalidateQueries({ queryKey: POST_QUERY_KEY });
     },
     onError: (error) => {
@@ -27,16 +26,14 @@ export const useGetPosts = (page: number = 1, limit: number = 10, userId?: strin
   });
 };
 
-// Infinite query for posts feed
 export const useInfinitePosts = (limit: number = 10, userId?: string) => {
   return useInfiniteQuery({
     queryKey: [...POST_QUERY_KEY, 'infinite', { limit, userId }],
     queryFn: ({ pageParam = 1 }) => getPosts(pageParam, limit, userId),
     getNextPageParam: (lastPage: PostsResponse, allPages) => {
-      // If hasMore is true, return next page number
       return lastPage.hasMore ? allPages.length + 1 : undefined;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000, 
     initialPageParam: 1,
   });
 };
@@ -84,13 +81,10 @@ export const useToggleLike = () => {
   return useMutation({
     mutationFn: (postId: string) => toggleLike(postId),
     onMutate: async (postId: string) => {
-      // Cancel any outgoing refetches
       await queryClient.cancelQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
 
-      // Snapshot the previous value
       const previousData = queryClient.getQueriesData({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
 
-      // Optimistically update the cache
       queryClient.setQueriesData(
         { queryKey: [...POST_QUERY_KEY, 'infinite'] },
         (old: any) => {
@@ -117,11 +111,9 @@ export const useToggleLike = () => {
         }
       );
 
-      // Return a context object with the snapshotted value
       return { previousData };
     },
     onError: (err, _postId, context) => {
-      // If the mutation fails, use the context returned from onMutate to roll back
       if (context?.previousData) {
         context.previousData.forEach(([queryKey, data]) => {
           queryClient.setQueryData(queryKey, data);
@@ -130,7 +122,6 @@ export const useToggleLike = () => {
       console.error('Like toggle failed:', err);
     },
     onSettled: () => {
-      // Always refetch after error or success to ensure we have the latest data
       queryClient.invalidateQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
     },
   });

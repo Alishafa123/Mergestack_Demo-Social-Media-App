@@ -78,7 +78,6 @@ export const getPostComments = async (
   try {
     const offset = (page - 1) * limit;
 
-    // Get top-level comments (no parent)
     const { count, rows } = await PostComment.findAndCountAll({
       where: { 
         post_id: postId,
@@ -106,10 +105,10 @@ export const getPostComments = async (
               }]
             }
           ],
-          order: [['createdAt', 'ASC']] // Replies in chronological order
+          order: [['createdAt', 'ASC']] 
         }
       ],
-      order: [['createdAt', 'DESC']], // Latest comments first
+      order: [['createdAt', 'DESC']], 
       limit,
       offset,
     });

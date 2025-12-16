@@ -6,7 +6,6 @@ const router = Router();
 
 router.use(authenticateSupabaseToken);
 
-// Comment routes
 router.post("/posts/:postId/comments", commentController.createComment);
 router.get("/posts/:postId/comments", commentController.getPostComments);
 router.put("/comments/:commentId", commentController.updateComment);

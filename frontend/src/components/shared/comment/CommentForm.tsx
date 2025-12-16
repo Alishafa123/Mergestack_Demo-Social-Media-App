@@ -44,13 +44,11 @@ const CommentForm: React.FC<CommentFormProps> = ({
 
     setError('');
 
-    // If custom onSubmit is provided (for editing), use it
     if (onSubmit) {
       onSubmit(content);
       return;
     }
 
-    // Otherwise, create new comment
     if (!postId) {
       setError('Post ID is required');
       return;

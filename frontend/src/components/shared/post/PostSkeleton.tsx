@@ -3,7 +3,6 @@ import React from 'react';
 const PostSkeleton: React.FC = () => {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden animate-pulse">
-      {/* Header */}
       <div className="p-4 pb-3">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
@@ -14,7 +13,6 @@ const PostSkeleton: React.FC = () => {
         </div>
       </div>
 
-      {/* Content */}
       <div className="px-4 pb-3">
         <div className="space-y-2">
           <div className="h-4 bg-gray-300 rounded w-full"></div>
@@ -22,10 +20,8 @@ const PostSkeleton: React.FC = () => {
         </div>
       </div>
 
-      {/* Image placeholder */}
       <div className="w-full h-96 bg-gray-300"></div>
 
-      {/* Actions */}
       <div className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex space-x-6">

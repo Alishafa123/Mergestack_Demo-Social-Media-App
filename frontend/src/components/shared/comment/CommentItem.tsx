@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { MoreHorizontal, Reply, Edit, Trash2 } from 'lucide-react';
-import UserHeader from '../user/UserHeader';
-import Button from '../buttons/Button';
 import CommentForm from './CommentForm';
 import { useDeleteComment, useUpdateComment } from '../../../hooks/useComment';
 import { AuthUtils } from '../../../utils/auth';
@@ -79,7 +77,6 @@ const CommentItem: React.FC<CommentItemProps> = ({
   return (
     <div className={`${isReply ? 'ml-8 mt-3' : 'mt-4'}`}>
       <div className="flex space-x-3">
-        {/* Avatar */}
         <div className="flex-shrink-0">
           <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
             {comment.user.profile?.profile_url ? (
@@ -96,11 +93,8 @@ const CommentItem: React.FC<CommentItemProps> = ({
           </div>
         </div>
 
-        {/* Comment Content */}
         <div className="flex-1 min-w-0">
-          {/* Comment Bubble */}
           <div className="bg-gray-100 rounded-2xl px-4 py-2 relative">
-            {/* User Info */}
             <div className="flex items-center justify-between mb-1">
               <span className="font-semibold text-sm text-gray-900">
                 {displayName}
@@ -142,7 +136,6 @@ const CommentItem: React.FC<CommentItemProps> = ({
               )}
             </div>
 
-            {/* Comment Text */}
             {isEditing ? (
               <CommentForm
                 initialValue={comment.content}
@@ -159,7 +152,6 @@ const CommentItem: React.FC<CommentItemProps> = ({
             )}
           </div>
 
-          {/* Comment Actions */}
           <div className="flex items-center space-x-4 mt-1 ml-2">
             <span className="text-xs text-gray-500">
               {formatDate(comment.createdAt)}
@@ -176,7 +168,6 @@ const CommentItem: React.FC<CommentItemProps> = ({
             )}
           </div>
 
-          {/* Reply Form */}
           {showReplyForm && (
             <div className="mt-3">
               <CommentForm
@@ -190,7 +181,6 @@ const CommentItem: React.FC<CommentItemProps> = ({
             </div>
           )}
 
-          {/* Replies */}
           {comment.replies && comment.replies.length > 0 && (
             <div className="mt-2">
               {comment.replies.map((reply) => (
