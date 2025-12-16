@@ -17,7 +17,6 @@ const PostImageSlider: React.FC<PostImageSliderProps> = ({ images, className = "
   
   if (!images || images.length === 0) return null;
 
-  // Sort images by order
   const sortedImages = [...images].sort((a, b) => a.image_order - b.image_order);
 
   const goToPrevious = () => {
@@ -85,7 +84,6 @@ const PostImageSlider: React.FC<PostImageSliderProps> = ({ images, className = "
           </>
         )}
 
-        {/* Image counter */}
         <div className="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
           {currentIndex + 1} / {sortedImages.length}
         </div>

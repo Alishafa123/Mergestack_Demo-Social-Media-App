@@ -51,7 +51,6 @@ Post.hasMany(PostLike, {
   onDelete: 'CASCADE'
 });
 
-// Post - Single User Like (for checking if current user liked)
 Post.hasOne(PostLike, {
   foreignKey: 'post_id',
   as: 'userLike',
@@ -77,7 +76,6 @@ PostLike.belongsTo(User, {
   onDelete: 'CASCADE'
 });
 
-// Post - PostComments relationship
 Post.hasMany(PostComment, {
   foreignKey: 'post_id',
   as: 'comments',
@@ -90,7 +88,6 @@ PostComment.belongsTo(Post, {
   onDelete: 'CASCADE'
 });
 
-// User - PostComments relationship
 User.hasMany(PostComment, {
   foreignKey: 'user_id',
   as: 'comments',

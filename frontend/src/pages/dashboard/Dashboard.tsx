@@ -40,7 +40,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Posts Feed */}
         <PostFeed />
       </main>
     </div>

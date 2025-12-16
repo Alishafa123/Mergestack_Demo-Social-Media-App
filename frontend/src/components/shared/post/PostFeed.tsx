@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 import PostCardWithSlider from './PostCardWithSlider';
 import PostSkeleton from './PostSkeleton';
 import Button from '../buttons/Button';
@@ -7,10 +8,11 @@ import { useInfinitePosts, useToggleLike } from '../../../hooks/usePost';
 import { AuthUtils } from '../../../utils/auth';
 
 interface PostFeedProps {
-  userId?: string; // Filter posts by specific user (optional)
+  userId?: string;
 }
 
 const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
+  const navigate = useNavigate();
   const currentUser = AuthUtils.getCurrentUser();
   const toggleLikeMutation = useToggleLike();
 
@@ -38,12 +40,11 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
     // TODO: Implement share functionality when sharing is added
   };
 
-  // Auto-load more posts when scrolling near bottom
   useEffect(() => {
     const handleScroll = () => {
       if (
         window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - 1000 // Load when 1000px from bottom
+        document.documentElement.offsetHeight - 1000 
       ) {
         if (hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
@@ -55,7 +56,6 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -66,7 +66,6 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
     );
   }
 
-  // Error state
   if (isError) {
     return (
       <div className="text-center py-12">
@@ -89,7 +88,6 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
     );
   }
 
-  // No posts state
   const allPosts = data?.pages.flatMap(page => page.posts) || [];
   
   if (allPosts.length === 0) {
@@ -104,7 +102,7 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
           </p>
           {!userId && (
             <Button
-              onClick={() => window.location.href = '/posts/create'}
+              onClick={() => navigate('/posts-create')}
               variant="primary"
               size="md"
             >
@@ -118,7 +116,6 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
 
   return (
     <div className="space-y-6">
-      {/* Posts */}
       {allPosts.map((post) => (
         <PostCardWithSlider
           key={post.id}
@@ -126,7 +123,7 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
           onLike={handleLike}
           onComment={handleComment}
           onShare={handleShare}
-          isLiked={post.isLiked || false} // Use real like status from API
+          isLiked={post.isLiked || false} 
           currentUserId={currentUser?.id}
         />
       ))}
