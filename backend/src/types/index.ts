@@ -86,12 +86,17 @@ export interface PostModel {
   content?: string;
   likes_count: number;
   comments_count: number;
+  shares_count: number;
   createdAt: Date;
   updatedAt: Date;
+  isLiked?: boolean;
+  isShared?: boolean;
   // Associated models (populated by includes)
   user?: UserModel;
   images?: PostImageModel[];
   likes?: PostLikeModel[];
+  comments?: PostCommentModel[];
+  shares?: PostShareModel[];
 }
 
 export interface PostImageModel {
@@ -111,6 +116,31 @@ export interface PostLikeModel {
   updatedAt: Date;
   // Associated models (populated by includes)
   user?: UserModel;
+}
+
+export interface PostCommentModel {
+  id: string;
+  post_id: string;
+  user_id: string;
+  parent_comment_id?: string | null;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  user?: UserModel;
+  replies?: PostCommentModel[];
+  parentComment?: PostCommentModel;
+}
+
+export interface PostShareModel {
+  id: string;
+  post_id: string;
+  user_id: string;
+  shared_content?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  // Associated models (populated by includes)
+  user?: UserModel;
+  post?: PostModel;
 }
 
 

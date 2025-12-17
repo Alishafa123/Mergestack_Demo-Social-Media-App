@@ -1,4 +1,4 @@
-import { Post, PostImage, PostLike, User, Profile } from "../models/index.js";
+import { Post, PostImage, PostLike, PostShare, User, Profile } from "../models/index.js";
 import type { CustomError, PostModel } from "../types/index.js";
 import { StorageService } from "./storage.service.js";
 
@@ -80,7 +80,8 @@ export const getPost = async (postId: string): Promise<PostModel> => {
 export const getPosts = async (
   page: number = 1, 
   limit: number = 10,
-  userId?: string
+  userId?: string,
+  currentUserId?: string
 ): Promise<{ posts: PostModel[], total: number, hasMore: boolean }> => {
   try {
     const offset = (page - 1) * limit;
@@ -102,7 +103,21 @@ export const getPosts = async (
           model: PostImage,
           as: 'images',
           order: [['image_order', 'ASC']]
-        }
+        },
+        ...(currentUserId ? [{
+          model: PostLike,
+          as: 'userLike',
+          where: { user_id: currentUserId },
+          required: false,
+          attributes: ['id'] 
+        }] : []),
+        ...(currentUserId ? [{
+          model: PostShare,
+          as: 'userShare',
+          where: { user_id: currentUserId },
+          required: false,
+          attributes: ['id']
+        }] : [])
       ],
       order: [['createdAt', 'DESC']],
       limit,
@@ -110,7 +125,14 @@ export const getPosts = async (
     });
 
     return {
-      posts: rows.map(row => row.toJSON() as PostModel),
+      posts: rows.map(row => {
+        const post = row.toJSON() as any;
+        post.isLiked = currentUserId ? !!(post.userLike) : false;
+        post.isShared = currentUserId ? !!(post.userShare) : false;
+        delete post.userLike;
+        delete post.userShare;
+        return post as PostModel;
+      }),
       total: count,
       hasMore: offset + limit < count
     };
