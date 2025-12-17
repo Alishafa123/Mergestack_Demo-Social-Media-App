@@ -15,8 +15,10 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, 
+    fileSize: 5 * 1024 * 1024,
+    files: 10, 
   },
 });
 
 export const uploadSingle = upload.single('profileImage');
+export const uploadMultiple = upload.array('images', 10); // For post images

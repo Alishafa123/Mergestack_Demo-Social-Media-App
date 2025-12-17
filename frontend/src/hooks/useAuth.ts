@@ -1,8 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
-import { userController } from '../jotai/user.atom';
-import type { User } from '../jotai/user.atom';
+import { AuthUtils } from '../utils/auth';
 import { loginUser, signupUser } from '../api/auth.api';
 import type { LoginFormData, SignupFormData } from '../schemas/authSchemas';
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
 
 interface AuthResponse {
   success: boolean;
@@ -16,9 +21,11 @@ export const useLogin = () => {
     mutationFn: loginUser,
     onSuccess: (data) => {
       localStorage.setItem('access_token', data.token);
-      userController.updateState({
-        id: data.user.id, name: data.user.name, email: data.user.email
-      })
+      AuthUtils.setUserData({
+        id: data.user.id,
+        name: data.user.name,
+        email: data.user.email
+      });
     },
     onError: (error) => {
       console.error('Login failed:', error);
@@ -31,7 +38,11 @@ export const useSignup = () => {
     mutationFn: signupUser,
     onSuccess: (data) => {
       localStorage.setItem('access_token', data.token);
-      userController.login(data.user.id, data.user.name, data.user.email);
+      AuthUtils.setUserData({
+        id: data.user.id,
+        name: data.user.name,
+        email: data.user.email
+      });
     },
     onError: (error) => {
       console.error('Signup failed:', error);
@@ -43,8 +54,7 @@ export const useLogout = () => {
 
   return useMutation({
     mutationFn: async () => {
-      localStorage.removeItem('access_token');
-      userController.logout();
+      AuthUtils.clearAuth();
     },
     onSuccess: () => {
       console.log('Logged out successfully');

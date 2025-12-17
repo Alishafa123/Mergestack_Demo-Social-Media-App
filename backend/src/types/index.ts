@@ -80,6 +80,69 @@ export interface ProfileModel {
   getDataValue(key: string): any;
 }
 
+export interface PostModel {
+  id: string;
+  user_id: string;
+  content?: string;
+  likes_count: number;
+  comments_count: number;
+  shares_count: number;
+  createdAt: Date;
+  updatedAt: Date;
+  isLiked?: boolean;
+  isShared?: boolean;
+  // Associated models (populated by includes)
+  user?: UserModel;
+  images?: PostImageModel[];
+  likes?: PostLikeModel[];
+  comments?: PostCommentModel[];
+  shares?: PostShareModel[];
+}
+
+export interface PostImageModel {
+  id: string;
+  post_id: string;
+  image_url: string;
+  image_order: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface PostLikeModel {
+  id: string;
+  post_id: string;
+  user_id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  // Associated models (populated by includes)
+  user?: UserModel;
+}
+
+export interface PostCommentModel {
+  id: string;
+  post_id: string;
+  user_id: string;
+  parent_comment_id?: string | null;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  user?: UserModel;
+  replies?: PostCommentModel[];
+  parentComment?: PostCommentModel;
+}
+
+export interface PostShareModel {
+  id: string;
+  post_id: string;
+  user_id: string;
+  shared_content?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  // Associated models (populated by includes)
+  user?: UserModel;
+  post?: PostModel;
+}
+
 
 export interface ApiResponse<T = any> {
   success: boolean;
