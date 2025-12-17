@@ -6,7 +6,7 @@ import { useLogin } from "../../hooks/useAuth";
 import Alert from "../../components/shared/Alert";
 import AuthIcon from "../../components/shared/AuthIcon";
 import Button from "../../components/shared/buttons/Button";
-import { EmailField, PasswordField } from "../../components/shared/form";
+import { CommonInput } from "../../components/shared/form";
 import { loginSchema } from "../../schemas/authSchemas";
 import type { LoginFormData } from "../../schemas/authSchemas";
 import { Link } from "react-router-dom";
@@ -79,8 +79,20 @@ export default function Login() {
           )}
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <EmailField register={register} errors={errors} />
-            <PasswordField register={register} errors={errors} />
+            <CommonInput 
+              name="email" 
+              label="Email address" 
+              type="email" 
+              register={register} 
+              errors={errors} 
+            />
+            <CommonInput 
+              name="password" 
+              label="Password" 
+              type="password" 
+              register={register} 
+              errors={errors} 
+            />
 
             <Button 
               type="submit" 

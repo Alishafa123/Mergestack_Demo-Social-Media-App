@@ -6,7 +6,7 @@ import { useSignup } from "../../hooks/useAuth";
 import Alert from "../../components/shared/Alert";
 import AuthIcon from "../../components/shared/AuthIcon";
 import Button from "../../components/shared/buttons/Button";
-import { EmailField, PasswordField, TextField } from "../../components/shared/form";
+import { CommonInput } from "../../components/shared/form";
 import { signupSchema } from "../../schemas/authSchemas";
 import type { SignupFormData } from "../../schemas/authSchemas";
 import { Link } from "react-router-dom";
@@ -79,7 +79,7 @@ export default function Signup() {
           )}
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <TextField 
+            <CommonInput 
               name="name" 
               label="Full Name" 
               placeholder="Enter your full name"
@@ -87,13 +87,26 @@ export default function Signup() {
               errors={errors} 
             />
             
-            <EmailField register={register} errors={errors} />
+            <CommonInput 
+              name="email" 
+              label="Email address" 
+              type="email" 
+              register={register} 
+              errors={errors} 
+            />
             
-            <PasswordField register={register} errors={errors} />
+            <CommonInput 
+              name="password" 
+              label="Password" 
+              type="password" 
+              register={register} 
+              errors={errors} 
+            />
             
-            <PasswordField 
+            <CommonInput 
               name="confirmPassword"
               label="Confirm Password"
+              type="password"
               placeholder="Confirm your password"
               register={register} 
               errors={errors} 

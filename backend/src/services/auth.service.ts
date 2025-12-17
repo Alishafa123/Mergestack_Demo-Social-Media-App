@@ -32,6 +32,8 @@ export const login = async ({ email, password }: LoginCredentials) => {
       name: data.user.user_metadata?.name || data.user.email!.split('@')[0]
     },
     token: data.session.access_token,
+    refreshToken: data.session.refresh_token,
+    expiresAt: data.session.expires_at,
   };
 };
 
@@ -97,5 +99,31 @@ export const signup = async ({ email, password, name }: SignupCredentials) => {
       name: data.user.user_metadata?.name || name
     },
     token: data.session.access_token,
+    refreshToken: data.session.refresh_token,
+    expiresAt: data.session.expires_at,
+  };
+};
+
+export const refreshToken = async (refreshToken: string) => {
+  if (!refreshToken) {
+    const err = new Error("Refresh token is required") as CustomError;
+    err.status = 400;
+    throw err;
+  }
+
+  const { data, error } = await supabase.auth.refreshSession({
+    refresh_token: refreshToken,
+  });
+
+  if (error || !data.session) {
+    const err = new Error("Invalid or expired refresh token") as CustomError;
+    err.status = 401;
+    throw err;
+  }
+
+  return {
+    token: data.session.access_token,
+    refreshToken: data.session.refresh_token,
+    expiresAt: data.session.expires_at,
   };
 };
