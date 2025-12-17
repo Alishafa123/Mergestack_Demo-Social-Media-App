@@ -4,8 +4,8 @@ import Post from "./post.model.js";
 import PostImage from "./post-image.model.js";
 import PostLike from "./post-like.model.js";
 import PostComment from "./post-comment.model.js";
+import PostShare from "./post-share.model.js";
 
-// User - Profile relationship
 User.hasOne(Profile, {
   foreignKey: 'user_id',
   as: 'profile',
@@ -18,7 +18,6 @@ Profile.belongsTo(User, {
   onDelete: 'CASCADE'
 });
 
-// User - Posts relationship
 User.hasMany(Post, {
   foreignKey: 'user_id',
   as: 'posts',
@@ -31,7 +30,6 @@ Post.belongsTo(User, {
   onDelete: 'CASCADE'
 });
 
-// Post - PostImages relationship
 Post.hasMany(PostImage, {
   foreignKey: 'post_id',
   as: 'images',
@@ -44,7 +42,6 @@ PostImage.belongsTo(Post, {
   onDelete: 'CASCADE'
 });
 
-// Post - PostLikes relationship
 Post.hasMany(PostLike, {
   foreignKey: 'post_id',
   as: 'likes',
@@ -63,7 +60,6 @@ PostLike.belongsTo(Post, {
   onDelete: 'CASCADE'
 });
 
-// User - PostLikes relationship
 User.hasMany(PostLike, {
   foreignKey: 'user_id',
   as: 'likedPosts',
@@ -100,7 +96,6 @@ PostComment.belongsTo(User, {
   onDelete: 'CASCADE'
 });
 
-// PostComment - Self-referencing relationship (for replies)
 PostComment.hasMany(PostComment, {
   foreignKey: 'parent_comment_id',
   as: 'replies',
@@ -113,4 +108,34 @@ PostComment.belongsTo(PostComment, {
   onDelete: 'CASCADE'
 });
 
-export { User, Profile, Post, PostImage, PostLike, PostComment };
+Post.hasMany(PostShare, {
+  foreignKey: 'post_id',
+  as: 'shares',
+  onDelete: 'CASCADE'
+});
+
+Post.hasOne(PostShare, {
+  foreignKey: 'post_id',
+  as: 'userShare',
+  onDelete: 'CASCADE'
+});
+
+PostShare.belongsTo(Post, {
+  foreignKey: 'post_id',
+  as: 'post',
+  onDelete: 'CASCADE'
+});
+
+User.hasMany(PostShare, {
+  foreignKey: 'user_id',
+  as: 'sharedPosts',
+  onDelete: 'CASCADE'
+});
+
+PostShare.belongsTo(User, {
+  foreignKey: 'user_id',
+  as: 'user',
+  onDelete: 'CASCADE'
+});
+
+export { User, Profile, Post, PostImage, PostLike, PostComment, PostShare };

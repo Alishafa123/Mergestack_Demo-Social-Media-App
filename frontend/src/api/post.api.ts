@@ -11,9 +11,11 @@ export interface Post {
   content?: string;
   likes_count: number;
   comments_count: number;
+  shares_count: number;
   createdAt: string;
   updatedAt: string;
   isLiked?: boolean; // Whether current user has liked this post
+  isShared?: boolean; // Whether current user has shared this post
   user: {
     id: string;
     name: string;
@@ -105,5 +107,15 @@ export const deletePost = async (postId: string) => {
 
 export const toggleLike = async (postId: string) => {
   const res = await api.post(`/posts/${postId}/like`);
+  return res.data;
+};
+
+export const sharePost = async (postId: string, sharedContent?: string) => {
+  const res = await api.post(`/posts/${postId}/share`, { sharedContent });
+  return res.data;
+};
+
+export const unsharePost = async (postId: string) => {
+  const res = await api.delete(`/posts/${postId}/share`);
   return res.data;
 };

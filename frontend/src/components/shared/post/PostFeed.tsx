@@ -1,20 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import PostCardWithSlider from './PostCardWithSlider';
 import PostSkeleton from './PostSkeleton';
 import Button from '../buttons/Button';
-import { useInfinitePosts, useToggleLike } from '../../../hooks/usePost';
+import ShareModal from './ShareModal';
+import { useInfinitePosts, useToggleLike, useToggleShare } from '../../../hooks/usePost';
 import { AuthUtils } from '../../../utils/auth';
 
 interface PostFeedProps {
-  userId?: string;
+  userId?: string; // Filter posts by specific user (optional)
+  enableShareModal?: boolean;
+  useShareDropdown?: boolean; 
 }
 
-const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
-  const navigate = useNavigate();
+const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, useShareDropdown = false }) => {
   const currentUser = AuthUtils.getCurrentUser();
   const toggleLikeMutation = useToggleLike();
+  const toggleShareMutation = useToggleShare();
+  
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<any>(null);
 
   const {
     data,
@@ -35,9 +41,42 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
     // Comment functionality is now handled within PostCardWithSlider
   };
 
-  const handleShare = (postId: string) => {
-    console.log('Share post:', postId);
-    // TODO: Implement share functionality when sharing is added
+  const handleShare = (postId: string, isCurrentlyShared: boolean) => {
+    if (isCurrentlyShared) {
+      toggleShareMutation.mutate({ 
+        postId, 
+        isCurrentlyShared: true 
+      });
+    } else {
+      if (enableShareModal) {
+        const post = allPosts.find(p => p.id === postId);
+        setSelectedPost(post);
+        setShareModalOpen(true);
+      } else {
+        toggleShareMutation.mutate({ 
+          postId, 
+          isCurrentlyShared: false 
+        });
+      }
+    }
+  };
+
+  const handleModalShare = (message?: string) => {
+    if (selectedPost) {
+      toggleShareMutation.mutate({ 
+        postId: selectedPost.id, 
+        sharedContent: message,
+        isCurrentlyShared: false 
+      });
+      setShareModalOpen(false);
+      setSelectedPost(null);
+    }
+  };
+
+  const handleShareWithComment = (postId: string) => {
+    const post = allPosts.find(p => p.id === postId);
+    setSelectedPost(post);
+    setShareModalOpen(true);
   };
 
   useEffect(() => {
@@ -123,8 +162,11 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
           onLike={handleLike}
           onComment={handleComment}
           onShare={handleShare}
+          onShareWithComment={handleShareWithComment}
           isLiked={post.isLiked || false} 
+          isShared={post.isShared || false} 
           currentUserId={currentUser?.id}
+          useShareDropdown={useShareDropdown}
         />
       ))}
 
@@ -155,6 +197,24 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
             You've reached the end of the feed! 🎉
           </p>
         </div>
+      )}
+
+      {(enableShareModal || useShareDropdown) && (
+        <ShareModal
+          isOpen={shareModalOpen}
+          onClose={() => {
+            setShareModalOpen(false);
+            setSelectedPost(null);
+          }}
+          onShare={handleModalShare}
+          isLoading={toggleShareMutation.isPending}
+          postContent={selectedPost?.content}
+          authorName={
+            selectedPost?.user.profile?.first_name && selectedPost?.user.profile?.last_name
+              ? `${selectedPost.user.profile.first_name} ${selectedPost.user.profile.last_name}`
+              : selectedPost?.user.name
+          }
+        />
       )}
     </div>
   );

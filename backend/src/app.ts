@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.routes.js";
 import profileRoutes from "./routes/profile.routes.js";
 import postRoutes from "./routes/post.routes.js";
 import commentRoutes from "./routes/comment.routes.js";
+import shareRoutes from "./routes/share.routes.js";
 import errorHandler from "./middleware/error.middleware.js";
 
 dotenv.config();
@@ -22,6 +23,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api", commentRoutes);
+app.use("/api", shareRoutes);
 
 app.get("/", (req, res) => res.json({ ok: true, env: process.env.NODE_ENV }));
 

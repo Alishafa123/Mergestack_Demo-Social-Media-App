@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
-import { createPost, getPosts, getPost, updatePost, deletePost, toggleLike } from '../api/post.api';
+import { createPost, getPosts, getPost, updatePost, deletePost, toggleLike, sharePost, unsharePost } from '../api/post.api';
 import type { CreatePostData, PostsResponse } from '../api/post.api';
 
 export const POST_QUERY_KEY = ['posts'];
@@ -120,6 +120,64 @@ export const useToggleLike = () => {
         });
       }
       console.error('Like toggle failed:', err);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
+    },
+  });
+};
+
+export const useToggleShare = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ postId, sharedContent, isCurrentlyShared }: { 
+      postId: string; 
+      sharedContent?: string; 
+      isCurrentlyShared: boolean;
+    }) => {
+      return isCurrentlyShared ? unsharePost(postId) : sharePost(postId, sharedContent);
+    },
+    onMutate: async ({ postId, isCurrentlyShared }) => {
+      await queryClient.cancelQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
+
+      const previousData = queryClient.getQueriesData({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
+
+      queryClient.setQueriesData(
+        { queryKey: [...POST_QUERY_KEY, 'infinite'] },
+        (old: any) => {
+          if (!old) return old;
+
+          return {
+            ...old,
+            pages: old.pages.map((page: any) => ({
+              ...page,
+              posts: page.posts.map((post: any) => {
+                if (post.id === postId) {
+                  return {
+                    ...post,
+                    isShared: !isCurrentlyShared,
+                    shares_count: isCurrentlyShared 
+                      ? Math.max(0, post.shares_count - 1)
+                      : post.shares_count + 1
+                  };
+                }
+                return post;
+              })
+            }))
+          };
+        }
+      );
+
+      return { previousData };
+    },
+    onError: (err, _variables, context) => {
+      if (context?.previousData) {
+        context.previousData.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+      console.error('Share toggle failed:', err);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });

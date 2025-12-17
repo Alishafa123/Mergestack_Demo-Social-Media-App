@@ -1,4 +1,4 @@
-import { Post, PostImage, PostLike, User, Profile } from "../models/index.js";
+import { Post, PostImage, PostLike, PostShare, User, Profile } from "../models/index.js";
 import type { CustomError, PostModel } from "../types/index.js";
 import { StorageService } from "./storage.service.js";
 
@@ -110,6 +110,13 @@ export const getPosts = async (
           where: { user_id: currentUserId },
           required: false,
           attributes: ['id'] 
+        }] : []),
+        ...(currentUserId ? [{
+          model: PostShare,
+          as: 'userShare',
+          where: { user_id: currentUserId },
+          required: false,
+          attributes: ['id']
         }] : [])
       ],
       order: [['createdAt', 'DESC']],
@@ -121,7 +128,9 @@ export const getPosts = async (
       posts: rows.map(row => {
         const post = row.toJSON() as any;
         post.isLiked = currentUserId ? !!(post.userLike) : false;
+        post.isShared = currentUserId ? !!(post.userShare) : false;
         delete post.userLike;
+        delete post.userShare;
         return post as PostModel;
       }),
       total: count,

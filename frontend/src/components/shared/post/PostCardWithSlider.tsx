@@ -4,6 +4,7 @@ import Button from '../buttons/Button';
 import PostImageSlider from './PostImageSlider';
 import UserHeader from '../user/UserHeader';
 import CommentSection from '../comment/CommentSection';
+import ShareDropdown from './ShareDropdown';
 
 interface PostUser {
   id: string;
@@ -26,6 +27,7 @@ interface Post {
   content?: string;
   likes_count: number;
   comments_count: number;
+  shares_count: number;
   createdAt: string;
   user: PostUser;
   images?: PostImage[];
@@ -35,10 +37,13 @@ interface PostCardWithSliderProps {
   post: Post;
   onLike?: (postId: string) => void;
   onComment?: (postId: string) => void;
-  onShare?: (postId: string) => void;
+  onShare?: (postId: string, isCurrentlyShared: boolean) => void;
+  onShareWithComment?: (postId: string) => void;
   isLiked?: boolean;
+  isShared?: boolean;
   currentUserId?: string;
   showComments?: boolean;
+  useShareDropdown?: boolean;
 }
 
 const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
@@ -46,9 +51,12 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
   onLike,
   onComment,
   onShare,
+  onShareWithComment,
   isLiked = false,
+  isShared = false,
   currentUserId,
-  showComments = false
+  showComments = false,
+  useShareDropdown = false
 }) => {
   const [commentsExpanded, setCommentsExpanded] = useState(showComments);
   const displayName = post.user.profile?.first_name && post.user.profile?.last_name
@@ -67,7 +75,8 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 relative">
+      {/* Post Header */}
       <div className="p-4 pb-3">
         <div className="flex items-center justify-between">
           <UserHeader
@@ -92,7 +101,9 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
       )}
 
       {post.images && post.images.length > 0 && (
-        <PostImageSlider images={post.images} />
+        <div className="overflow-hidden">
+          <PostImageSlider images={post.images} />
+        </div>
       )}
 
       <div className="px-4 py-3">
@@ -106,11 +117,15 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
             {post.comments_count > 0 && (
               <span>{post.comments_count} {post.comments_count === 1 ? 'comment' : 'comments'}</span>
             )}
+            {post.shares_count > 0 && (
+              <span>{post.shares_count} {post.shares_count === 1 ? 'share' : 'shares'}</span>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="px-4 py-3 border-t border-gray-100">
+      {/* Post Actions */}
+      <div className="px-4 py-3 border-t border-gray-100 relative">
         <div className="flex items-center justify-between">
           <Button
             variant="ghost"
@@ -142,15 +157,30 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
             <span>Comment</span>
           </Button>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onShare?.(post.id)}
-            className="flex items-center space-x-2 text-gray-600"
-          >
-            <Share size={18} />
-            <span>Share</span>
-          </Button>
+          {useShareDropdown ? (
+            <ShareDropdown
+              onQuickShare={() => onShare?.(post.id, isShared)}
+              onShareWithComment={() => onShareWithComment?.(post.id)}
+              isShared={isShared}
+            />
+          ) : (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onShare?.(post.id, isShared)}
+              className={`flex items-center space-x-2 transition-colors ${
+                isShared ? 'text-blue-500 hover:text-blue-600' : 'text-gray-600 hover:text-blue-500'
+              }`}
+            >
+              <Share 
+                size={18} 
+                className={`transition-all duration-200 ${
+                  isShared ? 'scale-110' : 'hover:scale-105'
+                }`} 
+              />
+              <span>{isShared ? 'Shared' : 'Share'}</span>
+            </Button>
+          )}
         </div>
       </div>
 

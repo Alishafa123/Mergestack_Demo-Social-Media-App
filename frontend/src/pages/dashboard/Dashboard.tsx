@@ -40,7 +40,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <PostFeed />
+        {/* Posts Feed */}
+        <PostFeed useShareDropdown={true} />
       </main>
     </div>
   );
