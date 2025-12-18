@@ -1,0 +1,94 @@
+import React from 'react';
+import { TrendingUp, Loader2 } from 'lucide-react';
+import TopPostItem from './TopPostItem';
+import Button from '../buttons/Button';
+import { useGetUserTopPosts } from '../../../hooks/usePost';
+import { formatDistanceToNow } from 'date-fns';
+
+interface TopPost {
+  id: string;
+  content: string;
+  likes_count: number;
+  comments_count: number;
+  shares_count: number;
+  createdAt: string;
+}
+
+const TopPostsCard: React.FC = () => {
+  const { data, isLoading, error } = useGetUserTopPosts();
+
+  const formatCreatedAt = (dateString: string) => {
+    try {
+      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
+    } catch {
+      return 'Unknown time';
+    }
+  };
+
+  const topPosts: TopPost[] = data?.posts?.map(post => ({
+    ...post,
+    createdAt: formatCreatedAt(post.createdAt)
+  })) || [];
+
+  const handlePostClick = (postId: string) => {
+    console.log('Clicked post:', postId);
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+      <div className="flex items-center space-x-3 mb-6">
+        <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full">
+          <TrendingUp size={20} className="text-white" />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">Top Posts</h3>
+          <p className="text-sm text-gray-500">Your most liked posts</p>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 size={24} className="animate-spin text-gray-400" />
+            <span className="ml-2 text-gray-500">Loading top posts...</span>
+          </div>
+        ) : error ? (
+          <div className="text-center py-8">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-red-600 text-sm">Failed to load top posts</p>
+            </div>
+          </div>
+        ) : topPosts.length === 0 ? (
+          <div className="text-center py-8">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <p className="text-gray-500 text-sm">No posts yet</p>
+              <p className="text-gray-400 text-xs mt-1">Create your first post to see it here!</p>
+            </div>
+          </div>
+        ) : (
+          topPosts.map((post, index) => (
+            <TopPostItem
+              key={post.id}
+              post={post}
+              rank={index + 1}
+              onClick={handlePostClick}
+            />
+          ))
+        )}
+      </div>
+
+      <div className="mt-6 pt-4 border-t border-gray-100">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text hover:from-blue-600 hover:via-purple-600 hover:to-pink-600"
+          onClick={() => console.log('Navigate to all posts')}
+        >
+          View All My Posts
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default TopPostsCard;

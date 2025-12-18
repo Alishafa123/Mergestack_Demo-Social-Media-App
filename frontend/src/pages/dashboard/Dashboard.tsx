@@ -1,48 +1,78 @@
-import { useNavigate } from 'react-router-dom';
-import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import { TrendingUp, Home } from 'lucide-react';
 import Navbar from '../../components/shared/navbar/Navbar';
-import Button from '../../components/shared/buttons/Button';
 import PostFeed from '../../components/shared/post/PostFeed';
+import TrendingPostsFeed from '../../components/shared/post/TrendingPostsFeed';
+import CreatePostPrompt from '../../components/shared/post/CreatePostPrompt';
+import { UserProfileCard } from '../../components/shared/profile';
+import { TopPostsCard } from '../../components/shared/activity';
+
+type FeedTab = 'home' | 'trending';
 
 export default function Dashboard() {
-  const navigate = useNavigate();
-
-  const handleCreatePost = () => {
-    navigate('/create-post');
-  };
+  const [activeTab, setActiveTab] = useState<FeedTab>('home');
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
-      <main className="max-w-4xl mx-auto px-4 py-6">
-        {/* Create Post Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-semibold text-lg">U</span>
+      <div className="max-w-full mx-auto px-4 py-6">
+        <div className="flex gap-6 max-w-7xl mx-auto">
+          {/* Left Sidebar */}
+          <div className="hidden lg:block w-80 flex-shrink-0">
+            <div className="sticky top-6">
+              <UserProfileCard />
             </div>
-            <button
-              onClick={handleCreatePost}
-              className="flex-1 bg-gray-100 hover:bg-gray-200 rounded-full px-4 py-3 text-left text-gray-500 transition-colors"
-            >
-              What's on your mind?
-            </button>
-            <Button
-              onClick={handleCreatePost}
-              variant="primary"
-              size="md"
-              className="flex items-center space-x-2"
-            >
-              <Plus size={20} />
-              <span>Create Post</span>
-            </Button>
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1 max-w-2xl">
+            <CreatePostPrompt />
+
+            {/* Feed Tabs */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+              <div className="flex border-b border-gray-200">
+                <button
+                  onClick={() => setActiveTab('home')}
+                  className={`flex-1 flex items-center justify-center space-x-2 px-6 py-4 font-medium transition-colors ${
+                    activeTab === 'home'
+                      ? 'text-blue-600 border-b-2 border-blue-600'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  <Home size={20} />
+                  <span>Home</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('trending')}
+                  className={`flex-1 flex items-center justify-center space-x-2 px-6 py-4 font-medium transition-colors ${
+                    activeTab === 'trending'
+                      ? 'text-blue-600 border-b-2 border-blue-600'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  <TrendingUp size={20} />
+                  <span>Trending</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Posts Feed */}
+            {activeTab === 'home' ? (
+              <PostFeed useShareDropdown={true} />
+            ) : (
+              <TrendingPostsFeed useShareDropdown={true} />
+            )}
+          </div>
+
+          {/* Right Sidebar */}
+          <div className="hidden xl:block w-80 flex-shrink-0">
+            <div className="sticky top-6">
+              <TopPostsCard />
+            </div>
           </div>
         </div>
-
-        {/* Posts Feed */}
-        <PostFeed useShareDropdown={true} />
-      </main>
+      </div>
     </div>
   );
 }

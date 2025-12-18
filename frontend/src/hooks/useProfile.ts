@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getProfile, updateProfile, deleteProfile } from '../api/profile.api';
+import { getProfile, updateProfile, deleteProfile, getUserStats, getUserStatsById } from '../api/profile.api';
 import type { ProfileFormData } from '../schemas/profileSchemas';
 
 export const PROFILE_QUERY_KEY = ['profile'];
+export const USER_STATS_QUERY_KEY = ['userStats'];
 
 export const useGetProfile = () => {
   return useQuery({
@@ -38,5 +39,24 @@ export const useDeleteProfile = () => {
     onError: (error) => {
       console.error('Profile deletion failed:', error);
     },
+  });
+};
+
+export const useGetUserStats = () => {
+  return useQuery({
+    queryKey: USER_STATS_QUERY_KEY,
+    queryFn: getUserStats,
+    staleTime: 2 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetUserStatsById = (userId: string) => {
+  return useQuery({
+    queryKey: [...USER_STATS_QUERY_KEY, userId],
+    queryFn: () => getUserStatsById(userId),
+    enabled: !!userId,
+    staleTime: 2 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 };

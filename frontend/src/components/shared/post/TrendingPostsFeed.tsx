@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, TrendingUp } from 'lucide-react';
 import PostCardWithSlider from './PostCardWithSlider';
 import PostSkeleton from './PostSkeleton';
 import Button from '../buttons/Button';
 import ShareModal from './ShareModal';
 import EmptyState from '../states/EmptyState';
 import ErrorState from '../states/ErrorState';
-import { useInfinitePosts, useToggleLike, useToggleShare } from '../../../hooks/usePost';
+import { useInfiniteTrendingPosts, useToggleLike, useToggleShare } from '../../../hooks/usePost';
 import { userController } from '../../../jotai/user.atom';
 
-interface PostFeedProps {
-  userId?: string; 
+interface TrendingPostsFeedProps {
   enableShareModal?: boolean;
   useShareDropdown?: boolean; 
 }
 
-const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, useShareDropdown = false }) => {
+const TrendingPostsFeed: React.FC<TrendingPostsFeedProps> = ({ 
+  enableShareModal = false, 
+  useShareDropdown = false 
+}) => {
   const { id, name, email } = userController.useState(['id', 'name', 'email']);
   const currentUser = id ? { id, name, email } : null;
   const toggleLikeMutation = useToggleLike();
@@ -32,7 +34,7 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
     isFetchingNextPage,
     isLoading,
     isError,
-  } = useInfinitePosts(10, userId);
+  } = useInfiniteTrendingPosts(10);
 
   const handleLike = (postId: string) => {
     toggleLikeMutation.mutate(postId);
@@ -40,7 +42,6 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
 
   const handleComment = (postId: string) => {
     console.log('Comment on post:', postId);
-    // Comment functionality is now handled within PostCardWithSlider
   };
 
   const handleShare = (postId: string, isCurrentlyShared: boolean) => {
@@ -110,7 +111,7 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
   if (isError) {
     return (
       <ErrorState
-        title="Failed to load posts"
+        title="Failed to load trending posts"
         message={error instanceof Error ? error.message : 'Something went wrong'}
       />
     );
@@ -121,11 +122,11 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
   if (allPosts.length === 0) {
     return (
       <EmptyState
-        title="No posts yet"
-        description={userId ? 'This user hasn\'t posted anything yet.' : 'Be the first to share something!'}
-        actionLabel="Create Your First Post"
+        icon={<TrendingUp className="w-12 h-12 text-gray-400" />}
+        title="No trending posts yet"
+        description="Be the first to create a trending post!"
+        actionLabel="Create Post"
         actionPath="/create-post"
-        showAction={!userId}
       />
     );
   }
@@ -171,7 +172,7 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
       {!hasNextPage && allPosts.length > 0 && (
         <div className="text-center py-6">
           <p className="text-gray-500 text-sm">
-            You've reached the end of the feed! 🎉
+            You've reached the end of trending posts! 🎉
           </p>
         </div>
       )}
@@ -197,4 +198,4 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
   );
 };
 
-export default PostFeed;
+export default TrendingPostsFeed;

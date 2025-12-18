@@ -143,6 +143,17 @@ export interface PostShareModel {
   post?: PostModel;
 }
 
+export interface UserFollowModel {
+  id: string;
+  follower_id: string;
+  following_id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  // Associated models (populated by includes)
+  follower?: UserModel;
+  followingUser?: UserModel;
+}
+
 
 export interface ApiResponse<T = any> {
   success: boolean;

@@ -173,3 +173,42 @@ export const deleteProfile = async (req: Request, res: Response, next: NextFunct
     next(error);
   }
 };
+
+export const getUserStats = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user!.id; 
+    
+    const stats = await profileService.getUserStats(userId);
+    
+    res.json({
+      success: true,
+      stats
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+export const getPublicUserStats = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.params.userId;
+    
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required"
+      });
+    }
+
+    const stats = await profileService.getUserStats(userId);
+    
+    res.json({
+      success: true,
+      stats
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+

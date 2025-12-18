@@ -6,6 +6,7 @@ import profileRoutes from "./routes/profile.routes.js";
 import postRoutes from "./routes/post.routes.js";
 import commentRoutes from "./routes/comment.routes.js";
 import shareRoutes from "./routes/share.routes.js";
+import userRoutes from "./routes/user.routes.js";
 import errorHandler from "./middleware/error.middleware.js";
 
 dotenv.config();
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api", commentRoutes);
 app.use("/api", shareRoutes);
 

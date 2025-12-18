@@ -251,3 +251,88 @@ export const toggleLike = async (
     throw error;
   }
 };
+
+export const getTrendingPosts = async (
+  page: number = 1,
+  limit: number = 10,
+  currentUserId?: string
+): Promise<{ posts: PostModel[], total: number, hasMore: boolean }> => {
+  try {
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await Post.findAndCountAll({
+      include: [
+        {
+          model: User,
+          as: 'user',
+          include: [{
+            model: Profile,
+            as: 'profile'
+          }]
+        },
+        {
+          model: PostImage,
+          as: 'images',
+          order: [['image_order', 'ASC']]
+        },
+        ...(currentUserId ? [{
+          model: PostLike,
+          as: 'userLike',
+          where: { user_id: currentUserId },
+          required: false,
+          attributes: ['id']
+        }] : []),
+        ...(currentUserId ? [{
+          model: PostShare,
+          as: 'userShare',
+          where: { user_id: currentUserId },
+          required: false,
+          attributes: ['id']
+        }] : [])
+      ],
+      order: [
+        ['likes_count', 'DESC'],
+        ['createdAt', 'DESC']
+      ],
+      limit,
+      offset,
+    });
+
+    return {
+      posts: rows.map(row => {
+        const post = row.toJSON() as any;
+        post.isLiked = currentUserId ? !!(post.userLike) : false;
+        post.isShared = currentUserId ? !!(post.userShare) : false;
+        delete post.userLike;
+        delete post.userShare;
+        return post as PostModel;
+      }),
+      total: count,
+      hasMore: offset + limit < count
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserTopPosts = async (
+  userId: string
+): Promise<{ posts: any[] }> => {
+  try {
+    const posts = await Post.findAll({
+      where: { user_id: userId },
+      attributes: ['id', 'content', 'likes_count', 'comments_count', 'shares_count', 'createdAt'],
+      order: [
+        ['likes_count', 'DESC'],
+        ['createdAt', 'DESC']
+      ],
+      limit: 3,
+    });
+
+    return {
+      posts: posts.map(post => post.toJSON())
+    };
+  } catch (error) {
+    throw error;
+  }
+};

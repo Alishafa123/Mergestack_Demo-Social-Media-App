@@ -5,6 +5,7 @@ import PostImage from "./post-image.model.js";
 import PostLike from "./post-like.model.js";
 import PostComment from "./post-comment.model.js";
 import PostShare from "./post-share.model.js";
+import UserFollow from "./user-follow.model.js";
 
 User.hasOne(Profile, {
   foreignKey: 'user_id',
@@ -138,4 +139,29 @@ PostShare.belongsTo(User, {
   onDelete: 'CASCADE'
 });
 
-export { User, Profile, Post, PostImage, PostLike, PostComment, PostShare };
+// User Following Relationships
+User.hasMany(UserFollow, {
+  foreignKey: 'follower_id',
+  as: 'following',
+  onDelete: 'CASCADE'
+});
+
+User.hasMany(UserFollow, {
+  foreignKey: 'following_id', 
+  as: 'followers',
+  onDelete: 'CASCADE'
+});
+
+UserFollow.belongsTo(User, {
+  foreignKey: 'follower_id',
+  as: 'follower',
+  onDelete: 'CASCADE'
+});
+
+UserFollow.belongsTo(User, {
+  foreignKey: 'following_id',
+  as: 'followingUser',
+  onDelete: 'CASCADE'
+});
+
+export { User, Profile, Post, PostImage, PostLike, PostComment, PostShare, UserFollow };

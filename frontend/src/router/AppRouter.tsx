@@ -4,6 +4,7 @@ import Signup from "../pages/auth/Signup";
 import Dashboard from "../pages/dashboard/Dashboard";
 import Profile from "../pages/profile/Profile";
 import CreatePost from "../pages/posts/CreatePost";
+import UserTimeline from "../pages/user/UserTimeline";
 
 export default function AppRouter() {
   return (
@@ -15,6 +16,8 @@ export default function AppRouter() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/create-post" element={<CreatePost />} />
+        <Route path="/user/:userId" element={<UserTimeline />} />
+        <Route path="/timeline" element={<UserTimeline />} />
       </Routes>
     </BrowserRouter>
   );

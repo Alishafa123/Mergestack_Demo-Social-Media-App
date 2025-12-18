@@ -25,12 +25,18 @@ export const login = async ({ email, password }: LoginCredentials) => {
     err.status = 401;
     throw err;
   }
+
+  const userProfile = await Profile.findOne({
+    where: { user_id: data.user.id }
+  });
+
   return {
     user: {
       id: data.user.id,
       email: data.user.email!,
       name: data.user.user_metadata?.name || data.user.email!.split('@')[0]
     },
+    profile: userProfile ? userProfile.toJSON() : null,
     token: data.session.access_token,
   };
 };
@@ -69,16 +75,16 @@ export const signup = async ({ email, password, name }: SignupCredentials) => {
     throw err;
   }
 
+  let profile = null;
+  
   try {
-    
-    const newUser = await User.create({
+    await User.create({
       id: data.user.id,
       email: data.user.email!,
       name: data.user.user_metadata?.name || name
     });
-    
 
-    const profile = await Profile.create({
+    profile = await Profile.create({
       user_id: data.user.id,
       first_name: (data.user.user_metadata?.name || name).split(' ')[0] || null,
       last_name: (data.user.user_metadata?.name || name).split(' ').slice(1).join(' ') || null
@@ -96,6 +102,7 @@ export const signup = async ({ email, password, name }: SignupCredentials) => {
       email: data.user.email!,
       name: data.user.user_metadata?.name || name
     },
+    profile: profile ? profile.toJSON() : null,
     token: data.session.access_token,
   };
 };
