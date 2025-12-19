@@ -14,9 +14,11 @@ interface User {
 interface AuthResponse {
   success: boolean;
   user: User;
-  token: string;
-  refreshToken: string;
-  expiresAt: number;
+  token?: string;
+  refreshToken?: string;
+  expiresAt?: number;
+  requiresEmailConfirmation?: boolean;
+  message?: string;
 }
 
 
@@ -24,8 +26,10 @@ export const useLogin = () => {
   return useMutation<AuthResponse, Error, LoginFormData>({
     mutationFn: loginUser,
     onSuccess: (data) => {
-      AuthUtils.setTokens(data.token, data.refreshToken, data.expiresAt);
-      userController.login(data.user.id, data.user.name, data.user.email);
+      if (data.token && data.refreshToken && data.expiresAt) {
+        AuthUtils.setTokens(data.token, data.refreshToken, data.expiresAt);
+        userController.login(data.user.id, data.user.name, data.user.email);
+      }
     },
     onError: (error) => {
       console.error('Login failed:', error);
@@ -37,8 +41,7 @@ export const useSignup = () => {
   return useMutation<AuthResponse, Error, SignupFormData>({
     mutationFn: signupUser,
     onSuccess: (data) => {
-      AuthUtils.setTokens(data.token, data.refreshToken, data.expiresAt);
-      userController.login(data.user.id, data.user.name, data.user.email);
+      console.log('Email confirmation required:', data.message);
     },
     onError: (error) => {
       console.error('Signup failed:', error);

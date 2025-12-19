@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useLogin } from "../../hooks/useAuth";
 import Alert from "../../components/shared/Alert";
 import AuthIcon from "../../components/shared/AuthIcon";
@@ -19,6 +19,7 @@ interface AlertState {
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [alert, setAlert] = useState<AlertState>({
     show: false,
     variant: 'success',
@@ -26,6 +27,13 @@ export default function Login() {
   });
   
   const loginMutation = useLogin();
+  
+  useEffect(() => {
+    if (location.state?.message) {
+      showAlert('success', location.state.message);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
   
   const {
     register,

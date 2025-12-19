@@ -65,32 +65,12 @@ export const signup = async ({ email, password, name }: SignupCredentials) => {
     throw err;
   }
 
-  if (!data.user || !data.session) {
+  if (!data.user) {
     const err = new Error("Registration failed") as CustomError;
     err.status = 400;
     throw err;
   }
 
-  try {
-    
-    const newUser = await User.create({
-      id: data.user.id,
-      email: data.user.email!,
-      name: data.user.user_metadata?.name || name
-    });
-    
-
-    const profile = await Profile.create({
-      user_id: data.user.id,
-      first_name: (data.user.user_metadata?.name || name).split(' ')[0] || null,
-      last_name: (data.user.user_metadata?.name || name).split(' ').slice(1).join(' ') || null
-    });
-
-    console.log('Profile created successfully:', profile.toJSON());
-    
-  } catch (dbError: any) {
-    console.error('Error saving user to custom table:', dbError);
-  }
 
   return {
     user: {
@@ -98,9 +78,8 @@ export const signup = async ({ email, password, name }: SignupCredentials) => {
       email: data.user.email!,
       name: data.user.user_metadata?.name || name
     },
-    token: data.session.access_token,
-    refreshToken: data.session.refresh_token,
-    expiresAt: data.session.expires_at,
+    requiresEmailConfirmation: true,
+    message: "Please check your email to confirm your account before logging in"
   };
 };
 
@@ -126,4 +105,33 @@ export const refreshToken = async (refreshToken: string) => {
     refreshToken: data.session.refresh_token,
     expiresAt: data.session.expires_at,
   };
+};
+
+export const handleEmailConfirmation = async (userId: string, email: string, name: string) => {
+  try {
+    const existingUser = await User.findByPk(userId);
+    
+    if (existingUser) {
+      console.log('User already exists in database:', userId);
+      return { success: true, message: 'User already exists' };
+    }
+
+    await User.create({
+      id: userId,
+      email: email,
+      name: name
+    });
+
+    await Profile.create({
+      user_id: userId,
+      first_name: name.split(' ')[0] || null,
+      last_name: name.split(' ').slice(1).join(' ') || null
+    });
+
+    console.log('User and profile created after email confirmation:', userId);
+    return { success: true, message: 'User created successfully' };
+  } catch (error: any) {
+    console.error('Error creating user after email confirmation:', error);
+    throw error;
+  }
 };

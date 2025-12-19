@@ -44,11 +44,16 @@ export default function Signup() {
 
   const onSubmit = (data: SignupFormData) => {
     signupMutation.mutate(data, {
-      onSuccess: () => {
-        showAlert('success', 'Account created successfully! Welcome aboard.');
+      onSuccess: (response) => {
+        showAlert('success', response.message || 'Please check your email to confirm your account before logging in.');
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1000);
+          navigate('/login', { 
+            state: { 
+              message: 'Account created! Please check your email and confirm your account before logging in.',
+              email: data.email 
+            } 
+          });
+        }, 2000);
       },
       onError: (error: any) => {
         const errorMessage = error?.response?.data?.message || 'Failed to create account. Please try again.';

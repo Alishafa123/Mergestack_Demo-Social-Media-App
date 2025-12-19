@@ -22,12 +22,12 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
   try {
     const { email, password, name }: SignupCredentials = req.body;
     const result = await authService.signup({ email, password, name });
+    
     return res.status(201).json({
       success: true,
-      user: result.user,
-      token: result.token,
-      refreshToken: result.refreshToken,
-      expiresAt: result.expiresAt,
+      requiresEmailConfirmation: true,
+      message: result.message,
+      user: result.user
     });
   } catch (err) {
     next(err);
@@ -45,6 +45,27 @@ export const refresh = async (req: Request, res: Response, next: NextFunction) =
       expiresAt: result.expiresAt,
     });
   } catch (err) {
+    next(err);
+  }
+};
+
+export const handleWebhook = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { type, record } = req.body;
+
+    if (type === 'INSERT' && record.email_confirmed_at) {
+      const userId = record.id;
+      const email = record.email;
+      const name = record.raw_user_meta_data?.name || email.split('@')[0];
+      
+      await authService.handleEmailConfirmation(userId, email, name);
+      
+      return res.json({ success: true });
+    }
+    
+    return res.json({ success: true, message: 'Event not handled' });
+  } catch (err) {
+    console.error('Webhook error:', err);
     next(err);
   }
 };
