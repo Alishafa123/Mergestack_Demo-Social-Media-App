@@ -205,6 +205,12 @@ export const getPublicUserStats = async (req: Request, res: Response, next: Next
     res.json({
       success: true,
       stats
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
 export const searchUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { q: query } = req.query;
@@ -241,7 +247,4 @@ export const searchUsers = async (req: Request, res: Response, next: NextFunctio
   } catch (error: any) {
     next(error);
   }
-};
-
-
 };

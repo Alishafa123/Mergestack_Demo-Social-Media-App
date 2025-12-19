@@ -77,26 +77,7 @@ export const signup = async ({ email, password, name }: SignupCredentials) => {
     throw err;
   }
 
-  let profile = null;
-  
-  try {
-    await User.create({
-      id: data.user.id,
-      email: data.user.email!,
-      name: data.user.user_metadata?.name || name
-    });
-
-    profile = await Profile.create({
-      user_id: data.user.id,
-      first_name: (data.user.user_metadata?.name || name).split(' ')[0] || null,
-      last_name: (data.user.user_metadata?.name || name).split(' ').slice(1).join(' ') || null
-
   return {
-    user: {
-      id: data.user.id,
-      email: data.user.email!,
-      name: data.user.user_metadata?.name || name
-    },
     requiresEmailConfirmation: true,
     message: "Please check your email to confirm your account before logging in"
   };
@@ -175,13 +156,6 @@ export const requestPasswordReset = async (email: string, redirectUrl: string) =
   }
 
   return {
-    user: {
-      id: data.user.id,
-      email: data.user.email!,
-      name: data.user.user_metadata?.name || name
-    },
-    profile: profile ? profile.toJSON() : null,
-    token: data.session.access_token,
     success: true,
     message: "If an account exists with this email, you will receive a password reset link shortly"
   };

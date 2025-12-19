@@ -20,7 +20,6 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
   const currentUser = id ? { id, name, email } : null;
   const toggleLikeMutation = useToggleLike();
   const toggleShareMutation = useToggleShare();
-  const navigate = useNavigate();
   
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<any>(null);

@@ -83,6 +83,8 @@ export const getUserStats = async (): Promise<UserStatsResponse> => {
 export const getUserStatsById = async (userId: string): Promise<UserStatsResponse> => {
   const res = await api.get(`/profile/stats/${userId}`);
   return res.data;
+};
+
 export const searchUsers = async (query: string, page: number = 1, limit: number = 10) => {
   const params = new URLSearchParams({
     q: query,

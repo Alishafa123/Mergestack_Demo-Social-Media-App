@@ -80,6 +80,14 @@ export default function AppRouter() {
             </ProtectedRoute>
           } 
         />
+        <Route 
+          path="/timeline" 
+          element={
+            <ProtectedRoute>
+              <UserTimeline />
+            </ProtectedRoute>
+          } 
+        />
 
         {/* Catch all route - redirect to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />

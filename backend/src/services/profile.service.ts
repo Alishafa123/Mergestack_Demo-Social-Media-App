@@ -1,11 +1,8 @@
 import { User, Profile, Post, UserFollow } from "../models/index.js";
 import { Op } from "sequelize";
 import  sequelize  from "../config/database.js";
-import { User, Profile } from "../models/index.js";
 import type { CustomError, UserModel } from "../types/index.js";
 import { StorageService } from "./storage.service.js";
-import sequelize from "../config/database.js";
-import { Op } from "sequelize";
 
 export const getProfile = async (userId: string): Promise<UserModel> => {
   try {
@@ -121,6 +118,13 @@ export const getUserStats = async (userId: string) => {
       totalPosts: parseInt(postStats?.totalPosts) || 0,
       followersCount,
       followingCount
+    };
+  } catch (error: any) {
+    console.error('Error getting user stats:', error);
+    throw error;
+  }
+};
+
 export const searchUsersByName = async (
   query: string,
   page: number = 1,
@@ -140,10 +144,9 @@ export const searchUsersByName = async (
             { last_name: { [Op.iLike]: `%${query}%` } }
           ]
         },
-        required: true // INNER JOIN - only users with profiles
+        required: true 
       }],
       where: {
-        // Exclude current user from results
         ...(currentUserId && { id: { [Op.ne]: currentUserId } })
       },
       order: [
@@ -164,4 +167,3 @@ export const searchUsersByName = async (
   }
 };
 
-};

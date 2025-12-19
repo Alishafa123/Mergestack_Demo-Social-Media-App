@@ -15,6 +15,16 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   query,
   onUserClick
 }) => {
+  // Debug logging
+  console.log('SearchResults received users:', users);
+  users.forEach(user => {
+    console.log(`User ${user.name}:`, {
+      hasProfile: !!user.profile,
+      profileUrl: user.profile?.profile_url,
+      firstName: user.profile?.first_name,
+      lastName: user.profile?.last_name
+    });
+  });
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -74,14 +84,25 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                   src={user.profile.profile_url}
                   alt={displayName}
                   className="w-12 h-12 rounded-full object-cover"
+                  onError={(e) => {
+                    console.log('Image failed to load:', user.profile?.profile_url);
+                    // Hide the broken image and show fallback
+                    e.currentTarget.style.display = 'none';
+                    if (e.currentTarget.nextElementSibling) {
+                      (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
+                    }
+                  }}
                 />
-              ) : (
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-lg">
-                    {displayName.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-              )}
+              ) : null}
+              <div 
+                className={`w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center ${
+                  user.profile?.profile_url ? 'hidden' : 'flex'
+                }`}
+              >
+                <span className="text-white font-semibold text-lg">
+                  {displayName.charAt(0).toUpperCase()}
+                </span>
+              </div>
             </div>
 
             {/* User Info */}

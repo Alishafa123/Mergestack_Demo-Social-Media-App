@@ -26,11 +26,8 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
     
     return res.status(201).json({
       success: true,
-      user: result.user,
-      profile: result.profile,
       requiresEmailConfirmation: true,
-      message: result.message,
-      user: result.user
+      message: result.message
     });
   } catch (err) {
     next(err);
