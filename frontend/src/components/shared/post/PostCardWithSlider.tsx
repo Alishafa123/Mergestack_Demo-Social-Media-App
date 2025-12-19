@@ -75,86 +75,86 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 relative">
+    <div className="bg-white rounded-xl shadow-lg border border-gray-200 relative mb-8">
       {/* Post Header */}
-      <div className="p-4 pb-3">
+      <div className="p-6 pb-4">
         <div className="flex items-center justify-between">
           <UserHeader
             displayName={displayName}
             profileUrl={post.user.profile?.profile_url}
             subtitle={formatDate(post.createdAt)}
-            size="sm"
+            size="md"
           />
           
           {currentUserId === post.user.id && (
-            <button className="p-2 hover:bg-gray-100 rounded-full">
-              <MoreHorizontal size={20} className="text-gray-500" />
+            <button className="p-3 hover:bg-gray-100 rounded-full transition-colors">
+              <MoreHorizontal size={24} className="text-gray-500" />
             </button>
           )}
         </div>
       </div>
 
       {post.content && (
-        <div className="px-4 pb-3">
-          <p className="text-gray-900 whitespace-pre-wrap">{post.content}</p>
+        <div className="px-6 pb-4">
+          <p className="text-gray-900 whitespace-pre-wrap text-lg leading-relaxed">{post.content}</p>
         </div>
       )}
 
       {post.images && post.images.length > 0 && (
-        <div className="overflow-hidden">
+        <div className="overflow-hidden rounded-lg mx-6 mb-4">
           <PostImageSlider images={post.images} />
         </div>
       )}
 
-      <div className="px-4 py-3">
-        <div className="flex items-center justify-between text-sm text-gray-500">
-          <div className="flex items-center space-x-4">
+      <div className="px-6 py-4">
+        <div className="flex items-center justify-between text-base text-gray-600">
+          <div className="flex items-center space-x-6">
             {post.likes_count > 0 && (
-              <span>{post.likes_count} {post.likes_count === 1 ? 'like' : 'likes'}</span>
+              <span className="font-medium">{post.likes_count} {post.likes_count === 1 ? 'like' : 'likes'}</span>
             )}
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6">
             {post.comments_count > 0 && (
-              <span>{post.comments_count} {post.comments_count === 1 ? 'comment' : 'comments'}</span>
+              <span className="font-medium">{post.comments_count} {post.comments_count === 1 ? 'comment' : 'comments'}</span>
             )}
             {post.shares_count > 0 && (
-              <span>{post.shares_count} {post.shares_count === 1 ? 'share' : 'shares'}</span>
+              <span className="font-medium">{post.shares_count} {post.shares_count === 1 ? 'share' : 'shares'}</span>
             )}
           </div>
         </div>
       </div>
 
       {/* Post Actions */}
-      <div className="px-4 py-3 border-t border-gray-100 relative">
+      <div className="px-6 py-4 border-t border-gray-100 relative">
         <div className="flex items-center justify-between">
           <Button
             variant="ghost"
-            size="sm"
+            size="md"
             onClick={() => onLike?.(post.id)}
-            className={`flex items-center space-x-2 transition-colors ${
+            className={`flex items-center space-x-3 px-4 py-3 transition-colors ${
               isLiked ? 'text-red-500 hover:text-red-600' : 'text-gray-600 hover:text-red-500'
             }`}
           >
             <Heart 
-              size={18} 
+              size={22} 
               className={`transition-all duration-200 ${
                 isLiked ? 'fill-current scale-110' : 'hover:scale-105'
               }`} 
             />
-            <span>{isLiked ? 'Liked' : 'Like'}</span>
+            <span className="font-medium">{isLiked ? 'Liked' : 'Like'}</span>
           </Button>
 
           <Button
             variant="ghost"
-            size="sm"
+            size="md"
             onClick={() => {
               setCommentsExpanded(!commentsExpanded);
               onComment?.(post.id);
             }}
-            className="flex items-center space-x-2 text-gray-600"
+            className="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:text-blue-500 transition-colors"
           >
-            <MessageCircle size={18} />
-            <span>Comment</span>
+            <MessageCircle size={22} />
+            <span className="font-medium">Comment</span>
           </Button>
 
           {useShareDropdown ? (
@@ -166,30 +166,31 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
           ) : (
             <Button
               variant="ghost"
-              size="sm"
+              size="md"
               onClick={() => onShare?.(post.id, isShared)}
-              className={`flex items-center space-x-2 transition-colors ${
+              className={`flex items-center space-x-3 px-4 py-3 transition-colors ${
                 isShared ? 'text-blue-500 hover:text-blue-600' : 'text-gray-600 hover:text-blue-500'
               }`}
             >
               <Share 
-                size={18} 
+                size={22} 
                 className={`transition-all duration-200 ${
                   isShared ? 'scale-110' : 'hover:scale-105'
                 }`} 
               />
-              <span>{isShared ? 'Shared' : 'Share'}</span>
+              <span className="font-medium">{isShared ? 'Shared' : 'Share'}</span>
             </Button>
           )}
         </div>
       </div>
 
-      <CommentSection
-        postId={post.id}
-        commentsCount={post.comments_count}
-        isExpanded={commentsExpanded}
-        onToggle={() => setCommentsExpanded(!commentsExpanded)}
-      />
+      {commentsExpanded && (
+        <CommentSection
+          postId={post.id}
+          commentsCount={post.comments_count}
+          isExpanded={false}
+        />
+      )}
     </div>
   );
 };

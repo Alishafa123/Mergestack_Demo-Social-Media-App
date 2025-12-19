@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import {useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ImageIcon } from 'lucide-react';
 import { userProfileController } from '../../jotai/userprofile.atom';
 import { useCreatePost } from '../../hooks/usePost';
 import { validatePost } from '../../schemas/postSchemas';
-import { getProfile } from '../../api/profile.api';
 import Button from '../../components/shared/buttons/Button';
 import Alert from '../../components/shared/Alert';
 import PostTextArea from '../../components/shared/post/PostTextArea';
@@ -39,37 +38,6 @@ export default function CreatePost() {
       setAlert(prev => ({ ...prev, show: false }));
     }, 5000);
   };
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const profileResponse = await getProfile();
-        
-        if (profileResponse.success && profileResponse.user?.profile) {
-          const profile = profileResponse.user.profile;
-
-          console.log('Profile data received:', profile);
-          
-          userProfileController.setUserProfile(
-            profile.id || '',
-            profile.first_name || '',
-            profile.last_name || '',
-            profile.phone || '',
-            profile.date_of_birth || '',
-            profile.gender || '',
-            profile.bio || '',
-            profile.profile_url || '',
-            profile.city || '',
-            profile.country || ''
-          );
-        }
-      } catch (error) {
-        console.error('Failed to fetch profile:', error);
-      }
-    };
-
-    fetchProfile();
-  }, []);
 
   const handleSubmit = async () => {
     const validation = validatePost(content, selectedImages);

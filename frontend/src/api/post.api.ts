@@ -119,3 +119,32 @@ export const unsharePost = async (postId: string) => {
   const res = await api.delete(`/posts/${postId}/share`);
   return res.data;
 };
+
+export const getTrendingPosts = async (page: number = 1, limit: number = 10) => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+  });
+
+  const res = await api.get(`/posts/trending?${params}`);
+  return res.data as PostsResponse;
+};
+
+export interface TopPost {
+  id: string;
+  content: string;
+  likes_count: number;
+  comments_count: number;
+  shares_count: number;
+  createdAt: string;
+}
+
+export interface TopPostsResponse {
+  success: boolean;
+  posts: TopPost[];
+}
+
+export const getUserTopPosts = async () => {
+  const res = await api.get("/posts/top/me");
+  return res.data as TopPostsResponse;
+};

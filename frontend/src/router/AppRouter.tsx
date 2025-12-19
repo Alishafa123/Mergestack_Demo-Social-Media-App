@@ -7,6 +7,7 @@ import ResetPassword from "../pages/auth/ResetPassword";
 import Dashboard from "../pages/dashboard/Dashboard";
 import Profile from "../pages/profile/Profile";
 import CreatePost from "../pages/posts/CreatePost";
+import UserTimeline from "../pages/user/UserTimeline";
 
 export default function AppRouter() {
   return (

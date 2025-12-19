@@ -9,6 +9,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     return res.json({
       success: true,
       user: result.user,
+      profile: result.profile,
       token: result.token,
       refreshToken: result.refreshToken,
       expiresAt: result.expiresAt,
@@ -25,6 +26,8 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
     
     return res.status(201).json({
       success: true,
+      user: result.user,
+      profile: result.profile,
       requiresEmailConfirmation: true,
       message: result.message,
       user: result.user

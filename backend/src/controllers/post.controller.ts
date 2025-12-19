@@ -160,3 +160,35 @@ export const toggleLike = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+export const getTrendingPosts = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const currentUserId = req.user!.id;
+
+    const result = await postService.getTrendingPosts(page, limit, currentUserId);
+
+    res.json({
+      success: true,
+      ...result
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+export const getUserTopPosts = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user!.id; 
+
+    const result = await postService.getUserTopPosts(userId);
+
+    res.json({
+      success: true,
+      ...result
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};

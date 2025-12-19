@@ -16,6 +16,9 @@ router.put("/me", uploadSingle, profileController.updateMyProfile);
 
 router.delete("/me", profileController.deleteMyProfile);
 
+router.get("/stats/me", profileController.getUserStats);
+router.get("/stats/:userId", profileController.getPublicUserStats);
+
 router.get("/:userId", profileController.getProfile);
 router.put("/:userId", uploadSingle, profileController.updateProfile);
 router.delete("/:userId", profileController.deleteProfile);

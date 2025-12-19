@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { userController } from '../../../jotai/user.atom';
+import { userProfileController} from '../../../jotai/userprofile.atom'
 import { useLogout } from '../../../hooks/useAuth';
 
 export default function ProfileDropdown() {
@@ -8,7 +8,7 @@ export default function ProfileDropdown() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const logoutMutation = useLogout();
-  const {name,email} = userController.useState(['name', 'email'])
+  const {first_name,last_name,profile_url} = userProfileController.useState(['first_name','last_name','profile_url'])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -28,6 +28,11 @@ export default function ProfileDropdown() {
     setIsOpen(false);
   };
 
+  const handleTimelineClick = () => {
+    navigate('/timeline');
+    setIsOpen(false);
+  };
+
   const handleLogout = () => {
     logoutMutation.mutate();
     setIsOpen(false);
@@ -43,10 +48,18 @@ export default function ProfileDropdown() {
         onClick={toggleDropdown}
         className="flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
-        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-          <span className="text-white text-sm font-medium">
-            {name?.charAt(0).toUpperCase() || 'U'}
-          </span>
+        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
+          {profile_url ? (
+            <img 
+              src={profile_url} 
+              alt="Profile" 
+              className="w-full h-full object-cover rounded-full"
+            />
+          ) : (
+            <span className="text-white text-sm font-medium">
+              {'U'}
+            </span>
+          )}
         </div>
       </button>
 
@@ -55,10 +68,7 @@ export default function ProfileDropdown() {
           <div className="py-1">
             <div className="px-4 py-2 border-b border-gray-100">
               <p className="text-sm font-medium text-gray-900">
-                {name || 'User'}
-              </p>
-              <p className="text-sm text-gray-500 truncate">
-                {email || ''}
+                {first_name && last_name ? `${first_name} ${last_name}` : 'User'}
               </p>
             </div>
 
@@ -80,6 +90,26 @@ export default function ProfileDropdown() {
                 />
               </svg>
               Profile
+            </button>
+
+            <button
+              onClick={handleTimelineClick}
+              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center"
+            >
+              <svg
+                className="mr-3 h-4 w-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              Timeline
             </button>
 
             <button

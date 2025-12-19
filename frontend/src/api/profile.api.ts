@@ -61,6 +61,28 @@ export const deleteProfile = async () => {
   return res.data;
 };
 
+export interface UserStats {
+  totalLikes: number;
+  totalComments: number;
+  totalShares: number;
+  totalPosts: number;
+  followersCount: number;
+  followingCount: number;
+}
+
+export interface UserStatsResponse {
+  success: boolean;
+  stats: UserStats;
+}
+
+export const getUserStats = async (): Promise<UserStatsResponse> => {
+  const res = await api.get("/profile/stats/me");
+  return res.data;
+};
+
+export const getUserStatsById = async (userId: string): Promise<UserStatsResponse> => {
+  const res = await api.get(`/profile/stats/${userId}`);
+  return res.data;
 export const searchUsers = async (query: string, page: number = 1, limit: number = 10) => {
   const params = new URLSearchParams({
     q: query,
