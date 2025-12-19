@@ -36,7 +36,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
     e.preventDefault();
     
     // Validate content
-    const validation = validateComment(content);
+    const validation = await validateComment(content);
     if (!validation.isValid) {
       setError(validation.errors[0]);
       return;

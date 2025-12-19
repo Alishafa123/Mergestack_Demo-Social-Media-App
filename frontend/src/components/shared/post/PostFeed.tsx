@@ -6,7 +6,7 @@ import PostSkeleton from './PostSkeleton';
 import Button from '../buttons/Button';
 import ShareModal from './ShareModal';
 import { useInfinitePosts, useToggleLike, useToggleShare } from '../../../hooks/usePost';
-import { AuthUtils } from '../../../utils/auth';
+import { userController } from '../../../jotai/user.atom';
 
 interface PostFeedProps {
   userId?: string; // Filter posts by specific user (optional)
@@ -15,9 +15,11 @@ interface PostFeedProps {
 }
 
 const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, useShareDropdown = false }) => {
-  const currentUser = AuthUtils.getCurrentUser();
+  const { id, name, email } = userController.useState(['id', 'name', 'email']);
+  const currentUser = id ? { id, name, email } : null;
   const toggleLikeMutation = useToggleLike();
   const toggleShareMutation = useToggleShare();
+  const navigate = useNavigate();
   
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<any>(null);

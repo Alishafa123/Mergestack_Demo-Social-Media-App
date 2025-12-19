@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MoreHorizontal, Reply, Edit, Trash2 } from 'lucide-react';
 import CommentForm from './CommentForm';
 import { useDeleteComment, useUpdateComment } from '../../../hooks/useComment';
-import { AuthUtils } from '../../../utils/auth';
+import { userController } from '../../../jotai/user.atom';
 import type { Comment } from '../../../api/comment.api';
 
 interface CommentItemProps {
@@ -22,7 +22,8 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
   
-  const currentUser = AuthUtils.getCurrentUser();
+  const { id, name, email } = userController.useState(['id', 'name', 'email']);
+  const currentUser = id ? { id, name, email } : null;
   const deleteCommentMutation = useDeleteComment();
   const updateCommentMutation = useUpdateComment();
 

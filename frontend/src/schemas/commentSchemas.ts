@@ -1,24 +1,24 @@
-import { z } from 'zod';
+import * as yup from 'yup';
 
-export const commentSchema = z.object({
-  content: z
+export const commentSchema = yup.object({
+  content: yup
     .string()
-    .min(1, 'Comment cannot be empty')
+    .required('Comment cannot be empty')
     .max(1000, 'Comment cannot exceed 1000 characters')
     .trim(),
 });
 
-export type CommentFormData = z.infer<typeof commentSchema>;
+export type CommentFormData = yup.InferType<typeof commentSchema>;
 
-export const validateComment = (content: string) => {
+export const validateComment = async (content: string) => {
   try {
-    commentSchema.parse({ content });
+    await commentSchema.validate({ content });
     return { isValid: true, errors: [] };
   } catch (error) {
-    if (error instanceof z.ZodError) {
+    if (error instanceof yup.ValidationError) {
       return {
         isValid: false,
-        errors: error.errors.map(err => err.message)
+        errors: [error.message]
       };
     }
     return { isValid: false, errors: ['Invalid comment'] };

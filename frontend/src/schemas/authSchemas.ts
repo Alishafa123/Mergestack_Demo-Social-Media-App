@@ -35,5 +35,29 @@ export const signupSchema = yup.object({
     .oneOf([yup.ref('password')], 'Passwords must match')
 });
 
+export const forgotPasswordSchema = yup.object({
+  email: yup
+    .string()
+    .required('Email is required')
+    .email('Invalid email address')
+});
+
+export const resetPasswordSchema = yup.object({
+  password: yup
+    .string()
+    .required('Password is required')
+    .min(6, 'Password must be at least 6 characters')
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+    ),
+  confirmPassword: yup
+    .string()
+    .required('Please confirm your password')
+    .oneOf([yup.ref('password')], 'Passwords must match')
+});
+
 export type LoginFormData = yup.InferType<typeof loginSchema>;
 export type SignupFormData = yup.InferType<typeof signupSchema>;
+export type ForgotPasswordFormData = yup.InferType<typeof forgotPasswordSchema>;
+export type ResetPasswordFormData = yup.InferType<typeof resetPasswordSchema>;

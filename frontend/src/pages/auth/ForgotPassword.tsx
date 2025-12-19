@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useLogin } from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { useForgotPassword } from "../../hooks/useAuth";
 import Alert from "../../components/shared/Alert";
 import AuthIcon from "../../components/shared/AuthIcon";
 import Button from "../../components/shared/buttons/Button";
 import { CommonInput } from "../../components/shared/form";
-import { loginSchema } from "../../schemas/authSchemas";
-import type { LoginFormData } from "../../schemas/authSchemas";
+import { forgotPasswordSchema } from "../../schemas/authSchemas";
+import type { ForgotPasswordFormData } from "../../schemas/authSchemas";
 import { Link } from "react-router-dom";
 
 interface AlertState {
@@ -17,30 +17,22 @@ interface AlertState {
   message: string;
 }
 
-export default function Login() {
+export default function ForgotPassword() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [alert, setAlert] = useState<AlertState>({
     show: false,
     variant: 'success',
     message: ''
   });
-  
-  const loginMutation = useLogin();
-  
-  useEffect(() => {
-    if (location.state?.message) {
-      showAlert('success', location.state.message);
-      window.history.replaceState({}, document.title);
-    }
-  }, [location]);
+
+  const forgotPasswordMutation = useForgotPassword();
   
   const {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<LoginFormData>({
-    resolver: yupResolver(loginSchema)
+  } = useForm<ForgotPasswordFormData>({
+    resolver: yupResolver(forgotPasswordSchema)
   });
 
   const showAlert = (variant: 'success' | 'error', message: string) => {
@@ -50,16 +42,20 @@ export default function Login() {
     }, 5000);
   };
 
-  const onSubmit = (data: LoginFormData) => {
-    loginMutation.mutate(data, {
-      onSuccess: () => {
-        showAlert('success', 'Login successful! Welcome back.');
+  const onSubmit = (data: ForgotPasswordFormData) => {
+    forgotPasswordMutation.mutate(data, {
+      onSuccess: (response) => {
+        showAlert('success', response.message);
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1000);
+          navigate('/login', { 
+            state: { 
+              message: 'Password reset email sent! Please check your inbox.',
+            } 
+          });
+        }, 2000);
       },
       onError: (error: any) => {
-        const errorMessage = error?.response?.data?.message || 'Invalid credentials. Please try again.';
+        const errorMessage = error?.response?.data?.message || 'Failed to send reset email. Please try again.';
         showAlert('error', errorMessage);
       }
     });
@@ -78,8 +74,8 @@ export default function Login() {
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
           <div className="text-center mb-8">
             <AuthIcon />
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Welcome Back</h2>
-            <p className="mt-2 text-sm text-gray-600">Sign in to your account to continue</p>
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Forgot Password</h2>
+            <p className="mt-2 text-sm text-gray-600">Enter your email to receive a password reset link</p>
           </div>
           
           {alert.show && (
@@ -91,37 +87,25 @@ export default function Login() {
               name="email" 
               label="Email address" 
               type="email" 
-              register={register} 
-              errors={errors} 
-            />
-            <CommonInput 
-              name="password" 
-              label="Password" 
-              type="password" 
+              placeholder="Enter your email"
               register={register} 
               errors={errors} 
             />
 
             <Button 
               type="submit" 
-              loading={loginMutation.isPending}
+              loading={forgotPasswordMutation.isPending}
               fullWidth
               size="lg"
             >
-              {loginMutation.isPending ? "Signing in..." : "Sign in"}
+              {forgotPasswordMutation.isPending ? "Sending..." : "Send Reset Link"}
             </Button>
-
-            <div className="text-right">
-              <Link to="/forgot-password" className="text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
-                Forgot password?
-              </Link>
-            </div>
             
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-500">
-                Don't have an account?{' '}
-                <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
-                  Sign up here
+                Remember your password?{' '}
+                <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
+                  Sign in here
                 </Link>
               </p>
             </div>

@@ -25,14 +25,12 @@ export default function ProfileImageUpload({
 
     setIsValidating(true);
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file');
       setIsValidating(false);
       return;
     }
 
-    // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
       alert('File size must be less than 5MB');
       setIsValidating(false);

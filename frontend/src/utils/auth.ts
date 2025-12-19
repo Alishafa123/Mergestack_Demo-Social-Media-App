@@ -1,11 +1,5 @@
 // Simple localStorage-based auth utilities
 
-export interface AuthUser {
-  id: string;
-  name: string;
-  email: string;
-}
-
 export const AuthUtils = {
   getToken: (): string | null => {
     return localStorage.getItem('access_token');
@@ -15,30 +9,15 @@ export const AuthUtils = {
     return !!AuthUtils.getToken();
   },
 
-  getCurrentUser: (): AuthUser | null => {
-    const token = AuthUtils.getToken();
-    if (!token) return null;
-    
-
-    const userData = localStorage.getItem('user_data');
-    if (userData) {
-      try {
-        return JSON.parse(userData);
-      } catch {
-        return null;
-      }
-    }
-    return null;
+  setTokens: (token: string, refreshToken: string, expiresAt: number): void => {
+    localStorage.setItem('access_token', token);
+    localStorage.setItem('refresh_token', refreshToken);
+    localStorage.setItem('token_expires_at', expiresAt.toString());
   },
-
- 
-  setUserData: (user: AuthUser): void => {
-    localStorage.setItem('user_data', JSON.stringify(user));
-  },
-
 
   clearAuth: (): void => {
     localStorage.removeItem('access_token');
-    localStorage.removeItem('user_data');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('token_expires_at');
   }
 };
