@@ -2,8 +2,8 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { userController } from '../jotai/user.atom';
 import { AuthUtils } from '../utils/auth';
-import { loginUser, signupUser } from '../api/auth.api';
-import type { LoginFormData, SignupFormData } from '../schemas/authSchemas';
+import { loginUser, signupUser, forgotPassword, resetPassword } from '../api/auth.api';
+import type { LoginFormData, SignupFormData, ForgotPasswordFormData, ResetPasswordFormData } from '../schemas/authSchemas';
 
 interface User {
   id: string;
@@ -59,6 +59,24 @@ export const useLogout = () => {
       console.log('Logged out successfully');
       AuthUtils.clearAuth();
       navigate('/login');
+    },
+  });
+};
+
+export const useForgotPassword = () => {
+  return useMutation<{ success: boolean; message: string }, Error, ForgotPasswordFormData>({
+    mutationFn: forgotPassword,
+    onError: (error) => {
+      console.error('Forgot password failed:', error);
+    },
+  });
+};
+
+export const useResetPassword = () => {
+  return useMutation<{ success: boolean; message: string }, Error, ResetPasswordFormData & { token: string }>({
+    mutationFn: resetPassword,
+    onError: (error) => {
+      console.error('Reset password failed:', error);
     },
   });
 };
