@@ -1,4 +1,7 @@
 import { User, Profile, Post, UserFollow } from "../models/index.js";
+import { Op } from "sequelize";
+import  sequelize  from "../config/database.js";
+import { User, Profile } from "../models/index.js";
 import type { CustomError, UserModel } from "../types/index.js";
 import { StorageService } from "./storage.service.js";
 import sequelize from "../config/database.js";
@@ -118,9 +121,47 @@ export const getUserStats = async (userId: string) => {
       totalPosts: parseInt(postStats?.totalPosts) || 0,
       followersCount,
       followingCount
+export const searchUsersByName = async (
+  query: string,
+  page: number = 1,
+  limit: number = 10,
+  currentUserId?: string
+): Promise<{ users: UserModel[], total: number, hasMore: boolean }> => {
+  try {
+    const offset = (page - 1) * limit;
+    
+    const { count, rows } = await User.findAndCountAll({
+      include: [{
+        model: Profile,
+        as: 'profile',
+        where: {
+          [Op.or]: [
+            { first_name: { [Op.iLike]: `%${query}%` } },
+            { last_name: { [Op.iLike]: `%${query}%` } }
+          ]
+        },
+        required: true // INNER JOIN - only users with profiles
+      }],
+      where: {
+        // Exclude current user from results
+        ...(currentUserId && { id: { [Op.ne]: currentUserId } })
+      },
+      order: [
+        ['createdAt', 'DESC']
+      ],
+      limit,
+      offset,
+      distinct: true
+    });
+
+    return {
+      users: rows.map(user => user.toJSON() as UserModel),
+      total: count,
+      hasMore: offset + limit < count
     };
   } catch (error) {
     throw error;
   }
 };
 
+};

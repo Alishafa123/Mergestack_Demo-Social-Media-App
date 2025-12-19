@@ -14,6 +14,14 @@ export interface SignupCredentials {
   name: string;
 }
 
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  password: string;
+}
+
 export interface AuthenticatedUser {
   id: string;
   email: string;

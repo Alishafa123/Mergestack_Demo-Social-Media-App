@@ -1,8 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { userController } from '../jotai/user.atom';
 import { AuthUtils } from '../utils/auth';
 import { userProfileController } from '../jotai/userprofile.atom';
 import { loginUser, signupUser } from '../api/auth.api';
 import type { LoginFormData, SignupFormData } from '../schemas/authSchemas';
+import { loginUser, signupUser, forgotPassword, resetPassword } from '../api/auth.api';
+import type { LoginFormData, SignupFormData, ForgotPasswordFormData, ResetPasswordFormData } from '../schemas/authSchemas';
 
 interface User {
   id: string;
@@ -29,10 +33,15 @@ interface AuthResponse {
   user: User;
   profile: Profile;
   token: string;
+  token?: string;
+  refreshToken?: string;
+  expiresAt?: number;
+  requiresEmailConfirmation?: boolean;
+  message?: string;
 }
 
-export const useLogin = () => {
 
+export const useLogin = () => {
   return useMutation<AuthResponse, Error, LoginFormData>({
     mutationFn: loginUser,
     onSuccess: (data) => {
@@ -55,6 +64,9 @@ export const useLogin = () => {
           data.profile.city || '',
           data.profile.country || ''
         );
+      if (data.token && data.refreshToken && data.expiresAt) {
+        AuthUtils.setTokens(data.token, data.refreshToken, data.expiresAt);
+        userController.login(data.user.id, data.user.name, data.user.email);
       }
     },
     onError: (error) => {
@@ -87,6 +99,7 @@ export const useSignup = () => {
           data.profile.country || ''
         );
       }
+      console.log('Email confirmation required:', data.message);
     },
     onError: (error) => {
       console.error('Signup failed:', error);
@@ -95,13 +108,33 @@ export const useSignup = () => {
 };
 
 export const useLogout = () => {
-
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: async () => {
-      AuthUtils.clearAuth();
+      userController.logout();
     },
     onSuccess: () => {
       console.log('Logged out successfully');
+      AuthUtils.clearAuth();
+      navigate('/login');
+    },
+  });
+};
+
+export const useForgotPassword = () => {
+  return useMutation<{ success: boolean; message: string }, Error, ForgotPasswordFormData>({
+    mutationFn: forgotPassword,
+    onError: (error) => {
+      console.error('Forgot password failed:', error);
+    },
+  });
+};
+
+export const useResetPassword = () => {
+  return useMutation<{ success: boolean; message: string }, Error, ResetPasswordFormData & { token: string }>({
+    mutationFn: resetPassword,
+    onError: (error) => {
+      console.error('Reset password failed:', error);
     },
   });
 };

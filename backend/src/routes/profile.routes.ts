@@ -7,6 +7,9 @@ const router = Router();
 
 router.use(authenticateSupabaseToken);
 
+// Search route must come before parameterized routes
+router.get("/users/search", profileController.searchUsers);
+
 router.get("/me", profileController.getMyProfile);
 
 router.put("/me", uploadSingle, profileController.updateMyProfile);

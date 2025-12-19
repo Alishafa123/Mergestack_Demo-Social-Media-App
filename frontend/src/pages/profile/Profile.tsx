@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import Alert from "../../components/shared/Alert";
 import Button from "../../components/shared/buttons/Button";
-import { TextField, TextAreaField, SelectField, DateField } from "../../components/shared/form";
+import { CommonInput, CommonDateField, CustomSelectField, TextAreaField } from "../../components/shared/form";
 import ProfileImageUpload from "../../components/shared/form/ProfileImageUpload";
 import { profileSchema } from "../../schemas/profileSchemas";
 import type { ProfileFormData } from "../../schemas/profileSchemas";
@@ -19,8 +19,6 @@ interface AlertState {
 const genderOptions = [
   { value: 'male', label: 'Male' },
   { value: 'female', label: 'Female' },
-  { value: 'other', label: 'Other' },
-  { value: 'prefer_not_to_say', label: 'Prefer not to say' },
 ];
 
 export default function Profile() {
@@ -112,7 +110,7 @@ export default function Profile() {
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <TextField 
+              <CommonInput 
                 name="first_name" 
                 label="First Name" 
                 placeholder="Enter your first name"
@@ -120,7 +118,7 @@ export default function Profile() {
                 errors={errors} 
               />
               
-              <TextField 
+              <CommonInput 
                 name="last_name" 
                 label="Last Name" 
                 placeholder="Enter your last name"
@@ -129,23 +127,24 @@ export default function Profile() {
               />
             </div>
 
-            <TextField 
+            <CommonInput 
               name="phone" 
               label="Phone Number" 
+              type="tel"
               placeholder="Enter your phone number"
               register={register} 
               errors={errors} 
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <DateField 
+              <CommonDateField 
                 name="date_of_birth" 
                 label="Date of Birth" 
                 register={register} 
                 errors={errors} 
               />
               
-              <SelectField
+              <CustomSelectField
                 name="gender"
                 label="Gender"
                 register={register}
@@ -165,7 +164,7 @@ export default function Profile() {
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <TextField 
+              <CommonInput 
                 name="city" 
                 label="City" 
                 placeholder="Enter your city"
@@ -173,7 +172,7 @@ export default function Profile() {
                 errors={errors} 
               />
               
-              <TextField 
+              <CommonInput 
                 name="country" 
                 label="Country" 
                 placeholder="Enter your country"

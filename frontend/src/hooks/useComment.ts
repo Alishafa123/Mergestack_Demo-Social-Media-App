@@ -32,7 +32,7 @@ export const useCreateComment = () => {
   return useMutation({
     mutationFn: ({ postId, data }: { postId: string; data: CreateCommentData }) => 
       createComment(postId, data),
-    onSuccess: (response, variables) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ 
         queryKey: [...COMMENT_QUERY_KEY, variables.postId] 
       });

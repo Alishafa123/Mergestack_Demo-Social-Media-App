@@ -205,6 +205,38 @@ export const getPublicUserStats = async (req: Request, res: Response, next: Next
     res.json({
       success: true,
       stats
+export const searchUsers = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { q: query } = req.query;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const currentUserId = req.user?.id;
+
+    if (!query || typeof query !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: "Search query is required"
+      });
+    }
+
+    if (query.length < 2) {
+      return res.status(400).json({
+        success: false,
+        message: "Search query must be at least 2 characters"
+      });
+    }
+
+    const result = await profileService.searchUsersByName(
+      query.trim(),
+      page,
+      limit,
+      currentUserId
+    );
+
+    res.json({
+      success: true,
+      query: query.trim(),
+      ...result
     });
   } catch (error: any) {
     next(error);
@@ -212,3 +244,4 @@ export const getPublicUserStats = async (req: Request, res: Response, next: Next
 };
 
 
+};

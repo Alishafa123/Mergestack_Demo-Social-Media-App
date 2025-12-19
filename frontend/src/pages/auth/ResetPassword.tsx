@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
-import { useSignup } from "../../hooks/useAuth";
+import { useResetPassword } from "../../hooks/useAuth";
 import Alert from "../../components/shared/Alert";
 import AuthIcon from "../../components/shared/AuthIcon";
 import Button from "../../components/shared/buttons/Button";
 import { CommonInput } from "../../components/shared/form";
-import { signupSchema } from "../../schemas/authSchemas";
-import type { SignupFormData } from "../../schemas/authSchemas";
+import { resetPasswordSchema } from "../../schemas/authSchemas";
+import type { ResetPasswordFormData } from "../../schemas/authSchemas";
 import { Link } from "react-router-dom";
 
 interface AlertState {
@@ -17,22 +17,51 @@ interface AlertState {
   message: string;
 }
 
-export default function Signup() {
+export default function ResetPassword() {
   const navigate = useNavigate();
+  const [token, setToken] = useState<string | null>(null);
   const [alert, setAlert] = useState<AlertState>({
     show: false,
     variant: 'success',
     message: ''
   });
 
-  const signupMutation = useSignup();
+  const resetPasswordMutation = useResetPassword();
+  
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      const params = new URLSearchParams(hash.substring(1));
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+      const tokenType = params.get('type');
+      
+      console.log('URL Hash params:', {
+        hasAccessToken: !!accessToken,
+        hasRefreshToken: !!refreshToken,
+        tokenType
+      });
+      
+      if (accessToken && tokenType === 'recovery') {
+        const tokenData = JSON.stringify({
+          access_token: accessToken,
+          refresh_token: refreshToken || ''
+        });
+        setToken(tokenData);
+      } else {
+        showAlert('error', 'Invalid or missing reset token. Please request a new password reset link.');
+      }
+    } else {
+      showAlert('error', 'Invalid or missing reset token. Please request a new password reset link.');
+    }
+  }, []);
   
   const {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<SignupFormData>({
-    resolver: yupResolver(signupSchema)
+  } = useForm<ResetPasswordFormData>({
+    resolver: yupResolver(resetPasswordSchema)
   });
 
   const showAlert = (variant: 'success' | 'error', message: string) => {
@@ -42,21 +71,25 @@ export default function Signup() {
     }, 5000);
   };
 
-  const onSubmit = (data: SignupFormData) => {
-    signupMutation.mutate(data, {
+  const onSubmit = (data: ResetPasswordFormData) => {
+    if (!token) {
+      showAlert('error', 'Invalid reset token. Please request a new password reset link.');
+      return;
+    }
+    
+    resetPasswordMutation.mutate({ ...data, token }, {
       onSuccess: (response) => {
-        showAlert('success', response.message || 'Please check your email to confirm your account before logging in.');
+        showAlert('success', response.message || 'Password reset successful! Redirecting to login...');
         setTimeout(() => {
           navigate('/login', { 
             state: { 
-              message: 'Account created! Please check your email and confirm your account before logging in.',
-              email: data.email 
+              message: 'Password reset successful! You can now login with your new password.',
             } 
           });
-        }, 2000);
+        }, 3000);
       },
       onError: (error: any) => {
-        const errorMessage = error?.response?.data?.message || 'Failed to create account. Please try again.';
+        const errorMessage = error?.response?.data?.message || 'Failed to reset password. Please try again.';
         showAlert('error', errorMessage);
       }
     });
@@ -75,8 +108,8 @@ export default function Signup() {
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
           <div className="text-center mb-8">
             <AuthIcon />
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Create Account</h2>
-            <p className="mt-2 text-sm text-gray-600">Join us and start your journey</p>
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Reset Password</h2>
+            <p className="mt-2 text-sm text-gray-600">Enter your new password</p>
           </div>
           
           {alert.show && (
@@ -85,51 +118,37 @@ export default function Signup() {
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <CommonInput 
-              name="name" 
-              label="Full Name" 
-              placeholder="Enter your full name"
-              register={register} 
-              errors={errors} 
-            />
-            
-            <CommonInput 
-              name="email" 
-              label="Email address" 
-              type="email" 
-              register={register} 
-              errors={errors} 
-            />
-            
-            <CommonInput 
               name="password" 
-              label="Password" 
+              label="New Password" 
               type="password" 
+              placeholder="Enter new password"
               register={register} 
               errors={errors} 
             />
             
             <CommonInput 
               name="confirmPassword"
-              label="Confirm Password"
+              label="Confirm New Password"
               type="password"
-              placeholder="Confirm your password"
+              placeholder="Confirm new password"
               register={register} 
               errors={errors} 
             />
 
             <Button 
               type="submit" 
-              loading={signupMutation.isPending}
+              loading={resetPasswordMutation.isPending}
               fullWidth
               size="lg"
+              disabled={!token}
             >
-              {signupMutation.isPending ? "Creating Account..." : "Create Account"}
+              {resetPasswordMutation.isPending ? "Resetting..." : "Reset Password"}
             </Button>
             
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-500">
-                Already have an account?{' '}
-                <Link to={'/login'} className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
+                Remember your password?{' '}
+                <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
                   Sign in here
                 </Link>
               </p>
