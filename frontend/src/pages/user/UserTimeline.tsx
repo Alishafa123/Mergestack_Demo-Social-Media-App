@@ -17,7 +17,7 @@ const UserTimeline: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
-      <ProfileHeader userId={profileUserId} isOwnProfile={isOwnProfile} />
+      <ProfileHeader />
       
       <div className="max-w-4xl mx-auto px-4 py-6">
         <div className="space-y-6">
@@ -25,7 +25,6 @@ const UserTimeline: React.FC = () => {
             <CreatePostPrompt />
           )}
           
-          {/* Posts Feed */}
           <PostFeed userId={profileUserId} useShareDropdown={true} />
         </div>
       </div>

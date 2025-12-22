@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import { TrendingUp, Home } from 'lucide-react';
+import { TrendingUp, Home, Users } from 'lucide-react';
 import Navbar from '../../components/shared/navbar/Navbar';
 import PostFeed from '../../components/shared/post/PostFeed';
 import TrendingPostsFeed from '../../components/shared/post/TrendingPostsFeed';
+import FollowersFeed from '../../components/shared/post/FollowersFeed';
 import CreatePostPrompt from '../../components/shared/post/CreatePostPrompt';
 import { UserProfileCard } from '../../components/shared/profile';
-import { TopPostsCard } from '../../components/shared/activity';
+import { TopPostsCard, RecentFollowersCard } from '../../components/shared/activity';
 
-type FeedTab = 'home' | 'trending';
+type FeedTab = 'home' | 'trending' | 'following';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<FeedTab>('home');
@@ -44,6 +45,17 @@ export default function Dashboard() {
                   <span>Home</span>
                 </button>
                 <button
+                  onClick={() => setActiveTab('following')}
+                  className={`flex-1 flex items-center justify-center space-x-2 px-6 py-4 font-medium transition-colors ${
+                    activeTab === 'following'
+                      ? 'text-blue-600 border-b-2 border-blue-600'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  <Users size={20} />
+                  <span>Following</span>
+                </button>
+                <button
                   onClick={() => setActiveTab('trending')}
                   className={`flex-1 flex items-center justify-center space-x-2 px-6 py-4 font-medium transition-colors ${
                     activeTab === 'trending'
@@ -60,6 +72,8 @@ export default function Dashboard() {
             {/* Posts Feed */}
             {activeTab === 'home' ? (
               <PostFeed useShareDropdown={true} />
+            ) : activeTab === 'following' ? (
+              <FollowersFeed useShareDropdown={true} />
             ) : (
               <TrendingPostsFeed useShareDropdown={true} />
             )}
@@ -67,8 +81,9 @@ export default function Dashboard() {
 
           {/* Right Sidebar */}
           <div className="hidden xl:block w-80 flex-shrink-0">
-            <div className="sticky top-6">
+            <div className="sticky top-6 space-y-6">
               <TopPostsCard />
+              <RecentFollowersCard />
             </div>
           </div>
         </div>

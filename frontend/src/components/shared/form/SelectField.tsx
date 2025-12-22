@@ -15,6 +15,7 @@ interface CustomSelectFieldProps {
   placeholder?: string;
   validation?: RegisterOptions;
   className?: string;
+  defaultValue?: string;
 }
 
 export default function CustomSelectField({
@@ -25,16 +26,27 @@ export default function CustomSelectField({
   options,
   placeholder = 'Select an option',
   validation,
-  className = ''
+  className = '',
+  defaultValue = ''
 }: CustomSelectFieldProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState('');
-  const [selectedLabel, setSelectedLabel] = useState(placeholder);
+  const [selectedValue, setSelectedValue] = useState(defaultValue);
+  const [selectedLabel, setSelectedLabel] = useState(() => {
+    const option = options.find(opt => opt.value === defaultValue);
+    return option ? option.label : placeholder;
+  });
   const dropdownRef = useRef<HTMLDivElement>(null);
   const error = errors[name];
 
   // Register the hidden input with react-hook-form
-  const { onChange, ...registerProps } = register(name, validation);
+  const { onChange, ref, ...registerProps } = register(name, validation);
+
+  // Update internal state when defaultValue changes (for form reset)
+  useEffect(() => {
+    setSelectedValue(defaultValue);
+    const option = options.find(opt => opt.value === defaultValue);
+    setSelectedLabel(option ? option.label : placeholder);
+  }, [defaultValue, options, placeholder]);
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -73,6 +85,7 @@ export default function CustomSelectField({
       <div className="relative" ref={dropdownRef}>
         {/* Hidden input for react-hook-form */}
         <input
+          ref={ref}
           type="hidden"
           value={selectedValue}
           {...registerProps}

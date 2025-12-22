@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { Search, X, Command } from 'lucide-react';
 import SearchResults from '../search/SearchResults';
 import { useSearchUsers } from '../../../hooks/useSearch';
-import type { SearchUser } from '../../../api/profile.api';
 
 interface SearchBarProps {
   onSearch?: (query: string) => void;
@@ -62,11 +61,9 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
     setTimeout(() => setIsFocused(false), 150);
   };
 
-  const handleUserClick = (user: SearchUser) => {
-    console.log('User clicked:', user);
+  const handleUserClick = () => {
     setIsFocused(false);
     setSearchQuery('');
-    // TODO: Navigate to user profile or handle user selection
   };
 
   return (

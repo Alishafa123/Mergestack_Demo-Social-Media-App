@@ -148,3 +148,13 @@ export const getUserTopPosts = async () => {
   const res = await api.get("/posts/top/me");
   return res.data as TopPostsResponse;
 };
+
+export const getFollowersFeed = async (page: number = 1, limit: number = 10) => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+  });
+
+  const res = await api.get(`/posts/followers?${params}`);
+  return res.data as PostsResponse;
+};

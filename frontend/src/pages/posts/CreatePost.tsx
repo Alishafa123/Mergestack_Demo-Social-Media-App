@@ -19,10 +19,8 @@ interface AlertState {
 
 export default function CreatePost() {
   const navigate = useNavigate();
-  const {first_name,last_name,profile_url} = userProfileController.useState(['first_name','last_name','profile_url'])
+  const {id,first_name,last_name,profile_url} = userProfileController.useState(['id','first_name','last_name','profile_url'])
   const createPostMutation = useCreatePost();
-
-  console.log('Current profile state:', { first_name, last_name, profile_url });
 
   const [content, setContent] = useState('');
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -81,7 +79,6 @@ export default function CreatePost() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
-      {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-2xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
@@ -121,13 +118,16 @@ export default function CreatePost() {
           )}
 
           {/* User info */}
-          <UserHeader
-            displayName={displayName}
-            profileUrl={profile_url}
-            subtitle="Sharing with everyone"
-            size="md"
-            className="mb-6"
-          />
+          {id && (
+            <UserHeader
+              userId={id}
+              displayName={displayName}
+              profileUrl={profile_url}
+              subtitle="Sharing with everyone"
+              size="md"
+              className="mb-6"
+            />
+          )}
 
           {/* Post content */}
           <div className="space-y-6">

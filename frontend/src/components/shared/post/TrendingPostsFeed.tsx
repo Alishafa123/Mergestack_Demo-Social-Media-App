@@ -36,8 +36,8 @@ const TrendingPostsFeed: React.FC<TrendingPostsFeedProps> = ({
     isError,
   } = useInfiniteTrendingPosts(10);
 
-  const handleLike = (postId: string) => {
-    toggleLikeMutation.mutate(postId);
+  const handleLike = (postId: string, postOwnerId?: string) => {
+    toggleLikeMutation.mutate({ postId, postOwnerId });
   };
 
   const handleComment = (postId: string) => {

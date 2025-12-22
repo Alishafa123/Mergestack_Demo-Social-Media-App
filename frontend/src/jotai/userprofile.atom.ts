@@ -1,4 +1,4 @@
-import { StateController, type StateObject } from 'jotai-controller';
+import {StateController, type StateObject } from 'jotai-controller';
 
 export interface UserProfile extends StateObject {
   id: string;
@@ -32,11 +32,10 @@ const initialState: UserProfile = {
 export class UserProfileController extends StateController<UserProfile> {
  constructor() {
     super('user', initialState);
-    
+        // super( initialState);
   }
 
   setUserProfile(id:string, first_name:string, last_name:string, phone:string, date_of_birth:string, gender:string, bio:string, profile_url:string, city:string, country: string) {
-    debugger
     this.updateState({
       id,
       first_name,

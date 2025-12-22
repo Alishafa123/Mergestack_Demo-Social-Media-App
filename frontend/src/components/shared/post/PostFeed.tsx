@@ -34,13 +34,8 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
     isError,
   } = useInfinitePosts(10, userId);
 
-  const handleLike = (postId: string) => {
-    toggleLikeMutation.mutate(postId);
-  };
-
-  const handleComment = (postId: string) => {
-    console.log('Comment on post:', postId);
-    // Comment functionality is now handled within PostCardWithSlider
+  const handleLike = (postId: string, postOwnerId?: string) => {
+    toggleLikeMutation.mutate({ postId, postOwnerId });
   };
 
   const handleShare = (postId: string, isCurrentlyShared: boolean) => {
@@ -137,7 +132,6 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
           key={post.id}
           post={post}
           onLike={handleLike}
-          onComment={handleComment}
           onShare={handleShare}
           onShareWithComment={handleShareWithComment}
           isLiked={post.isLiked || false} 

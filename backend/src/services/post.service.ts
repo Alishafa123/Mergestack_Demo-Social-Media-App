@@ -1,6 +1,7 @@
-import { Post, PostImage, PostLike, PostShare, User, Profile } from "../models/index.js";
+import { Post, PostImage, PostLike, PostShare, User, Profile, UserFollow } from "../models/index.js";
 import type { CustomError, PostModel } from "../types/index.js";
 import { StorageService } from "./storage.service.js";
+import { Op } from "sequelize";
 
 export const createPost = async (
   userId: string, 
@@ -331,6 +332,86 @@ export const getUserTopPosts = async (
 
     return {
       posts: posts.map(post => post.toJSON())
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getFollowersFeed = async (
+  userId: string,
+  page: number = 1,
+  limit: number = 10
+): Promise<{ posts: PostModel[], total: number, hasMore: boolean }> => {
+  try {
+    const offset = (page - 1) * limit;
+
+    const followedUsers = await UserFollow.findAll({
+      where: { follower_id: userId },
+      attributes: ['following_id']
+    });
+
+    const followedUserIds = followedUsers.map(follow => follow.following_id);
+
+    if (followedUserIds.length === 0) {
+      return {
+        posts: [],
+        total: 0,
+        hasMore: false
+      };
+    }
+
+    const { count, rows } = await Post.findAndCountAll({
+      where: {
+        user_id: {
+          [Op.in]: followedUserIds
+        }
+      },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          include: [{
+            model: Profile,
+            as: 'profile'
+          }]
+        },
+        {
+          model: PostImage,
+          as: 'images',
+          order: [['image_order', 'ASC']]
+        },
+        {
+          model: PostLike,
+          as: 'userLike',
+          where: { user_id: userId },
+          required: false,
+          attributes: ['id']
+        },
+        {
+          model: PostShare,
+          as: 'userShare',
+          where: { user_id: userId },
+          required: false,
+          attributes: ['id']
+        }
+      ],
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+    });
+
+    return {
+      posts: rows.map(row => {
+        const post = row.toJSON() as any;
+        post.isLiked = !!(post.userLike);
+        post.isShared = !!(post.userShare);
+        delete post.userLike;
+        delete post.userShare;
+        return post as PostModel;
+      }),
+      total: count,
+      hasMore: offset + limit < count
     };
   } catch (error) {
     throw error;

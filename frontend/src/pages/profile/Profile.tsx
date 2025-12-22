@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +8,8 @@ import { CommonInput, CommonDateField, CustomSelectField, TextAreaField } from "
 import ProfileImageUpload from "../../components/shared/form/ProfileImageUpload";
 import { profileSchema } from "../../schemas/profileSchemas";
 import type { ProfileFormData } from "../../schemas/profileSchemas";
-import { useUpdateProfile, useGetProfile } from "../../hooks/useProfile";
+import { useUpdateProfile } from "../../hooks/useProfile";
+import { userProfileController } from "../../jotai/userprofile.atom";
 
 interface AlertState {
   show: boolean;
@@ -22,6 +23,13 @@ const genderOptions = [
 ];
 
 export default function Profile() {
+  // Get profile data from controller
+  const {first_name, last_name, phone, date_of_birth, gender, bio, profile_url, city, country} = userProfileController.useState([
+    'first_name', 'last_name', 'phone', 'date_of_birth', 
+    'gender', 'bio', 'profile_url', 'city', 'country'
+  ]);
+  
+  
   const navigate = useNavigate();
   const [alert, setAlert] = useState<AlertState>({
     show: false,
@@ -29,25 +37,28 @@ export default function Profile() {
     message: ''
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  
-  const { data: profileData, isLoading } = useGetProfile();
+
   const updateProfileMutation = useUpdateProfile();
-  
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<ProfileFormData>({
     resolver: yupResolver(profileSchema),
-    defaultValues: {}
+    defaultValues: {
+      first_name: first_name || '',
+      last_name: last_name || '',
+      phone: phone || '',
+      date_of_birth: date_of_birth || '',
+      gender: (gender as 'male' | 'female' )|| '',
+      bio: bio || '',
+      city: city || '',
+      country: country || '',
+    }
   });
 
-  useEffect(() => {
-    if (profileData?.user?.profile) {
-      reset(profileData.user.profile);
-    }
-  }, [profileData, reset]);
+
 
   const showAlert = (variant: 'success' | 'error', message: string) => {
     setAlert({ show: true, variant, message });
@@ -86,124 +97,119 @@ export default function Profile() {
         <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-blue-200 rounded-full opacity-30"></div>
         <div className="absolute top-1/4 right-1/4 w-24 h-24 bg-purple-200 rounded-full opacity-30"></div>
       </div>
-      
+
       <div className="max-w-2xl w-full space-y-8 relative z-10">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
-          
-          
+
+
           {alert.show && (
             <Alert variant={alert.variant} message={alert.message} />
           )}
-          
-          {isLoading ? (
-            <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Profile Picture */}
             <ProfileImageUpload
-              currentImageUrl={profileData?.user?.profile?.profile_url}
+              currentImageUrl={profile_url}
               onFileSelect={setSelectedFile}
               disabled={updateProfileMutation.isPending}
               error={errors.profile_url?.message}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <CommonInput 
-                name="first_name" 
-                label="First Name" 
-                placeholder="Enter your first name"
-                register={register} 
-                errors={errors} 
-              />
-              
-              <CommonInput 
-                name="last_name" 
-                label="Last Name" 
-                placeholder="Enter your last name"
-                register={register} 
-                errors={errors} 
-              />
-            </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <CommonInput
+                  name="first_name"
+                  label="First Name"
+                  placeholder="Enter your first name"
+                  register={register}
+                  errors={errors}
+                />
 
-            <CommonInput 
-              name="phone" 
-              label="Phone Number" 
-              type="tel"
-              placeholder="Enter your phone number"
-              register={register} 
-              errors={errors} 
-            />
+                <CommonInput
+                  name="last_name"
+                  label="Last Name"
+                  placeholder="Enter your last name"
+                  register={register}
+                  errors={errors}
+                />
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <CommonDateField 
-                name="date_of_birth" 
-                label="Date of Birth" 
-                register={register} 
-                errors={errors} 
-              />
-              
-              <CustomSelectField
-                name="gender"
-                label="Gender"
+              <CommonInput
+                name="phone"
+                label="Phone Number"
+                type="tel"
+                placeholder="Enter your phone number"
                 register={register}
                 errors={errors}
-                options={genderOptions}
-                placeholder="Select gender"
               />
-            </div>
 
-            <TextAreaField
-              name="bio"
-              label="Bio"
-              register={register}
-              errors={errors}
-              placeholder="Tell us about yourself..."
-              rows={4}
-            />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <CommonDateField
+                  name="date_of_birth"
+                  label="Date of Birth"
+                  register={register}
+                  errors={errors}
+                />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <CommonInput 
-                name="city" 
-                label="City" 
-                placeholder="Enter your city"
-                register={register} 
-                errors={errors} 
+                <CustomSelectField
+                  name="gender"
+                  label="Gender"
+                  register={register}
+                  errors={errors}
+                  options={genderOptions}
+                  placeholder="Select gender"
+                  defaultValue={gender || ''}
+                />
+              </div>
+
+              <TextAreaField
+                name="bio"
+                label="Bio"
+                register={register}
+                errors={errors}
+                placeholder="Tell us about yourself..."
+                rows={4}
               />
-              
-              <CommonInput 
-                name="country" 
-                label="Country" 
-                placeholder="Enter your country"
-                register={register} 
-                errors={errors} 
-              />
-            </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                variant="secondary"
-                type="button"
-                onClick={handleBackToDashboard}
-                fullWidth
-                size="lg"
-              >
-                Back to Dashboard
-              </Button>
-              
-              <Button 
-                type="submit" 
-                loading={updateProfileMutation.isPending}
-                disabled={updateProfileMutation.isPending}
-                fullWidth
-                size="lg"
-              >
-                {updateProfileMutation.isPending ? "Updating Profile..." : "Update Profile"}
-              </Button>
-            </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <CommonInput
+                  name="city"
+                  label="City"
+                  placeholder="Enter your city"
+                  register={register}
+                  errors={errors}
+                />
+
+                <CommonInput
+                  name="country"
+                  label="Country"
+                  placeholder="Enter your country"
+                  register={register}
+                  errors={errors}
+                />
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={handleBackToDashboard}
+                  fullWidth
+                  size="lg"
+                >
+                  Back to Dashboard
+                </Button>
+
+                <Button
+                  type="submit"
+                  loading={updateProfileMutation.isPending}
+                  disabled={updateProfileMutation.isPending}
+                  fullWidth
+                  size="lg"
+                >
+                  {updateProfileMutation.isPending ? "Updating Profile..." : "Update Profile"}
+                </Button>
+              </div>
           </form>
-          )}
         </div>
       </div>
     </div>

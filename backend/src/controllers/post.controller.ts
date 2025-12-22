@@ -192,3 +192,20 @@ export const getUserTopPosts = async (req: Request, res: Response, next: NextFun
     next(error);
   }
 };
+
+export const getFollowersFeed = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user!.id;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const result = await postService.getFollowersFeed(userId, page, limit);
+
+    res.json({
+      success: true,
+      ...result
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
