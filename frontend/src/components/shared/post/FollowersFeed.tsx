@@ -1,15 +1,25 @@
-import React, { useCallback } from 'react';
-import { useInfiniteFollowersFeed } from '../../../hooks/usePost';
+import React, { useCallback, useState } from 'react';
+import { useInfiniteFollowersFeed, useToggleLike, useToggleShare } from '../../../hooks/usePost';
 import PostCardWithSlider from './PostCardWithSlider';
-import { Loader2, Users} from 'lucide-react';
+import { Loader2, Users } from 'lucide-react';
 import PostSkeleton from './PostSkeleton';
 import ErrorState from '../states/ErrorState';
+import ShareModal from './ShareModal';
+import { userController } from '../../../jotai/user.atom';
 
 interface FollowersFeedProps {
   useShareDropdown?: boolean;
 }
 
 const FollowersFeed: React.FC<FollowersFeedProps> = ({ useShareDropdown = false }) => {
+  const { id, name, email } = userController.useState(['id', 'name', 'email']);
+  const currentUser = id ? { id, name, email } : null;
+  const toggleLikeMutation = useToggleLike();
+  const toggleShareMutation = useToggleShare();
+  
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<any>(null);
+
   const {
     data,
     fetchNextPage,
@@ -18,6 +28,42 @@ const FollowersFeed: React.FC<FollowersFeedProps> = ({ useShareDropdown = false 
     isLoading,
     error,
   } = useInfiniteFollowersFeed(10);
+
+  const handleLike = (postId: string, postOwnerId?: string) => {
+    toggleLikeMutation.mutate({ postId, postOwnerId });
+  };
+
+  const handleShare = (postId: string, isCurrentlyShared: boolean) => {
+    if (isCurrentlyShared) {
+      toggleShareMutation.mutate({ 
+        postId, 
+        isCurrentlyShared: true 
+      });
+    } else {
+      toggleShareMutation.mutate({ 
+        postId, 
+        isCurrentlyShared: false 
+      });
+    }
+  };
+
+  const handleShareWithComment = (postId: string) => {
+    const post = allPosts.find(p => p.id === postId);
+    setSelectedPost(post);
+    setShareModalOpen(true);
+  };
+
+  const handleModalShare = (message?: string) => {
+    if (selectedPost) {
+      toggleShareMutation.mutate({ 
+        postId: selectedPost.id, 
+        sharedContent: message,
+        isCurrentlyShared: false 
+      });
+      setShareModalOpen(false);
+      setSelectedPost(null);
+    }
+  };
 
   const handleScroll = useCallback(() => {
     if (
@@ -76,6 +122,12 @@ const FollowersFeed: React.FC<FollowersFeedProps> = ({ useShareDropdown = false 
         <PostCardWithSlider
           key={post.id}
           post={post}
+          onLike={handleLike}
+          onShare={handleShare}
+          onShareWithComment={handleShareWithComment}
+          isLiked={post.isLiked || false}
+          isShared={post.isShared || false}
+          currentUserId={currentUser?.id}
           useShareDropdown={useShareDropdown}
         />
       ))}
@@ -91,6 +143,24 @@ const FollowersFeed: React.FC<FollowersFeedProps> = ({ useShareDropdown = false 
         <div className="text-center py-8">
           <p className="text-gray-500">You've reached the end of your followers' posts!</p>
         </div>
+      )}
+
+      {useShareDropdown && (
+        <ShareModal
+          isOpen={shareModalOpen}
+          onClose={() => {
+            setShareModalOpen(false);
+            setSelectedPost(null);
+          }}
+          onShare={handleModalShare}
+          isLoading={toggleShareMutation.isPending}
+          postContent={selectedPost?.content}
+          authorName={
+            selectedPost?.user.profile?.first_name && selectedPost?.user.profile?.last_name
+              ? `${selectedPost.user.profile.first_name} ${selectedPost.user.profile.last_name}`
+              : selectedPost?.user.name
+          }
+        />
       )}
     </div>
   );

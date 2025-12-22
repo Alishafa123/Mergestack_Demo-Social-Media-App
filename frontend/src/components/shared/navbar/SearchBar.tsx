@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Search, X, Command } from 'lucide-react';
 import SearchResults from '../search/SearchResults';
 import { useSearchUsers } from '../../../hooks/useSearch';
+import { useNavigate } from 'react-router-dom';
 
 interface SearchBarProps {
   onSearch?: (query: string) => void;
@@ -13,6 +14,7 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const navigate=useNavigate();
   
   // Debounce search query
   useEffect(() => {
@@ -61,9 +63,10 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
     setTimeout(() => setIsFocused(false), 150);
   };
 
-  const handleUserClick = () => {
+  const handleUserClick = (userId: string) => {
     setIsFocused(false);
     setSearchQuery('');
+    navigate(`/user/${userId}`);
   };
 
   return (
@@ -97,7 +100,6 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
             }`}
           />
 
-          {/* Right side icons */}
           <div className="absolute inset-y-0 right-0 pr-4 flex items-center space-x-2">
             {searchQuery ? (
               <button
@@ -116,10 +118,8 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
           </div>
         </div>
 
-        {/* Search Results Dropdown */}
         {searchQuery && isFocused && (
           <div className="absolute z-50 mt-2 w-full bg-white shadow-xl rounded-2xl border border-gray-100 max-h-96 overflow-hidden">
-            {/* Search header */}
             <div className="px-4 py-3 border-b border-gray-100">
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <Search size={16} />
@@ -127,7 +127,6 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
               </div>
             </div>
             
-            {/* Search Results */}
             <div className="max-h-80 overflow-y-auto">
               <SearchResults
                 users={searchResults?.users || []}
@@ -137,7 +136,6 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
               />
             </div>
             
-            {/* Footer */}
             {searchResults && searchResults.users.length > 0 && (
               <div className="px-4 py-3 border-t border-gray-100 bg-gray-50">
                 <p className="text-xs text-gray-500 text-center">

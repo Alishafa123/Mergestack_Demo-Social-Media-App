@@ -47,12 +47,6 @@ const RecentFollowersCard: React.FC = () => {
     navigate(`/user/${followerId}`);
   };
 
-  const handleViewAllFollowers = () => {
-    if (currentUser.id) {
-      navigate(`/user/${currentUser.id}`); // Navigate to own profile to see followers
-    }
-  };
-
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
       <div className="flex items-center space-x-3 mb-6">
@@ -126,17 +120,6 @@ const RecentFollowersCard: React.FC = () => {
             </div>
           ))
         )}
-      </div>
-
-      <div className="mt-6 pt-4 border-t border-gray-100">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="w-full text-transparent bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 bg-clip-text hover:from-green-600 hover:via-teal-600 hover:to-blue-600"
-          onClick={handleViewAllFollowers}
-        >
-          View All Followers
-        </Button>
       </div>
     </div>
   );

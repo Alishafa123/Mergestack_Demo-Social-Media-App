@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { User, MapPin, Loader2 } from 'lucide-react';
 import type { SearchUser } from '../../../api/profile.api';
 
@@ -7,7 +6,7 @@ interface SearchResultsProps {
   users: SearchUser[];
   isLoading: boolean;
   query: string;
-  onUserClick?: () => void;
+  onUserClick: (userId: string) => void;
 }
 
 const SearchResults: React.FC<SearchResultsProps> = ({
@@ -16,12 +15,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   query,
   onUserClick
 }) => {
-
-  const navigate = useNavigate();
   
   const handleProfileClick = (userId: string) => {
-    navigate(`/user/${userId}`);
-    onUserClick?.(); 
+    onUserClick(userId);
   };
   if (isLoading) {
     return (
@@ -72,6 +68,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         return (
           <div
             key={user.id}
+            onClick={() => handleProfileClick(user.id)}
             className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
           >
             <div className="flex-shrink-0">
@@ -127,7 +124,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
             <div className="flex-shrink-0">
               <button 
-                onClick={() => handleProfileClick(user.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleProfileClick(user.id);
+                }}
                 className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
               >
                 View Profile

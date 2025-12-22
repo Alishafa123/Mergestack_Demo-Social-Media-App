@@ -19,19 +19,16 @@ export default function Dashboard() {
       
       <div className="max-w-full mx-auto px-4 py-6">
         <div className="flex gap-6 max-w-7xl mx-auto">
-          {/* Left Sidebar */}
           <div className="hidden lg:block w-80 flex-shrink-0">
-            <div className="sticky top-6">
+            <div className="sticky top-24 h-fit">
               <UserProfileCard />
             </div>
           </div>
 
-          {/* Main Content */}
           <div className="flex-1 max-w-2xl">
             <CreatePostPrompt />
 
-            {/* Feed Tabs */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+           <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
               <div className="flex border-b border-gray-200">
                 <button
                   onClick={() => setActiveTab('home')}
@@ -81,7 +78,7 @@ export default function Dashboard() {
 
           {/* Right Sidebar */}
           <div className="hidden xl:block w-80 flex-shrink-0">
-            <div className="sticky top-6 space-y-6">
+            <div className="sticky top-24 h-fit space-y-6">
               <TopPostsCard />
               <RecentFollowersCard />
             </div>

@@ -18,6 +18,11 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
+      const isAuthEndpoint = originalRequest.url?.includes('/auth/');
+      if (isAuthEndpoint) {
+        return Promise.reject(error);
+      }
+
       originalRequest._retry = true;
 
       const refreshToken = localStorage.getItem('refresh_token');

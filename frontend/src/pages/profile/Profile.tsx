@@ -23,7 +23,6 @@ const genderOptions = [
 ];
 
 export default function Profile() {
-  // Get profile data from controller
   const {first_name, last_name, phone, date_of_birth, gender, bio, profile_url, city, country} = userProfileController.useState([
     'first_name', 'last_name', 'phone', 'date_of_birth', 
     'gender', 'bio', 'profile_url', 'city', 'country'
@@ -107,7 +106,6 @@ export default function Profile() {
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Profile Picture */}
             <ProfileImageUpload
               currentImageUrl={profile_url}
               onFileSelect={setSelectedFile}

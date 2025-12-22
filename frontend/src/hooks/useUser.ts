@@ -107,13 +107,12 @@ export const useGetUserSuggestions = (page: number = 1, limit: number = 10) => {
   });
 };
 
-// Hook specifically for recent followers (for dashboard)
 export const useGetRecentFollowers = (userId: string) => {
   return useQuery({
     queryKey: [...RECENT_FOLLOWERS_QUERY_KEY, userId],
-    queryFn: () => getFollowers(userId, 1, 3), // Get first page, limit 3
+    queryFn: () => getFollowers(userId, 1, 3),
     enabled: !!userId,
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 2 * 60 * 1000, 
     refetchOnWindowFocus: false,
   });
 };

@@ -99,6 +99,11 @@ export interface PostModel {
   updatedAt: Date;
   isLiked?: boolean;
   isShared?: boolean;
+  type?: 'original' | 'shared';
+  timeline_date?: Date;
+  shared_by?: UserModel;
+  shared_content?: string;
+  shared_at?: Date;
   // Associated models (populated by includes)
   user?: UserModel;
   images?: PostImageModel[];
