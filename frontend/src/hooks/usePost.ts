@@ -59,6 +59,7 @@ export const useUpdatePost = () => {
       queryClient.invalidateQueries({ queryKey: POST_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: FOLLOWERS_FEED_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: TRENDING_QUERY_KEY });
     },
     onError: (error) => {
       console.error('Post update failed:', error);
@@ -75,6 +76,8 @@ export const useDeletePost = () => {
       queryClient.invalidateQueries({ queryKey: POST_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: FOLLOWERS_FEED_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: TRENDING_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: USER_STATS_QUERY_KEY });
     },
     onError: (error) => {
       console.error('Post deletion failed:', error);

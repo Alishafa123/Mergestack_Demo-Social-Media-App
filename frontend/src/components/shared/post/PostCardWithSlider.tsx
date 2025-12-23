@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Share, MoreHorizontal } from 'lucide-react';
+import { Heart, MessageCircle, Share } from 'lucide-react';
 import Button from '../buttons/Button';
 import PostImageSlider from './PostImageSlider';
 import UserHeader from '../user/UserHeader';
 import CommentSection from '../comment/CommentSection';
 import ShareDropdown from './ShareDropdown';
 import SharedPostHeader from './SharedPostHeader';
+import PostOptionsDropdown from './PostOptionsDropdown';
+import { userProfileController } from '../../../jotai/userprofile.atom';
 import type { Post } from '../../../api/post.api';
 
 interface PostCardWithSliderProps {
@@ -14,9 +16,10 @@ interface PostCardWithSliderProps {
   onComment?: (postId: string) => void;
   onShare?: (postId: string, isCurrentlyShared: boolean) => void;
   onShareWithComment?: (postId: string) => void;
+  onDelete?: (postId: string) => void;
+  onEdit?: (postId: string) => void;
   isLiked?: boolean;
   isShared?: boolean;
-  currentUserId?: string;
   showComments?: boolean;
   useShareDropdown?: boolean;
 }
@@ -26,13 +29,16 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
   onLike,
   onShare,
   onShareWithComment,
+  onDelete,
+  onEdit,
   isLiked = false,
   isShared = false,
-  currentUserId,
   showComments = false,
   useShareDropdown = false
 }) => {
   const [commentsExpanded, setCommentsExpanded] = useState(showComments);
+  const { id: currentUserId } = userProfileController.useState(['id']);
+  
   const displayName = post.user.profile?.first_name && post.user.profile?.last_name
     ? `${post.user.profile.first_name} ${post.user.profile.last_name}`
     : post.user.name;
@@ -46,6 +52,14 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
     if (diffInHours < 24) return `${diffInHours}h ago`;
     if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
     return date.toLocaleDateString();
+  };
+
+  const handleDelete = () => {
+    onDelete?.(post.id);
+  };
+
+  const handleEdit = () => {
+    onEdit?.(post.id);
   };
 
   return (
@@ -65,9 +79,10 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
           />
           
           {currentUserId === post.user.id && (
-            <button className="p-3 hover:bg-gray-100 rounded-full transition-colors">
-              <MoreHorizontal size={24} className="text-gray-500" />
-            </button>
+            <PostOptionsDropdown
+              onDelete={handleDelete}
+              onEdit={onEdit ? handleEdit : undefined}
+            />
           )}
         </div>
       </div>

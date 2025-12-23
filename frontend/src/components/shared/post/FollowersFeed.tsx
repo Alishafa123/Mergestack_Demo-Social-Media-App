@@ -1,23 +1,26 @@
 import React, { useCallback, useState } from 'react';
-import { useInfiniteFollowersFeed, useToggleLike, useToggleShare } from '../../../hooks/usePost';
+import { useInfiniteFollowersFeed, useToggleLike, useToggleShare, useDeletePost, useUpdatePost } from '../../../hooks/usePost';
 import PostCardWithSlider from './PostCardWithSlider';
 import { Loader2, Users } from 'lucide-react';
 import PostSkeleton from './PostSkeleton';
 import ErrorState from '../states/ErrorState';
 import ShareModal from './ShareModal';
-import { userController } from '../../../jotai/user.atom';
+import DeleteConfirmModal from '../modals/DeleteConfirmModal';
+import EditPostModal from '../modals/EditPostModal';
 
 interface FollowersFeedProps {
   useShareDropdown?: boolean;
 }
 
 const FollowersFeed: React.FC<FollowersFeedProps> = ({ useShareDropdown = false }) => {
-  const { id, name, email } = userController.useState(['id', 'name', 'email']);
-  const currentUser = id ? { id, name, email } : null;
   const toggleLikeMutation = useToggleLike();
   const toggleShareMutation = useToggleShare();
+  const deletePostMutation = useDeletePost();
+  const updatePostMutation = useUpdatePost();
   
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<any>(null);
 
   const {
@@ -28,6 +31,49 @@ const FollowersFeed: React.FC<FollowersFeedProps> = ({ useShareDropdown = false 
     isLoading,
     error,
   } = useInfiniteFollowersFeed(10);
+
+  const handleDelete = (postId: string) => {
+    const post = allPosts.find(p => p.id === postId);
+    setSelectedPost(post);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedPost) {
+      deletePostMutation.mutate(selectedPost.id, {
+        onSuccess: () => {
+          setDeleteModalOpen(false);
+          setSelectedPost(null);
+        },
+        onError: (error) => {
+          console.error('Failed to delete post:', error);
+        }
+      });
+    }
+  };
+
+  const handleEdit = (postId: string) => {
+    const post = allPosts.find(p => p.id === postId);
+    setSelectedPost(post);
+    setEditModalOpen(true);
+  };
+
+  const handleSaveEdit = (content: string) => {
+    if (selectedPost) {
+      updatePostMutation.mutate(
+        { postId: selectedPost.id, content },
+        {
+          onSuccess: () => {
+            setEditModalOpen(false);
+            setSelectedPost(null);
+          },
+          onError: (error) => {
+            console.error('Failed to update post:', error);
+          }
+        }
+      );
+    }
+  };
 
   const handleLike = (postId: string, postOwnerId?: string) => {
     toggleLikeMutation.mutate({ postId, postOwnerId });
@@ -125,9 +171,10 @@ const FollowersFeed: React.FC<FollowersFeedProps> = ({ useShareDropdown = false 
           onLike={handleLike}
           onShare={handleShare}
           onShareWithComment={handleShareWithComment}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
           isLiked={post.isLiked || false}
           isShared={post.isShared || false}
-          currentUserId={currentUser?.id}
           useShareDropdown={useShareDropdown}
         />
       ))}
@@ -162,6 +209,28 @@ const FollowersFeed: React.FC<FollowersFeedProps> = ({ useShareDropdown = false 
           }
         />
       )}
+
+      <DeleteConfirmModal
+        isOpen={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setSelectedPost(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        isLoading={deletePostMutation.isPending}
+        message="Are you sure you want to delete this post? This action cannot be undone and will also remove all shares of this post."
+      />
+
+      <EditPostModal
+        isOpen={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false);
+          setSelectedPost(null);
+        }}
+        onSave={handleSaveEdit}
+        isLoading={updatePostMutation.isPending}
+        post={selectedPost}
+      />
     </div>
   );
 };

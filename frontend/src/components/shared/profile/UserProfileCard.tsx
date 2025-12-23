@@ -240,15 +240,6 @@ const UserProfileCard: React.FC = () => {
                 <span className="text-gray-700 capitalize">{profileData.gender}</span>
               </div>
             )}
-            
-            {profileData?.id && (
-              <div className="flex items-center text-base">
-                <div className="w-5 h-5 mr-3 flex-shrink-0 flex items-center justify-center">
-                  <span className="text-gray-400 text-sm">#</span>
-                </div>
-                <span className="text-gray-700 font-mono text-sm truncate">{profileData.id}</span>
-              </div>
-            )}
           </div>
         </div>
 

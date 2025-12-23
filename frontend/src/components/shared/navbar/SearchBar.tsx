@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, X, Command } from 'lucide-react';
+import { Search } from 'lucide-react';
 import SearchResults from '../search/SearchResults';
 import { useSearchUsers } from '../../../hooks/useSearch';
 import { useNavigate } from 'react-router-dom';
@@ -49,10 +49,6 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-  };
-
-  const handleClear = () => {
-    setSearchQuery('');
   };
 
   const handleFocus = () => {
