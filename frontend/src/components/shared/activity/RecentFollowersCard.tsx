@@ -50,32 +50,32 @@ const RecentFollowersCard: React.FC = () => {
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
       <div className="flex items-center space-x-3 mb-6">
-        <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 rounded-full">
-          <Users size={20} className="text-white" />
+        <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 rounded-full">
+          <Users size={22} className="text-white" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Recent Followers</h3>
-          <p className="text-sm text-gray-500">People who recently followed you</p>
+          <h3 className="text-xl font-semibold text-gray-900">Recent Followers</h3>
+          <p className="text-base text-gray-500">People who recently followed you</p>
         </div>
       </div>
 
       <div className="space-y-4">
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 size={24} className="animate-spin text-gray-400" />
-            <span className="ml-2 text-gray-500">Loading followers...</span>
+            <Loader2 size={28} className="animate-spin text-gray-400" />
+            <span className="ml-2 text-base text-gray-500">Loading followers...</span>
           </div>
         ) : error ? (
           <div className="text-center py-8">
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-red-600 text-sm">Failed to load followers</p>
+              <p className="text-red-600 text-base">Failed to load followers</p>
             </div>
           </div>
         ) : recentFollowers.length === 0 ? (
           <div className="text-center py-8">
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <p className="text-gray-500 text-sm">No followers yet</p>
-              <p className="text-gray-400 text-xs mt-1">Share your profile to get followers!</p>
+              <p className="text-gray-500 text-base">No followers yet</p>
+              <p className="text-gray-400 text-sm mt-1">Share your profile to get followers!</p>
             </div>
           </div>
         ) : (
@@ -86,7 +86,7 @@ const RecentFollowersCard: React.FC = () => {
               className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors group"
             >
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-full overflow-hidden bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
                   {follower.profileUrl ? (
                     <img
                       src={follower.profileUrl}
@@ -94,7 +94,7 @@ const RecentFollowersCard: React.FC = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <span className="text-white font-semibold text-lg">
+                    <span className="text-white font-semibold text-xl">
                       {follower.name.charAt(0).toUpperCase()}
                     </span>
                   )}
@@ -102,18 +102,18 @@ const RecentFollowersCard: React.FC = () => {
               </div>
               
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                <p className="font-medium text-base text-gray-900 truncate group-hover:text-blue-600 transition-colors">
                   {follower.name}
                 </p>
                 {follower.bio && (
-                  <p className="text-sm text-gray-500 truncate mt-1">
+                  <p className="text-base text-gray-500 truncate mt-1">
                     {follower.bio}
                   </p>
                 )}
               </div>
               
               <div className="flex-shrink-0 flex flex-col items-end">
-                <span className="text-xs text-gray-500 mb-1">
+                <span className="text-sm text-gray-500 mb-1">
                   {follower.followedAt}
                 </span>
               </div>

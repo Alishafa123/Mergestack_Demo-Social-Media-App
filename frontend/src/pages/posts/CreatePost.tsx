@@ -65,9 +65,9 @@ export default function CreatePost() {
     );
   };
 
-  const handleBack = () => {
-    navigate('/dashboard');
-  };
+  // const handleBack = () => {
+  //   navigate('/dashboard');
+  // };
 
   const isSubmitDisabled = createPostMutation.isPending || (!content.trim() && selectedImages.length === 0);
 
@@ -83,16 +83,16 @@ export default function CreatePost() {
         <div className="max-w-2xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <Button
+              {/* <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleBack}
-                className="flex items-center space-x-2"
-              >
-                <ArrowLeft size={20} />
+                className="flex items-center space-x-2 text-base"
+              > */}
+                {/* <ArrowLeft size={20} />
                 <span>Back</span>
-              </Button>
-              <h1 className="text-2xl font-semibold text-gray-900">Create Post</h1>
+              </Button> */}
+              <h1 className="text-3xl font-semibold text-gray-900">Create Post</h1>
             </div>
             
             <Button
@@ -100,6 +100,7 @@ export default function CreatePost() {
               disabled={isSubmitDisabled}
               loading={createPostMutation.isPending}
               size="md"
+              className="text-base px-6 py-3"
             >
               {createPostMutation.isPending ? 'Publishing...' : 'Publish'}
             </Button>
@@ -155,7 +156,7 @@ export default function CreatePost() {
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2 text-gray-600">
                   <ImageIcon size={20} />
-                  <span className="text-sm">
+                  <span className="text-base">
                     {selectedImages.length > 0 
                       ? `${selectedImages.length} image${selectedImages.length > 1 ? 's' : ''} selected`
                       : 'Add photos to your post'
@@ -164,7 +165,7 @@ export default function CreatePost() {
                 </div>
               </div>
               
-              <div className="text-sm text-gray-500">
+              <div className="text-base text-gray-500">
                 {content.length}/2000 characters
               </div>
             </div>
@@ -173,8 +174,8 @@ export default function CreatePost() {
 
         {/* Tips */}
         <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="font-medium text-blue-900 mb-2">Tips for great posts:</h3>
-          <ul className="text-sm text-blue-800 space-y-1">
+          <h3 className="font-medium text-blue-900 mb-2 text-lg">Tips for great posts:</h3>
+          <ul className="text-base text-blue-800 space-y-1">
             <li>• Share what's meaningful to you</li>
             <li>• Add photos to make your post more engaging</li>
             <li>• Keep it authentic and respectful</li>

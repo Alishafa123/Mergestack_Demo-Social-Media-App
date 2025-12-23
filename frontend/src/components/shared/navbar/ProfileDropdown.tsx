@@ -48,9 +48,9 @@ export default function ProfileDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
-        className="flex items-center justify-center w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="flex items-center justify-center w-14 h-14 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
-        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
+        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
           {profile_url ? (
             <img
               src={profile_url}
@@ -58,7 +58,7 @@ export default function ProfileDropdown() {
               className="w-full h-full object-cover rounded-full"
             />
           ) : (
-            <span className="text-white text-base font-medium">
+            <span className="text-white text-lg font-medium">
               {'U'}
             </span>
           )}

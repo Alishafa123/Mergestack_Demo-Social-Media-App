@@ -1,14 +1,14 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '../../components/shared/navbar/Navbar';
-import { ProfileHeader } from '../../components/shared/profile';
+import { UserProfileCard } from '../../components/shared/profile';
 import CreatePostPrompt from '../../components/shared/post/CreatePostPrompt';
 import PostFeed from '../../components/shared/post/PostFeed';
-import { userController } from '../../jotai/user.atom';
+import { userProfileController } from '../../jotai/userprofile.atom';
 
 const UserTimeline: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
-  const currentUser = userController.useState(['id']);
+  const currentUser = userProfileController.useState(['id']);
   
   const isOwnProfile = !userId || userId === currentUser.id;
   const profileUserId = userId || currentUser.id || '';
@@ -17,15 +17,27 @@ const UserTimeline: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
-      <ProfileHeader />
-      
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        <div className="space-y-6">
-          {isOwnProfile && (
-            <CreatePostPrompt />
-          )}
-          
-          <PostFeed userId={profileUserId} useShareDropdown={true} />
+      <div className="w-full px-2 sm:px-4 py-6">
+        <div className="max-w-[3000px] mx-auto">
+          <div className="flex items-start gap-6 lg:gap-12">
+            <div className="hidden lg:block w-[25%] flex-shrink-0">
+              <div className="sticky top-28 h-fit">
+                <UserProfileCard />
+              </div>
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <div className="space-y-6">
+                {isOwnProfile && (
+                  <CreatePostPrompt />
+                )}
+                
+                <PostFeed userId={profileUserId} useShareDropdown={true} />
+              </div>
+            </div>
+<div className='hidden lg:block w-[25%] flex-shrink-0'></div>
+
+          </div>
         </div>
       </div>
     </div>

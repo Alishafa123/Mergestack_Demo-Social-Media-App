@@ -79,7 +79,7 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
         }`}>
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <Search 
-              size={20} 
+              size={22} 
               className={`transition-colors duration-200 ${
                 isFocused ? 'text-blue-500' : 'text-gray-400'
               }`} 
@@ -93,29 +93,12 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
             onFocus={handleFocus}
             onBlur={handleBlur}
             placeholder={placeholder}
-            className={`block w-full pl-12 pr-12 py-3 text-sm bg-gray-50 border-0 rounded-full leading-5 placeholder-gray-500 focus:outline-none focus:bg-white focus:placeholder-gray-400 transition-all duration-200 ${
+            className={`block w-full pl-12 pr-12 py-4 text-base bg-gray-50 border-0 rounded-full leading-5 placeholder-gray-500 focus:outline-none focus:bg-white focus:placeholder-gray-400 transition-all duration-200 ${
               isFocused 
                 ? 'ring-2 ring-blue-500 bg-white' 
                 : 'hover:bg-gray-100'
             }`}
           />
-
-          <div className="absolute inset-y-0 right-0 pr-4 flex items-center space-x-2">
-            {searchQuery ? (
-              <button
-                type="button"
-                onClick={handleClear}
-                className="text-gray-400 hover:text-gray-600 focus:outline-none transition-colors duration-200 p-1 rounded-full hover:bg-gray-200"
-              >
-                <X size={16} />
-              </button>
-            ) : (
-              <div className="hidden sm:flex items-center space-x-1 text-xs text-gray-400 bg-gray-200 px-2 py-1 rounded-md">
-                <Command size={12} />
-                <span>K</span>
-              </div>
-            )}
-          </div>
         </div>
 
         {searchQuery && isFocused && (

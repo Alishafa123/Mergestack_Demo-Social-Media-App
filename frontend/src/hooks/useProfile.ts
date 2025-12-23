@@ -55,12 +55,13 @@ export const useDeleteProfile = () => {
   });
 };
 
-export const useGetUserStats = () => {
+export const useGetUserStats = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: USER_STATS_QUERY_KEY,
     queryFn: getUserStats,
     staleTime: 2 * 60 * 1000,
     refetchOnWindowFocus: false,
+    enabled: options?.enabled ?? true,
   });
 };
 

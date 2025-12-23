@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { getPostComments, createComment, updateComment, deleteComment } from '../api/comment.api';
 import type { CreateCommentData, CommentsResponse } from '../api/comment.api';
+import { USER_STATS_QUERY_KEY } from './useProfile';
 
 export const COMMENT_QUERY_KEY = ['comments'];
 
@@ -39,6 +40,11 @@ export const useCreateComment = () => {
       
       queryClient.invalidateQueries({ 
         queryKey: ['posts'] 
+      });
+
+      // Invalidate user stats to update UserProfileCard immediately
+      queryClient.invalidateQueries({ 
+        queryKey: USER_STATS_QUERY_KEY 
       });
     },
     onError: (error) => {
