@@ -18,6 +18,7 @@ interface PostCardWithSliderProps {
   onShareWithComment?: (postId: string) => void;
   onDelete?: (postId: string) => void;
   onEdit?: (postId: string) => void;
+  onDeleteShare?: (postId: string) => void;
   isLiked?: boolean;
   isShared?: boolean;
   showComments?: boolean;
@@ -31,6 +32,7 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
   onShareWithComment,
   onDelete,
   onEdit,
+  onDeleteShare,
   isLiked = false,
   isShared = false,
   showComments = false,
@@ -62,12 +64,14 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
     onEdit?.(post.id);
   };
 
+  const handleDeleteShare = () => {
+    onDeleteShare?.(post.id);
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 relative mb-8">
-      {/* Shared Post Header - only show for shared posts */}
-      {post.type === 'shared' && <SharedPostHeader post={post} />}
+      {post.type === 'shared' && <SharedPostHeader post={post} onDeleteShare={handleDeleteShare} />}
       
-      {/* Post Header */}
       <div className="p-6 pb-4">
         <div className="flex items-center justify-between">
           <UserHeader

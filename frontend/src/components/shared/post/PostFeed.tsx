@@ -122,6 +122,13 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
     setShareModalOpen(true);
   };
 
+  const handleDeleteShare = (postId: string) => {
+    toggleShareMutation.mutate({ 
+      postId, 
+      isCurrentlyShared: true 
+    });
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       if (
@@ -182,6 +189,7 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
           onShareWithComment={handleShareWithComment}
           onDelete={handleDelete}
           onEdit={handleEdit}
+          onDeleteShare={handleDeleteShare}
           isLiked={post.isLiked || false} 
           isShared={post.isShared || false} 
           useShareDropdown={useShareDropdown}

@@ -128,6 +128,14 @@ const TrendingPostsFeed: React.FC<TrendingPostsFeedProps> = ({
     setShareModalOpen(true);
   };
 
+  const handleDeleteShare = (postId: string) => {
+    // Unshare the post (remove the share)
+    toggleShareMutation.mutate({ 
+      postId, 
+      isCurrentlyShared: true 
+    });
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       if (
@@ -189,6 +197,7 @@ const TrendingPostsFeed: React.FC<TrendingPostsFeedProps> = ({
           onShareWithComment={handleShareWithComment}
           onDelete={handleDelete}
           onEdit={handleEdit}
+          onDeleteShare={handleDeleteShare}
           isLiked={post.isLiked || false} 
           isShared={post.isShared || false} 
           useShareDropdown={useShareDropdown}

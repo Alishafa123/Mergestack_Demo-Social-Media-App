@@ -99,6 +99,13 @@ const FollowersFeed: React.FC<FollowersFeedProps> = ({ useShareDropdown = false 
     setShareModalOpen(true);
   };
 
+  const handleDeleteShare = (postId: string) => {
+    toggleShareMutation.mutate({ 
+      postId, 
+      isCurrentlyShared: true 
+    });
+  };
+
   const handleModalShare = (message?: string) => {
     if (selectedPost) {
       toggleShareMutation.mutate({ 
@@ -173,6 +180,7 @@ const FollowersFeed: React.FC<FollowersFeedProps> = ({ useShareDropdown = false 
           onShareWithComment={handleShareWithComment}
           onDelete={handleDelete}
           onEdit={handleEdit}
+          onDeleteShare={handleDeleteShare}
           isLiked={post.isLiked || false}
           isShared={post.isShared || false}
           useShareDropdown={useShareDropdown}
