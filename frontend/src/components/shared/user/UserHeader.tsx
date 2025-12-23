@@ -1,6 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface UserHeaderProps {
+  userId:string
   displayName: string;
   profileUrl?: string | null;
   subtitle?: string;
@@ -9,12 +11,14 @@ interface UserHeaderProps {
 }
 
 const UserHeader: React.FC<UserHeaderProps> = ({
+  userId,
   displayName,
   profileUrl,
   subtitle = "Sharing with everyone",
   size = 'md',
   className = ""
 }) => {
+  const navigate = useNavigate();
   const sizeClasses = {
     sm: {
       container: "space-x-2",
@@ -40,10 +44,13 @@ const UserHeader: React.FC<UserHeaderProps> = ({
   };
 
   const currentSize = sizeClasses[size];
+  const handleprofileclick=()=>{
+  navigate(`/user/${userId}`)
+  }
 
   return (
-    <div className={`flex items-center ${currentSize.container} ${className}`}>
-      <div className={`${currentSize.avatar} bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center`}>
+    <div className={`flex items-center cursor-pointer ${currentSize.container} ${className}`} onClick={handleprofileclick}>
+      <div className={`${currentSize.avatar} bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center`} >
         {profileUrl ? (
           <img
             src={profileUrl}

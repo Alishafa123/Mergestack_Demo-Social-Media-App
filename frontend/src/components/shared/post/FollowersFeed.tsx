@@ -1,23 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Loader2, TrendingUp } from 'lucide-react';
+import React, { useCallback, useState } from 'react';
+import { useInfiniteFollowersFeed, useToggleLike, useToggleShare } from '../../../hooks/usePost';
 import PostCardWithSlider from './PostCardWithSlider';
+import { Loader2, Users } from 'lucide-react';
 import PostSkeleton from './PostSkeleton';
-import Button from '../buttons/Button';
-import ShareModal from './ShareModal';
-import EmptyState from '../states/EmptyState';
 import ErrorState from '../states/ErrorState';
-import { useInfiniteTrendingPosts, useToggleLike, useToggleShare } from '../../../hooks/usePost';
+import ShareModal from './ShareModal';
 import { userController } from '../../../jotai/user.atom';
 
-interface TrendingPostsFeedProps {
-  enableShareModal?: boolean;
-  useShareDropdown?: boolean; 
+interface FollowersFeedProps {
+  useShareDropdown?: boolean;
 }
 
-const TrendingPostsFeed: React.FC<TrendingPostsFeedProps> = ({ 
-  enableShareModal = false, 
-  useShareDropdown = false 
-}) => {
+const FollowersFeed: React.FC<FollowersFeedProps> = ({ useShareDropdown = false }) => {
   const { id, name, email } = userController.useState(['id', 'name', 'email']);
   const currentUser = id ? { id, name, email } : null;
   const toggleLikeMutation = useToggleLike();
@@ -28,20 +22,15 @@ const TrendingPostsFeed: React.FC<TrendingPostsFeedProps> = ({
 
   const {
     data,
-    error,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-    isError,
-  } = useInfiniteTrendingPosts(10);
+    error,
+  } = useInfiniteFollowersFeed(10);
 
   const handleLike = (postId: string, postOwnerId?: string) => {
     toggleLikeMutation.mutate({ postId, postOwnerId });
-  };
-
-  const handleComment = (postId: string) => {
-    console.log('Comment on post:', postId);
   };
 
   const handleShare = (postId: string, isCurrentlyShared: boolean) => {
@@ -51,17 +40,17 @@ const TrendingPostsFeed: React.FC<TrendingPostsFeedProps> = ({
         isCurrentlyShared: true 
       });
     } else {
-      if (enableShareModal) {
-        const post = allPosts.find(p => p.id === postId);
-        setSelectedPost(post);
-        setShareModalOpen(true);
-      } else {
-        toggleShareMutation.mutate({ 
-          postId, 
-          isCurrentlyShared: false 
-        });
-      }
+      toggleShareMutation.mutate({ 
+        postId, 
+        isCurrentlyShared: false 
+      });
     }
+  };
+
+  const handleShareWithComment = (postId: string) => {
+    const post = allPosts.find(p => p.id === postId);
+    setSelectedPost(post);
+    setShareModalOpen(true);
   };
 
   const handleModalShare = (message?: string) => {
@@ -76,27 +65,21 @@ const TrendingPostsFeed: React.FC<TrendingPostsFeedProps> = ({
     }
   };
 
-  const handleShareWithComment = (postId: string) => {
-    const post = allPosts.find(p => p.id === postId);
-    setSelectedPost(post);
-    setShareModalOpen(true);
-  };
+  const handleScroll = useCallback(() => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop >=
+      document.documentElement.offsetHeight - 1000 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - 1000 
-      ) {
-        if (hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      }
-    };
-
+  React.useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [handleScroll]);
 
   if (isLoading) {
     return (
@@ -108,26 +91,28 @@ const TrendingPostsFeed: React.FC<TrendingPostsFeedProps> = ({
     );
   }
 
-  if (isError) {
+  if (error) {
     return (
       <ErrorState
-        title="Failed to load trending posts"
+        title="Failed to load posts"
         message={error instanceof Error ? error.message : 'Something went wrong'}
       />
     );
   }
 
   const allPosts = data?.pages.flatMap(page => page.posts) || [];
-  
+
   if (allPosts.length === 0) {
     return (
-      <EmptyState
-        icon={<TrendingUp className="w-12 h-12 text-gray-400" />}
-        title="No trending posts yet"
-        description="Be the first to create a trending post!"
-        actionLabel="Create Post"
-        actionPath="/create-post"
-      />
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+        <div className="text-gray-400 mb-4">
+          <Users size={48} className="mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-gray-600">No posts from followers</h3>
+          <p className="text-sm text-gray-500 mt-2 mb-4">
+            Follow some users to see their posts in your feed!
+          </p>
+        </div>
+      </div>
     );
   }
 
@@ -138,46 +123,29 @@ const TrendingPostsFeed: React.FC<TrendingPostsFeedProps> = ({
           key={post.id}
           post={post}
           onLike={handleLike}
-          onComment={handleComment}
           onShare={handleShare}
           onShareWithComment={handleShareWithComment}
-          isLiked={post.isLiked || false} 
-          isShared={post.isShared || false} 
+          isLiked={post.isLiked || false}
+          isShared={post.isShared || false}
           currentUserId={currentUser?.id}
           useShareDropdown={useShareDropdown}
         />
       ))}
 
-      {hasNextPage && (
-        <div className="flex justify-center py-6">
-          <Button
-            onClick={() => fetchNextPage()}
-            disabled={isFetchingNextPage}
-            variant="outline"
-            size="md"
-            className="flex items-center space-x-2"
-          >
-            {isFetchingNextPage ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Loading more...</span>
-              </>
-            ) : (
-              <span>Load More Posts</span>
-            )}
-          </Button>
+      {isFetchingNextPage && (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 size={24} className="animate-spin text-blue-500" />
+          <span className="ml-2 text-gray-600">Loading more posts...</span>
         </div>
       )}
 
       {!hasNextPage && allPosts.length > 0 && (
-        <div className="text-center py-6">
-          <p className="text-gray-500 text-sm">
-            You've reached the end of trending posts! 🎉
-          </p>
+        <div className="text-center py-8">
+          <p className="text-gray-500">You've reached the end of your followers' posts!</p>
         </div>
       )}
 
-      {(enableShareModal || useShareDropdown) && (
+      {useShareDropdown && (
         <ShareModal
           isOpen={shareModalOpen}
           onClose={() => {
@@ -198,4 +166,4 @@ const TrendingPostsFeed: React.FC<TrendingPostsFeedProps> = ({
   );
 };
 
-export default TrendingPostsFeed;
+export default FollowersFeed;

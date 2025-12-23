@@ -1,7 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus } from 'lucide-react';
-import Button from '../buttons/Button';
 import { userProfileController } from '../../../jotai/userprofile.atom';
 
 interface CreatePostPromptProps {
@@ -47,15 +45,6 @@ const CreatePostPrompt: React.FC<CreatePostPromptProps> = ({
         >
           {placeholder}
         </button>
-        <Button
-          onClick={handleCreatePost}
-          variant="primary"
-          size="md"
-          className="flex items-center space-x-2"
-        >
-          <Plus size={20} />
-          <span>Create Post</span>
-        </Button>
       </div>
     </div>
   );

@@ -5,37 +5,12 @@ import PostImageSlider from './PostImageSlider';
 import UserHeader from '../user/UserHeader';
 import CommentSection from '../comment/CommentSection';
 import ShareDropdown from './ShareDropdown';
-
-interface PostUser {
-  id: string;
-  name: string;
-  profile?: {
-    profile_url?: string;
-    first_name?: string;
-    last_name?: string;
-  };
-}
-
-interface PostImage {
-  id: string;
-  image_url: string;
-  image_order: number;
-}
-
-interface Post {
-  id: string;
-  content?: string;
-  likes_count: number;
-  comments_count: number;
-  shares_count: number;
-  createdAt: string;
-  user: PostUser;
-  images?: PostImage[];
-}
+import SharedPostHeader from './SharedPostHeader';
+import type { Post } from '../../../api/post.api';
 
 interface PostCardWithSliderProps {
   post: Post;
-  onLike?: (postId: string) => void;
+  onLike?: (postId: string, postOwnerId?: string) => void;
   onComment?: (postId: string) => void;
   onShare?: (postId: string, isCurrentlyShared: boolean) => void;
   onShareWithComment?: (postId: string) => void;
@@ -49,7 +24,6 @@ interface PostCardWithSliderProps {
 const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
   post,
   onLike,
-  onComment,
   onShare,
   onShareWithComment,
   isLiked = false,
@@ -76,10 +50,14 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
 
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 relative mb-8">
+      {/* Shared Post Header - only show for shared posts */}
+      {post.type === 'shared' && <SharedPostHeader post={post} />}
+      
       {/* Post Header */}
       <div className="p-6 pb-4">
         <div className="flex items-center justify-between">
           <UserHeader
+            userId={post.user.id}
             displayName={displayName}
             profileUrl={post.user.profile?.profile_url}
             subtitle={formatDate(post.createdAt)}
@@ -130,7 +108,7 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
           <Button
             variant="ghost"
             size="md"
-            onClick={() => onLike?.(post.id)}
+            onClick={() => onLike?.(post.id, post.user.id)}
             className={`flex items-center space-x-3 px-4 py-3 transition-colors ${
               isLiked ? 'text-red-500 hover:text-red-600' : 'text-gray-600 hover:text-red-500'
             }`}
@@ -149,7 +127,6 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
             size="md"
             onClick={() => {
               setCommentsExpanded(!commentsExpanded);
-              onComment?.(post.id);
             }}
             className="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:text-blue-500 transition-colors"
           >

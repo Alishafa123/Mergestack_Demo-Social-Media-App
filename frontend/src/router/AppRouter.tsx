@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ProtectedRoute, PublicRoute } from "../components/auth";
+import { ClientComponent } from "../components/client";
 import Login from "../pages/auth/Login";
 import Signup from "../pages/auth/Signup";
 import ForgotPassword from "../pages/auth/ForgotPassword";
@@ -55,12 +56,13 @@ export default function AppRouter() {
           } 
         />
 
-        {/* Protected Routes - require authentication */}
         <Route 
           path="/dashboard" 
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <ClientComponent>
+                <Dashboard />
+              </ClientComponent>
             </ProtectedRoute>
           } 
         />
@@ -68,7 +70,9 @@ export default function AppRouter() {
           path="/profile" 
           element={
             <ProtectedRoute>
-              <Profile />
+              <ClientComponent>
+                <Profile />
+              </ClientComponent>
             </ProtectedRoute>
           } 
         />
@@ -76,7 +80,9 @@ export default function AppRouter() {
           path="/create-post" 
           element={
             <ProtectedRoute>
-              <CreatePost />
+              <ClientComponent>
+                <CreatePost />
+              </ClientComponent>
             </ProtectedRoute>
           } 
         />
@@ -84,7 +90,19 @@ export default function AppRouter() {
           path="/timeline" 
           element={
             <ProtectedRoute>
-              <UserTimeline />
+              <ClientComponent>
+                <UserTimeline />
+              </ClientComponent>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/user/:userId" 
+          element={
+            <ProtectedRoute>
+              <ClientComponent>
+                <UserTimeline />
+              </ClientComponent>
             </ProtectedRoute>
           } 
         />

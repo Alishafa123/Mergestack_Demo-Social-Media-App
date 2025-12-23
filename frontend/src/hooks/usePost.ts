@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
-import { createPost, getPosts, getPost, updatePost, deletePost, toggleLike, sharePost, unsharePost, getTrendingPosts, getUserTopPosts } from '../api/post.api';
+import { createPost, getPosts, getPost, updatePost, deletePost, toggleLike, sharePost, unsharePost, getTrendingPosts, getUserTopPosts, getFollowersFeed } from '../api/post.api';
 import type { CreatePostData, PostsResponse } from '../api/post.api';
+import { USER_STATS_QUERY_KEY } from './useProfile';
 
 export const POST_QUERY_KEY = ['posts'];
 
@@ -12,6 +13,7 @@ export const useCreatePost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: POST_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: FOLLOWERS_FEED_QUERY_KEY });
     },
     onError: (error) => {
       console.error('Post creation failed:', error);
@@ -56,6 +58,7 @@ export const useUpdatePost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: POST_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: FOLLOWERS_FEED_QUERY_KEY });
     },
     onError: (error) => {
       console.error('Post update failed:', error);
@@ -71,6 +74,7 @@ export const useDeletePost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: POST_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: FOLLOWERS_FEED_QUERY_KEY });
     },
     onError: (error) => {
       console.error('Post deletion failed:', error);
@@ -82,8 +86,8 @@ export const useToggleLike = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (postId: string) => toggleLike(postId),
-    onMutate: async (postId: string) => {
+    mutationFn: ({ postId }: { postId: string; postOwnerId?: string }) => toggleLike(postId),
+    onMutate: async ({ postId }: { postId: string; postOwnerId?: string }) => {
       await queryClient.cancelQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
 
       const previousData = queryClient.getQueriesData({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
@@ -116,7 +120,7 @@ export const useToggleLike = () => {
 
       return { previousData };
     },
-    onError: (err, _postId, context) => {
+    onError: (err, _variables, context) => {
       if (context?.previousData) {
         context.previousData.forEach(([queryKey, data]) => {
           queryClient.setQueryData(queryKey, data);
@@ -124,9 +128,20 @@ export const useToggleLike = () => {
       }
       console.error('Like toggle failed:', err);
     },
-    onSettled: () => {
+    onSettled: (_data, _error, { postOwnerId }) => {
+      
       queryClient.invalidateQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
       queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: [...FOLLOWERS_FEED_QUERY_KEY, 'infinite'] });
+      
+      if (postOwnerId) {
+        const queryKey = [...USER_STATS_QUERY_KEY, postOwnerId];
+        queryClient.invalidateQueries({ queryKey });
+      } else {
+        console.log('  ❌ postOwnerId is missing - cannot invalidate user stats');
+      }
+      
+      queryClient.invalidateQueries({ queryKey: USER_STATS_QUERY_KEY });
     },
   });
 };
@@ -186,6 +201,7 @@ export const useToggleShare = () => {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
       queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: [...FOLLOWERS_FEED_QUERY_KEY, 'infinite'] });
     },
   });
 };
@@ -219,5 +235,27 @@ export const useGetUserTopPosts = () => {
     queryKey: TOP_POSTS_QUERY_KEY,
     queryFn: getUserTopPosts,
     staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+export const FOLLOWERS_FEED_QUERY_KEY = ['posts', 'followers'];
+
+export const useGetFollowersFeed = (page: number = 1, limit: number = 10) => {
+  return useQuery({
+    queryKey: [...FOLLOWERS_FEED_QUERY_KEY, { page, limit }],
+    queryFn: () => getFollowersFeed(page, limit),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+export const useInfiniteFollowersFeed = (limit: number = 10) => {
+  return useInfiniteQuery({
+    queryKey: [...FOLLOWERS_FEED_QUERY_KEY, 'infinite', { limit }],
+    queryFn: ({ pageParam = 1 }) => getFollowersFeed(pageParam, limit),
+    getNextPageParam: (lastPage: PostsResponse, allPages) => {
+      return lastPage.hasMore ? allPages.length + 1 : undefined;
+    },
+    staleTime: 5 * 60 * 1000,
+    initialPageParam: 1,
   });
 };

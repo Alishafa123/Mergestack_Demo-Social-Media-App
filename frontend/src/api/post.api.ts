@@ -16,6 +16,30 @@ export interface Post {
   updatedAt: string;
   isLiked?: boolean; // Whether current user has liked this post
   isShared?: boolean; // Whether current user has shared this post
+  type?: 'original' | 'shared';
+  timeline_date?: string;
+  shared_by?: {
+    id: string;
+    name: string;
+    email: string;
+    profile?: {
+      id: number;
+      user_id: string;
+      first_name?: string;
+      last_name?: string;
+      phone?: string;
+      date_of_birth?: string;
+      gender?: string;
+      bio?: string;
+      profile_url?: string;
+      city?: string;
+      country?: string;
+      createdAt: string;
+      updatedAt: string;
+    };
+  };
+  shared_content?: string;
+  shared_at?: string;
   user: {
     id: string;
     name: string;
@@ -147,4 +171,14 @@ export interface TopPostsResponse {
 export const getUserTopPosts = async () => {
   const res = await api.get("/posts/top/me");
   return res.data as TopPostsResponse;
+};
+
+export const getFollowersFeed = async (page: number = 1, limit: number = 10) => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+  });
+
+  const res = await api.get(`/posts/followers?${params}`);
+  return res.data as PostsResponse;
 };

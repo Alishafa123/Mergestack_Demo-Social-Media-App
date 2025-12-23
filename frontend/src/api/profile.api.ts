@@ -37,13 +37,18 @@ export const getProfile = async () => {
   return res.data;
 };
 
+export const getProfileById = async (userId: string) => {
+  const res = await api.get(`/profile/${userId}`);
+  return res.data;
+};
+
 export const updateProfile = async (data: ProfileFormData & { profileImage?: File }) => {
   const formData = new FormData();
   
   Object.entries(data).forEach(([key, value]) => {
     if (key === 'profileImage' && value instanceof File) {
       formData.append('profileImage', value);
-    } else if (value !== undefined && value !== null && key !== 'profileImage' && key !== 'profile_url') {
+    } else if (value !== undefined && value !== null && value !== '' && key !== 'profileImage' && key !== 'profile_url') {
       formData.append(key, String(value));
     }
   });

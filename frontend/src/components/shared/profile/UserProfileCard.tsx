@@ -144,13 +144,6 @@ const UserProfileCard: React.FC = () => {
           </div>
         )}
       </div>
-
-      <div className="border-t border-gray-100 pt-4">
-        <div className="flex items-center justify-center text-base text-gray-500">
-          <Calendar size={16} className="mr-2" />
-          <span className="font-medium">Member since 2024</span>
-        </div>
-      </div>
     </div>
   );
 };

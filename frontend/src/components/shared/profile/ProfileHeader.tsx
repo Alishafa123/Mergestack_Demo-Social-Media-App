@@ -1,30 +1,63 @@
 import React from 'react';
-import { MapPin, Edit3, UserPlus } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+import { MapPin, Edit3, UserPlus, UserMinus} from 'lucide-react';
 import Button from '../buttons/Button';
 import ProfileStats from './ProfileStats';
-import { userProfileController } from '../../../jotai/userprofile.atom';
+import { useGetProfile, useGetProfileById } from '../../../hooks/useProfile';
+import { useGetFollowStatus, useFollowUser, useUnfollowUser } from '../../../hooks/useUser';
+import { userController } from '../../../jotai/user.atom';
 
 interface ProfileHeaderProps {
-  userId: string;
-  isOwnProfile: boolean;
+  userId?: string;
+  isOwnProfile?: boolean;
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userId, isOwnProfile }) => {
-  const { first_name, last_name, profile_url, bio, city, country } = userProfileController.useState([
-    'first_name', 'last_name', 'profile_url', 'bio', 'city', 'country'
-  ]);
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userId: propUserId, isOwnProfile: propIsOwnProfile }) => {
+  const { userId: paramUserId } = useParams();
+  const currentUser = userController.useState(['id']);
+  
+  const userId = propUserId || paramUserId;
+  const isOwnProfile = propIsOwnProfile ?? (!userId || userId === currentUser.id);
+  
+  const { data: ownProfileData } = useGetProfile();
+  const { data: otherProfileData } = useGetProfileById(userId || '');
+  const { data: followStatusData, isLoading: followStatusLoading } = useGetFollowStatus(userId || '');
+  
+  const followUserMutation = useFollowUser();
+  const unfollowUserMutation = useUnfollowUser();
+  
+  const profileData = isOwnProfile ? ownProfileData : otherProfileData;
+  const profile = profileData?.user?.profile;
+  const isFollowing = followStatusData?.isFollowing || false;
 
-  const fullName = `${first_name || ''} ${last_name || ''}`.trim() || 'User';
+  const first_name = profile?.first_name || '';
+  const last_name = profile?.last_name || '';
+  const profile_url = profile?.profile_url || '';
+  const bio = profile?.bio || '';
+  const city = profile?.city || '';
+  const country = profile?.country || '';
+
+  const fullName = `${first_name} ${last_name}`.trim() || 'User';
   const location = [city, country].filter(Boolean).join(', ');
   
   const handleEditProfile = () => {
     console.log('Edit profile clicked');
   };
 
-  const handleFollowToggle = () => {
-    // Handle follow/unfollow logic
-    console.log('Follow toggle clicked');
+  const handleFollowToggle = async () => {
+    if (!userId) return;
+    
+    try {
+      if (isFollowing) {
+        await unfollowUserMutation.mutateAsync(userId);
+      } else {
+        await followUserMutation.mutateAsync(userId);
+      }
+    } catch (error) {
+      console.error('Follow toggle failed:', error);
+    }
   };
+  const isFollowLoading = followUserMutation.isPending || unfollowUserMutation.isPending;
 
   return (
     <div className="bg-white shadow-sm border-b border-gray-200">
@@ -63,7 +96,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userId, isOwnProfile }) =
             )}
             
             <div className="mb-6">
-              <ProfileStats userId={userId} />
+              <ProfileStats userId={userId || ''} />
             </div>
             
             <div className="flex justify-center space-x-4">
@@ -81,19 +114,26 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userId, isOwnProfile }) =
                 <>
                   <Button
                     onClick={handleFollowToggle}
-                    variant="primary"
+                    variant={isFollowing ? "outline" : "primary"}
                     size="md"
                     className="flex items-center space-x-2"
+                    disabled={isFollowLoading || followStatusLoading}
                   >
-                    <UserPlus size={18} />
-                    <span>Follow</span>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="md"
-                    className="flex items-center space-x-2"
-                  >
-                    <span>Message</span>
+                    {isFollowLoading ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-current"></div>
+                    ) : isFollowing ? (
+                      <UserMinus size={18} />
+                    ) : (
+                      <UserPlus size={18} />
+                    )}
+                    <span>
+                      {isFollowLoading 
+                        ? 'Loading...' 
+                        : isFollowing 
+                          ? 'Unfollow' 
+                          : 'Follow'
+                      }
+                    </span>
                   </Button>
                 </>
               )}

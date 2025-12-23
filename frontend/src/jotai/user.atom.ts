@@ -22,7 +22,6 @@ export class UserController extends StateController<User> {
   }
 
   login(id:string ,name: string, email: string) {
-    debugger
     this.updateState({
       id,
       name,

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { userProfileController} from '../../../jotai/userprofile.atom'
+import { userProfileController } from '../../../jotai/userprofile.atom'
 import { useLogout } from '../../../hooks/useAuth';
 
 export default function ProfileDropdown() {
@@ -8,7 +8,7 @@ export default function ProfileDropdown() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const logoutMutation = useLogout();
-  const {first_name,last_name,profile_url} = userProfileController.useState(['first_name','last_name','profile_url'])
+  const { id, first_name, last_name, profile_url } = userProfileController.useState(['id', 'first_name', 'last_name', 'profile_url'])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -29,8 +29,10 @@ export default function ProfileDropdown() {
   };
 
   const handleTimelineClick = () => {
-    navigate('/timeline');
-    setIsOpen(false);
+    if (id) {
+      navigate(`/user/${id}`);
+      setIsOpen(false);
+    }
   };
 
   const handleLogout = () => {
@@ -46,17 +48,17 @@ export default function ProfileDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
-        className="flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="flex items-center justify-center w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
-        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
+        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
           {profile_url ? (
-            <img 
-              src={profile_url} 
-              alt="Profile" 
+            <img
+              src={profile_url}
+              alt="Profile"
               className="w-full h-full object-cover rounded-full"
             />
           ) : (
-            <span className="text-white text-sm font-medium">
+            <span className="text-white text-base font-medium">
               {'U'}
             </span>
           )}

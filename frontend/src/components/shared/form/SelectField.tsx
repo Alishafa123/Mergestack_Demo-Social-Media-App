@@ -15,6 +15,7 @@ interface CustomSelectFieldProps {
   placeholder?: string;
   validation?: RegisterOptions;
   className?: string;
+  defaultValue?: string;
 }
 
 export default function CustomSelectField({
@@ -25,18 +26,26 @@ export default function CustomSelectField({
   options,
   placeholder = 'Select an option',
   validation,
-  className = ''
+  className = '',
+  defaultValue = ''
 }: CustomSelectFieldProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState('');
-  const [selectedLabel, setSelectedLabel] = useState(placeholder);
+  const [selectedValue, setSelectedValue] = useState(defaultValue);
+  const [selectedLabel, setSelectedLabel] = useState(() => {
+    const option = options.find(opt => opt.value === defaultValue);
+    return option ? option.label : placeholder;
+  });
   const dropdownRef = useRef<HTMLDivElement>(null);
   const error = errors[name];
 
-  // Register the hidden input with react-hook-form
-  const { onChange, ...registerProps } = register(name, validation);
+  const { onChange, ref, ...registerProps } = register(name, validation);
 
-  // Handle click outside to close dropdown
+  useEffect(() => {
+    setSelectedValue(defaultValue);
+    const option = options.find(opt => opt.value === defaultValue);
+    setSelectedLabel(option ? option.label : placeholder);
+  }, [defaultValue, options, placeholder]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -52,7 +61,6 @@ export default function CustomSelectField({
     setSelectedValue(option.value);
     setSelectedLabel(option.label);
     setIsOpen(false);
-    // Trigger react-hook-form onChange
     onChange({ target: { name, value: option.value } });
   };
 
@@ -60,7 +68,6 @@ export default function CustomSelectField({
     setSelectedValue('');
     setSelectedLabel(placeholder);
     setIsOpen(false);
-    // Trigger react-hook-form onChange
     onChange({ target: { name, value: '' } });
   };
 
@@ -71,14 +78,13 @@ export default function CustomSelectField({
       </label>
       
       <div className="relative" ref={dropdownRef}>
-        {/* Hidden input for react-hook-form */}
         <input
+          ref={ref}
           type="hidden"
           value={selectedValue}
           {...registerProps}
         />
         
-        {/* Custom select button */}
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
@@ -103,10 +109,8 @@ export default function CustomSelectField({
           </span>
         </button>
 
-        {/* Custom dropdown */}
         {isOpen && (
           <div className="absolute z-10 w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-auto">
-            {/* Clear option */}
             <button
               type="button"
               onClick={handleClear}
@@ -115,7 +119,6 @@ export default function CustomSelectField({
               {placeholder}
             </button>
             
-            {/* Options */}
             {options.map((option) => (
               <button
                 key={option.value}
