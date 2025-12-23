@@ -1,6 +1,6 @@
 import {useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ImageIcon } from 'lucide-react';
+import { ImageIcon } from 'lucide-react';
 import { userProfileController } from '../../jotai/userprofile.atom';
 import { useCreatePost } from '../../hooks/usePost';
 import { validatePost } from '../../schemas/postSchemas';
@@ -65,9 +65,6 @@ export default function CreatePost() {
     );
   };
 
-  // const handleBack = () => {
-  //   navigate('/dashboard');
-  // };
 
   const isSubmitDisabled = createPostMutation.isPending || (!content.trim() && selectedImages.length === 0);
 
@@ -108,17 +105,14 @@ export default function CreatePost() {
         </div>
       </div>
 
-      {/* Main content */}
       <div className="max-w-2xl mx-auto px-4 py-6">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          {/* Alert */}
           {alert.show && (
             <div className="mb-6">
               <Alert variant={alert.variant} message={alert.message} />
             </div>
           )}
 
-          {/* User info */}
           {id && (
             <UserHeader
               userId={id}
@@ -130,9 +124,7 @@ export default function CreatePost() {
             />
           )}
 
-          {/* Post content */}
           <div className="space-y-6">
-            {/* Text area */}
             <PostTextArea
               value={content}
               onChange={setContent}
@@ -142,7 +134,6 @@ export default function CreatePost() {
               autoFocus
             />
 
-            {/* Image upload */}
             <PostImageUpload
               onImagesChange={setSelectedImages}
               maxImages={10}
@@ -150,7 +141,6 @@ export default function CreatePost() {
             />
           </div>
 
-          {/* Post options */}
           <div className="mt-6 pt-4 border-t border-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
@@ -172,7 +162,6 @@ export default function CreatePost() {
           </div>
         </div>
 
-        {/* Tips */}
         <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h3 className="font-medium text-blue-900 mb-2 text-lg">Tips for great posts:</h3>
           <ul className="text-base text-blue-800 space-y-1">
