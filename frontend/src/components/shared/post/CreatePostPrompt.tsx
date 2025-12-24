@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { userProfileController } from '../../../jotai/userprofile.atom';
-import CreatePostModal from '../modals/CreatePostModal';
+import { userProfileController } from '@jotai/userprofile.atom';
+import CreatePostModal from '@components/shared/modals/CreatePostModal';
 
 interface CreatePostPromptProps {
   userInitial?: string;

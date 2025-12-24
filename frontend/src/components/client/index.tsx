@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react"
-import { userProfileController } from "../../jotai/userprofile.atom"
-import { getProfile } from "../../api/profile.api"
-import { FullScreenLoader } from "../shared/loading"
+import { userProfileController } from "@jotai/userprofile.atom"
+import { getProfile } from "@api/profile.api"
+import { FullScreenLoader } from "@components/shared/loading"
 
 interface ClientComponentProps {
     children: ReactNode;

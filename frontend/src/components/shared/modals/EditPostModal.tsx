@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { X, Edit3 } from 'lucide-react';
-import Button from '../buttons/Button';
-import { showToast } from '../toast';
-import PostTextArea from '../post/PostTextArea';
-import UserHeader from '../user/UserHeader';
-import { userProfileController } from '../../../jotai/userprofile.atom';
+import Button from '@components/shared/buttons/Button';
+import { showToast } from '@components/shared/toast';
+import PostTextArea from '@components/shared/post/PostTextArea';
+import UserHeader from '@components/shared/user/UserHeader';
+import { userProfileController } from '@jotai/userprofile.atom';
 
 interface EditPostModalProps {
   isOpen: boolean;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Users,Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useGetRecentFollowers } from '../../../hooks/useUser';
-import { userProfileController } from '../../../jotai/userprofile.atom';
+import { useGetRecentFollowers } from '@hooks/useUser';
+import { userProfileController } from '@jotai/userprofile.atom';
 import { formatDistanceToNow } from 'date-fns';
 
 interface RecentFollower {

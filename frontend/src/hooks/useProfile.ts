@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getProfile, getProfileById, updateProfile, deleteProfile, getUserStats, getUserStatsById } from '../api/profile.api';
-import type { ProfileFormData } from '../schemas/profileSchemas';
-import { userProfileController } from '../jotai/userprofile.atom';
+import { getProfile, getProfileById, updateProfile, deleteProfile, getUserStats, getUserStatsById } from '@api/profile.api';
+import type { ProfileFormData } from '@schemas/profileSchemas';
+import { userProfileController } from '@jotai/userprofile.atom';
 
 export const PROFILE_QUERY_KEY = ['profile'];
 export const USER_STATS_QUERY_KEY = ['userStats'];

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search } from 'lucide-react';
-import SearchResults from '../search/SearchResults';
-import { useSearchUsers } from '../../../hooks/useSearch';
+import SearchResults from '@components/shared/search/SearchResults';
+import { useSearchUsers } from '@hooks/useSearch';
 import { useNavigate } from 'react-router-dom';
 
 interface SearchBarProps {

@@ -2,13 +2,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Loader2, TrendingUp, Users } from 'lucide-react';
 import PostCardWithSlider from './PostCardWithSlider';
 import PostSkeleton from './PostSkeleton';
-import Button from '../buttons/Button';
+import Button from '@components/shared/buttons/Button';
 import ShareModal from './ShareModal';
-import DeleteConfirmModal from '../modals/DeleteConfirmModal';
-import EditPostModal from '../modals/EditPostModal';
-import { showToast } from '../toast';
-import EmptyState from '../states/EmptyState';
-import ErrorState from '../states/ErrorState';
+import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
+import EditPostModal from '@components/shared/modals/EditPostModal';
+import { showToast } from '@components/shared/toast';
+import EmptyState from '@components/shared/states/EmptyState';
+import ErrorState from '@components/shared/states/ErrorState';
 import { 
   useInfinitePosts, 
   useInfiniteTrendingPosts, 
@@ -17,7 +17,7 @@ import {
   useToggleShare, 
   useDeletePost, 
   useUpdatePost 
-} from '../../../hooks/usePost';
+} from '@hooks/usePost';
 
 type FeedType = 'general' | 'trending' | 'followers';
 

@@ -1,11 +1,11 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MapPin, Heart, MessageCircle, Share2, Edit, Loader2, UserPlus, UserMinus, Users } from 'lucide-react';
-import { userController } from '../../../jotai/user.atom';
-import { userProfileController } from '../../../jotai/userprofile.atom';
-import { useGetUserStats, useGetProfileById, useGetUserStatsById } from '../../../hooks/useProfile';
-import { useFollowUser, useUnfollowUser, useGetFollowStatus } from '../../../hooks/useUser';
-import Button from '../buttons/Button';
+import { userController } from '@jotai/user.atom';
+import { userProfileController } from '@jotai/userprofile.atom';
+import { useGetUserStats, useGetProfileById, useGetUserStatsById } from '@hooks/useProfile';
+import { useFollowUser, useUnfollowUser, useGetFollowStatus } from '@hooks/useUser';
+import Button from '@components/shared/buttons/Button';
 
 const UserProfileCard: React.FC = () => {
   const navigate = useNavigate();

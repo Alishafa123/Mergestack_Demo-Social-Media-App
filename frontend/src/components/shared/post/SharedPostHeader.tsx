@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import PostOptionsDropdown from './PostOptionsDropdown';
-import DeleteConfirmModal from '../modals/DeleteConfirmModal';
-import { userProfileController } from '../../../jotai/userprofile.atom';
-import type { Post } from '../../../api/post.api';
+import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
+import { userProfileController } from '@jotai/userprofile.atom';
+import type { Post } from '@api/post.api';
 
 interface SharedPostHeaderProps {
   post: Post;

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
-import { createPost, getPosts, getPost, updatePost, deletePost, toggleLike, sharePost, unsharePost, getTrendingPosts, getUserTopPosts, getFollowersFeed } from '../api/post.api';
-import type { CreatePostData, PostsResponse } from '../api/post.api';
+import { createPost, getPosts, getPost, updatePost, deletePost, toggleLike, sharePost, unsharePost, getTrendingPosts, getUserTopPosts, getFollowersFeed } from '@api/post.api';
+import type { CreatePostData, PostsResponse } from '@api/post.api';
 import { USER_STATS_QUERY_KEY } from './useProfile';
 
 export const POST_QUERY_KEY = ['posts'];

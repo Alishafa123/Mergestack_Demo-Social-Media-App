@@ -1,5 +1,5 @@
-import api from "../services/axios";
-import type { ProfileFormData } from "../schemas/profileSchemas";
+import api from "@services/axios";
+import type { ProfileFormData } from "@schemas/profileSchemas";
 
 export interface SearchUser {
   id: string;

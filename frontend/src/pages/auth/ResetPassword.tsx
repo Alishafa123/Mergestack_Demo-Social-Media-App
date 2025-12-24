@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useResetPassword } from "../../hooks/useAuth";
-import { showToast } from "../../components/shared/toast";
-import { BackgroundDesign } from "../../components/shared/backgrounds";
-import AuthIcon from "../../components/shared/Icons/AuthIcon";
-import Button from "../../components/shared/buttons/Button";
-import { Input } from "../../components/shared/form";
-import { resetPasswordSchema } from "../../schemas/authSchemas";
-import type { ResetPasswordFormData } from "../../schemas/authSchemas";
+import { useResetPassword } from "@hooks/useAuth";
+import { showToast } from "@components/shared/toast";
+import { BackgroundDesign } from "@components/shared/backgrounds";
+import AuthIcon from "@components/shared/Icons/AuthIcon";
+import Button from "@components/shared/buttons/Button";
+import { Input } from "@components/shared/form";
+import { resetPasswordSchema } from "@schemas/authSchemas";
+import type { ResetPasswordFormData } from "@schemas/authSchemas";
 import { Link } from "react-router-dom";
 
 export default function ResetPassword() {

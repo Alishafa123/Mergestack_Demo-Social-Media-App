@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { userController } from '../jotai/user.atom';
-import { AuthUtils } from '../utils/auth';
-import { userProfileController } from '../jotai/userprofile.atom';
-import { showToast } from '../components/shared/toast';
-import { loginUser, signupUser, forgotPassword, resetPassword } from '../api/auth.api';
-import type { LoginFormData, SignupFormData, ForgotPasswordFormData, ResetPasswordFormData } from '../schemas/authSchemas';
+import { userController } from '@jotai/user.atom';
+import { AuthUtils } from '@utils/auth';
+import { userProfileController } from '@jotai/userprofile.atom';
+import { showToast } from '@components/shared/toast';
+import { loginUser, signupUser, forgotPassword, resetPassword } from '@api/auth.api';
+import type { LoginFormData, SignupFormData, ForgotPasswordFormData, ResetPasswordFormData } from '@schemas/authSchemas';
 
 interface User {
   id: string;

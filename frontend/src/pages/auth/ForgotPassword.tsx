@@ -1,12 +1,12 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForgotPassword } from "../../hooks/useAuth";
-import { BackgroundDesign } from "../../components/shared/backgrounds";
-import AuthIcon from "../../components/shared/Icons/AuthIcon";
-import Button from "../../components/shared/buttons/Button";
-import { Input } from "../../components/shared/form";
-import { forgotPasswordSchema } from "../../schemas/authSchemas";
-import type { ForgotPasswordFormData } from "../../schemas/authSchemas";
+import { useForgotPassword } from "@hooks/useAuth";
+import { BackgroundDesign } from "@components/shared/backgrounds";
+import AuthIcon from "@components/shared/Icons/AuthIcon";
+import Button from "@components/shared/buttons/Button";
+import { Input } from "@components/shared/form";
+import { forgotPasswordSchema } from "@schemas/authSchemas";
+import type { ForgotPasswordFormData } from "@schemas/authSchemas";
 import { Link } from "react-router-dom";
 
 export default function ForgotPassword() {

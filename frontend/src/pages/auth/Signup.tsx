@@ -1,13 +1,13 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
-import { useSignup } from "../../hooks/useAuth";
-import { BackgroundDesign } from "../../components/shared/backgrounds";
-import AuthIcon from "../../components/shared/Icons/AuthIcon";
-import Button from "../../components/shared/buttons/Button";
-import { Input } from "../../components/shared/form";
-import { signupSchema } from "../../schemas/authSchemas";
-import type { SignupFormData } from "../../schemas/authSchemas";
+import { useSignup } from "@hooks/useAuth";
+import { BackgroundDesign } from "@components/shared/backgrounds";
+import AuthIcon from "@components/shared/Icons/AuthIcon";
+import Button from "@components/shared/buttons/Button";
+import { Input } from "@components/shared/form";
+import { signupSchema } from "@schemas/authSchemas";
+import type { SignupFormData } from "@schemas/authSchemas";
 import { Link } from "react-router-dom";
 
 export default function Signup() {
