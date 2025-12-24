@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Edit, Eye } from "lucide-react";
 import Navbar from "../../components/shared/navbar/Navbar";
-import Alert from "../../components/shared/Alert";
+import { showToast } from "../../components/shared/toast";
 import Button from "../../components/shared/buttons/Button";
 import { CommonInput, CommonDateField, CustomSelectField, TextAreaField } from "../../components/shared/form";
 import ProfileImageUpload from "../../components/shared/form/ProfileImageUpload";
@@ -12,12 +12,6 @@ import { profileSchema } from "../../schemas/profileSchemas";
 import type { ProfileFormData } from "../../schemas/profileSchemas";
 import { useUpdateProfile } from "../../hooks/useProfile";
 import { userProfileController } from "../../jotai/userprofile.atom";
-
-interface AlertState {
-  show: boolean;
-  variant: 'success' | 'error';
-  message: string;
-}
 
 const genderOptions = [
   { value: 'male', label: 'Male' },
@@ -36,13 +30,7 @@ export default function Profile() {
   
   
   const navigate = useNavigate();
-  const [alert, setAlert] = useState<AlertState>({
-    show: false,
-    variant: 'success',
-    message: ''
-  });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
   const updateProfileMutation = useUpdateProfile();
 
   const {
@@ -71,15 +59,6 @@ export default function Profile() {
     ? `${city}, ${country}` 
     : city || country || null;
 
-
-
-  const showAlert = (variant: 'success' | 'error', message: string) => {
-    setAlert({ show: true, variant, message });
-    setTimeout(() => {
-      setAlert(prev => ({ ...prev, show: false }));
-    }, 5000);
-  };
-
   const onSubmit = (data: ProfileFormData) => {
     const submitData = {
       ...data,
@@ -88,12 +67,14 @@ export default function Profile() {
 
     updateProfileMutation.mutate(submitData, {
       onSuccess: () => {
-        showAlert('success', 'Profile updated successfully!');
+        showToast.success('Profile updated successfully! 👤');
         setSelectedFile(null);
+        // Switch back to view mode after successful update
+        setSearchParams({ mode: 'view' });
       },
       onError: (error: any) => {
         const errorMessage = error?.response?.data?.message || 'Failed to update profile. Please try again.';
-        showAlert('error', errorMessage);
+        showToast.error(errorMessage);
       }
     });
   };
@@ -105,6 +86,18 @@ export default function Profile() {
   const handleModeToggle = () => {
     const newMode = isEditMode ? 'view' : 'edit';
     setSearchParams({ mode: newMode });
+    
+    // Clear selected file when switching modes
+    if (newMode === 'view') {
+      setSelectedFile(null);
+    }
+  };
+
+  const getButtonText = () => {
+    if (updateProfileMutation.isPending) {
+      return 'Updating profile...';
+    }
+    return 'Update Profile';
   };
 
   const renderViewMode = () => (
@@ -295,7 +288,7 @@ export default function Profile() {
           fullWidth
           size="lg"
         >
-          {updateProfileMutation.isPending ? "Updating Profile..." : "Update Profile"}
+          {getButtonText()}
         </Button>
       </div>
     </form>
@@ -330,10 +323,6 @@ export default function Profile() {
                 </span>
               </div>
             </div>
-
-            {alert.show && (
-              <Alert variant={alert.variant} message={alert.message} />
-            )}
 
             {isEditMode ? renderEditMode() : renderViewMode()}
           </div>

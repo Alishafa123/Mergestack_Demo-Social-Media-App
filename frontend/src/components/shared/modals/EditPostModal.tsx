@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Edit3 } from 'lucide-react';
 import Button from '../buttons/Button';
-import Alert from '../Alert';
+import { showToast } from '../toast';
 import PostTextArea from '../post/PostTextArea';
 import UserHeader from '../user/UserHeader';
 import { userProfileController } from '../../../jotai/userprofile.atom';
@@ -26,12 +26,6 @@ interface EditPostModalProps {
   };
 }
 
-interface AlertState {
-  show: boolean;
-  variant: 'success' | 'error';
-  message: string;
-}
-
 const EditPostModal: React.FC<EditPostModalProps> = ({
   isOpen,
   onClose,
@@ -40,11 +34,6 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
   post
 }) => {
   const [content, setContent] = useState('');
-  const [alert, setAlert] = useState<AlertState>({
-    show: false,
-    variant: 'success',
-    message: ''
-  });
 
   const {
     first_name,
@@ -62,28 +51,21 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
     }
   }, [isOpen, post]);
 
-  const showAlert = (variant: 'success' | 'error', message: string) => {
-    setAlert({ show: true, variant, message });
-    setTimeout(() => {
-      setAlert(prev => ({ ...prev, show: false }));
-    }, 5000);
-  };
-
   const handleSave = () => {
     const trimmedContent = content.trim();
     
     if (!trimmedContent) {
-      showAlert('error', 'Post content cannot be empty');
+      showToast.error('Post content cannot be empty');
       return;
     }
 
     if (trimmedContent.length > 2000) {
-      showAlert('error', 'Post content cannot exceed 2000 characters');
+      showToast.error('Post content cannot exceed 2000 characters');
       return;
     }
 
     if (trimmedContent === (post?.content || '').trim()) {
-      showAlert('error', 'No changes detected');
+      showToast.warning('No changes detected');
       return;
     }
 
@@ -92,8 +74,14 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
 
   const handleClose = () => {
     setContent('');
-    setAlert({ show: false, variant: 'success', message: '' });
     onClose();
+  };
+
+  const getButtonText = () => {
+    if (isLoading) {
+      return 'Saving changes...';
+    }
+    return 'Save Changes';
   };
 
   const displayName = first_name && last_name
@@ -124,13 +112,6 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
 
         {/* Content */}
         <div className="p-6 max-h-[calc(90vh-140px)] overflow-y-auto">
-          {/* Alert */}
-          {alert.show && (
-            <div className="mb-4">
-              <Alert variant={alert.variant} message={alert.message} />
-            </div>
-          )}
-
           {/* User info */}
           <UserHeader
             userId={post.user.id}
@@ -176,7 +157,7 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
               disabled={isLoading || !content.trim()}
               className="px-8 py-2 text-base"
             >
-              {isLoading ? 'Saving...' : 'Save Changes'}
+              {getButtonText()}
             </Button>
           </div>
         </div>

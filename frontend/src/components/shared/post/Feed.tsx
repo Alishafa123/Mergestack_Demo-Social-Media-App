@@ -6,6 +6,7 @@ import Button from '../buttons/Button';
 import ShareModal from './ShareModal';
 import DeleteConfirmModal from '../modals/DeleteConfirmModal';
 import EditPostModal from '../modals/EditPostModal';
+import { showToast } from '../toast';
 import EmptyState from '../states/EmptyState';
 import ErrorState from '../states/ErrorState';
 import { 
@@ -143,11 +144,14 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
         { postId: selectedPost.id, content },
         {
           onSuccess: () => {
+            showToast.success('Post updated successfully! ✏️');
             setEditModalOpen(false);
             setSelectedPost(null);
           },
-          onError: (error) => {
+          onError: (error: any) => {
             console.error('Failed to update post:', error);
+            const errorMessage = error?.response?.data?.message || 'Failed to update post. Please try again.';
+            showToast.error(errorMessage);
           }
         }
       );

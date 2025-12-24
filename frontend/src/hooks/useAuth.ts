@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { userController } from '../jotai/user.atom';
 import { AuthUtils } from '../utils/auth';
 import { userProfileController } from '../jotai/userprofile.atom';
+import { showToast } from '../components/shared/toast';
 import { loginUser, signupUser, forgotPassword, resetPassword } from '../api/auth.api';
 import type { LoginFormData, SignupFormData, ForgotPasswordFormData, ResetPasswordFormData } from '../schemas/authSchemas';
 
@@ -39,14 +40,18 @@ interface AuthResponse {
 
 
 export const useLogin = () => {
+  const navigate = useNavigate();
+
   return useMutation<AuthResponse, Error, LoginFormData>({
     mutationFn: loginUser,
     onSuccess: (data) => {
       if (data.token && data.refreshToken && data.expiresAt) {
         AuthUtils.setTokens(data.token, data.refreshToken, data.expiresAt);
         userController.login(data.user.id, data.user.name, data.user.email);
+        showToast.success(`Welcome back, ${data.user.name}!`);
+        navigate('/dashboard');
       }
-      
+
       if (data.profile) {
         userProfileController.setUserProfile(
           data.profile.id || '',
@@ -62,21 +67,27 @@ export const useLogin = () => {
         );
       }
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Login failed:', error);
+      const errorMessage = error?.response?.data?.message || 'Login failed. Please check your credentials and try again.';
+      showToast.error(errorMessage);
     },
   });
 };
 
 export const useSignup = () => {
+  const navigate = useNavigate();
   return useMutation<AuthResponse, Error, SignupFormData>({
     mutationFn: signupUser,
     onSuccess: (data) => {
-     
-      console.log('Email confirmation required:', data.message);
+      const message = data.message || 'Account created successfully! Please check your email to verify your account.';
+      showToast.success(message, { autoClose: 8000 });
+      navigate('/login');
+
     },
-    onError: (error) => {
-      console.error('Signup failed:', error);
+    onError: (error: any) => {
+      const errorMessage = error?.response?.data?.message || 'Signup failed. Please try again.';
+      showToast.error(errorMessage);
     },
   });
 };
@@ -90,25 +101,45 @@ export const useLogout = () => {
     onSuccess: () => {
       console.log('Logged out successfully');
       AuthUtils.clearAuth();
+      showToast.info('You have been logged out successfully');
       navigate('/login');
+    },
+    onError: () => {
+      showToast.error('Failed to logout. Please try again.');
     },
   });
 };
 
 export const useForgotPassword = () => {
+    const navigate = useNavigate();
+
   return useMutation<{ success: boolean; message: string }, Error, ForgotPasswordFormData>({
     mutationFn: forgotPassword,
-    onError: (error) => {
-      console.error('Forgot password failed:', error);
+    onSuccess: (data) => {
+      const message = data.message || 'Password reset email sent successfully! Please check your inbox.';
+      showToast.success(message, { autoClose: 8000 });
+      navigate('/login');
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.response?.data?.message || 'Failed to send password reset email. Please try again.';
+      showToast.error(errorMessage);
     },
   });
 };
 
 export const useResetPassword = () => {
+  const navigate = useNavigate();
+
   return useMutation<{ success: boolean; message: string }, Error, ResetPasswordFormData & { token: string }>({
     mutationFn: resetPassword,
-    onError: (error) => {
-      console.error('Reset password failed:', error);
+    onSuccess: (data) => {
+      const message = data.message || 'Password reset successfully! You can now login with your new password.';
+      showToast.success(message, { autoClose: 8000 });
+      navigate('/login');
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.response?.data?.message || 'Failed to reset password. Please try again.';
+      showToast.error(errorMessage);
     },
   });
 };

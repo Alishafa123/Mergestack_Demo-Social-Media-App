@@ -1,30 +1,14 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigate } from "react-router-dom";
 import { useForgotPassword } from "../../hooks/useAuth";
-import Alert from "../../components/shared/Alert";
-import AuthIcon from "../../components/shared/AuthIcon";
+import AuthIcon from "../../components/shared/Icons/AuthIcon";
 import Button from "../../components/shared/buttons/Button";
 import { CommonInput } from "../../components/shared/form";
 import { forgotPasswordSchema } from "../../schemas/authSchemas";
 import type { ForgotPasswordFormData } from "../../schemas/authSchemas";
 import { Link } from "react-router-dom";
 
-interface AlertState {
-  show: boolean;
-  variant: 'success' | 'error';
-  message: string;
-}
-
 export default function ForgotPassword() {
-  const navigate = useNavigate();
-  const [alert, setAlert] = useState<AlertState>({
-    show: false,
-    variant: 'success',
-    message: ''
-  });
-
   const forgotPasswordMutation = useForgotPassword();
   
   const {
@@ -35,30 +19,15 @@ export default function ForgotPassword() {
     resolver: yupResolver(forgotPasswordSchema)
   });
 
-  const showAlert = (variant: 'success' | 'error', message: string) => {
-    setAlert({ show: true, variant, message });
-    setTimeout(() => {
-      setAlert(prev => ({ ...prev, show: false }));
-    }, 5000);
+  const onSubmit = (data: ForgotPasswordFormData) => {
+    forgotPasswordMutation.mutate(data);
   };
 
-  const onSubmit = (data: ForgotPasswordFormData) => {
-    forgotPasswordMutation.mutate(data, {
-      onSuccess: (response) => {
-        showAlert('success', response.message);
-        setTimeout(() => {
-          navigate('/login', { 
-            state: { 
-              message: 'Password reset email sent! Please check your inbox.',
-            } 
-          });
-        }, 2000);
-      },
-      onError: (error: any) => {
-        const errorMessage = error?.response?.data?.message || 'Failed to send reset email. Please try again.';
-        showAlert('error', errorMessage);
-      }
-    });
+  const getButtonText = () => {
+    if (forgotPasswordMutation.isPending) {
+      return 'Sending reset link...';
+    }
+    return 'Send Reset Link';
   };
 
   return (
@@ -78,10 +47,6 @@ export default function ForgotPassword() {
             <p className="mt-2 text-sm text-gray-600">Enter your email to receive a password reset link</p>
           </div>
           
-          {alert.show && (
-            <Alert variant={alert.variant} message={alert.message} />
-          )}
-          
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <CommonInput 
               name="email" 
@@ -95,10 +60,11 @@ export default function ForgotPassword() {
             <Button 
               type="submit" 
               loading={forgotPasswordMutation.isPending}
+              disabled={forgotPasswordMutation.isPending}
               fullWidth
               size="lg"
             >
-              {forgotPasswordMutation.isPending ? "Sending..." : "Send Reset Link"}
+              {getButtonText()}
             </Button>
             
             <div className="mt-6 text-center">

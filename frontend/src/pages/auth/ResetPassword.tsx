@@ -1,31 +1,17 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigate } from "react-router-dom";
 import { useResetPassword } from "../../hooks/useAuth";
-import Alert from "../../components/shared/Alert";
-import AuthIcon from "../../components/shared/AuthIcon";
+import { showToast } from "../../components/shared/toast";
+import AuthIcon from "../../components/shared/Icons/AuthIcon";
 import Button from "../../components/shared/buttons/Button";
 import { CommonInput } from "../../components/shared/form";
 import { resetPasswordSchema } from "../../schemas/authSchemas";
 import type { ResetPasswordFormData } from "../../schemas/authSchemas";
 import { Link } from "react-router-dom";
 
-interface AlertState {
-  show: boolean;
-  variant: 'success' | 'error';
-  message: string;
-}
-
 export default function ResetPassword() {
-  const navigate = useNavigate();
   const [token, setToken] = useState<string | null>(null);
-  const [alert, setAlert] = useState<AlertState>({
-    show: false,
-    variant: 'success',
-    message: ''
-  });
-
   const resetPasswordMutation = useResetPassword();
   
   useEffect(() => {
@@ -49,10 +35,10 @@ export default function ResetPassword() {
         });
         setToken(tokenData);
       } else {
-        showAlert('error', 'Invalid or missing reset token. Please request a new password reset link.');
+        showToast.error('Invalid or missing reset token. Please request a new password reset link.');
       }
     } else {
-      showAlert('error', 'Invalid or missing reset token. Please request a new password reset link.');
+      showToast.error('Invalid or missing reset token. Please request a new password reset link.');
     }
   }, []);
   
@@ -64,35 +50,20 @@ export default function ResetPassword() {
     resolver: yupResolver(resetPasswordSchema)
   });
 
-  const showAlert = (variant: 'success' | 'error', message: string) => {
-    setAlert({ show: true, variant, message });
-    setTimeout(() => {
-      setAlert(prev => ({ ...prev, show: false }));
-    }, 5000);
-  };
-
   const onSubmit = (data: ResetPasswordFormData) => {
     if (!token) {
-      showAlert('error', 'Invalid reset token. Please request a new password reset link.');
+      showToast.error('Invalid reset token. Please request a new password reset link.');
       return;
     }
     
-    resetPasswordMutation.mutate({ ...data, token }, {
-      onSuccess: (response) => {
-        showAlert('success', response.message || 'Password reset successful! Redirecting to login...');
-        setTimeout(() => {
-          navigate('/login', { 
-            state: { 
-              message: 'Password reset successful! You can now login with your new password.',
-            } 
-          });
-        }, 3000);
-      },
-      onError: (error: any) => {
-        const errorMessage = error?.response?.data?.message || 'Failed to reset password. Please try again.';
-        showAlert('error', errorMessage);
-      }
-    });
+    resetPasswordMutation.mutate({ ...data, token });
+  };
+
+  const getButtonText = () => {
+    if (resetPasswordMutation.isPending) {
+      return 'Resetting password...';
+    }
+    return 'Reset Password';
   };
 
   return (
@@ -111,10 +82,6 @@ export default function ResetPassword() {
             <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Reset Password</h2>
             <p className="mt-2 text-sm text-gray-600">Enter your new password</p>
           </div>
-          
-          {alert.show && (
-            <Alert variant={alert.variant} message={alert.message} />
-          )}
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <CommonInput 
@@ -138,11 +105,11 @@ export default function ResetPassword() {
             <Button 
               type="submit" 
               loading={resetPasswordMutation.isPending}
+              disabled={resetPasswordMutation.isPending || !token}
               fullWidth
               size="lg"
-              disabled={!token}
             >
-              {resetPasswordMutation.isPending ? "Resetting..." : "Reset Password"}
+              {getButtonText()}
             </Button>
             
             <div className="mt-6 text-center">

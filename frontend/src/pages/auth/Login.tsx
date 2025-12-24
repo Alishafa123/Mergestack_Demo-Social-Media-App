@@ -1,36 +1,23 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useLogin } from "../../hooks/useAuth";
-import Alert from "../../components/shared/Alert";
-import AuthIcon from "../../components/shared/AuthIcon";
+import { showToast } from "../../components/shared/toast";
+import AuthIcon from "../../components/shared/Icons/AuthIcon";
 import Button from "../../components/shared/buttons/Button";
 import { CommonInput } from "../../components/shared/form";
 import { loginSchema } from "../../schemas/authSchemas";
 import type { LoginFormData } from "../../schemas/authSchemas";
 import { Link } from "react-router-dom";
 
-interface AlertState {
-  show: boolean;
-  variant: 'success' | 'error';
-  message: string;
-}
-
 export default function Login() {
-  const navigate = useNavigate();
   const location = useLocation();
-  const [alert, setAlert] = useState<AlertState>({
-    show: false,
-    variant: 'success',
-    message: ''
-  });
-  
   const loginMutation = useLogin();
   
   useEffect(() => {
     if (location.state?.message) {
-      showAlert('success', location.state.message);
+      showToast.success(location.state.message);
       window.history.replaceState({}, document.title);
     }
   }, [location]);
@@ -43,26 +30,15 @@ export default function Login() {
     resolver: yupResolver(loginSchema)
   });
 
-  const showAlert = (variant: 'success' | 'error', message: string) => {
-    setAlert({ show: true, variant, message });
-    setTimeout(() => {
-      setAlert(prev => ({ ...prev, show: false }));
-    }, 5000);
+  const onSubmit = (data: LoginFormData) => {
+    loginMutation.mutate(data);
   };
 
-  const onSubmit = (data: LoginFormData) => {
-    loginMutation.mutate(data, {
-      onSuccess: () => {
-        showAlert('success', 'Login successful! Welcome back.');
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 1000);
-      },
-      onError: (error: any) => {
-        const errorMessage = error?.response?.data?.message || 'Invalid credentials. Please try again.';
-        showAlert('error', errorMessage);
-      }
-    });
+  const getButtonText = () => {
+    if (loginMutation.isPending) {
+      return 'Signing in...';
+    }
+    return 'Sign in';
   };
 
   return (
@@ -81,10 +57,6 @@ export default function Login() {
             <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Welcome Back</h2>
             <p className="mt-2 text-sm text-gray-600">Sign in to your account to continue</p>
           </div>
-          
-          {alert.show && (
-            <Alert variant={alert.variant} message={alert.message} />
-          )}
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <CommonInput 
@@ -105,10 +77,11 @@ export default function Login() {
             <Button 
               type="submit" 
               loading={loginMutation.isPending}
+              disabled={loginMutation.isPending}
               fullWidth
               size="lg"
             >
-              {loginMutation.isPending ? "Signing in..." : "Sign in"}
+              {getButtonText()}
             </Button>
 
             <div className="text-right">

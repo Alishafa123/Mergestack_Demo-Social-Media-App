@@ -1,30 +1,16 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import { useSignup } from "../../hooks/useAuth";
-import Alert from "../../components/shared/Alert";
-import AuthIcon from "../../components/shared/AuthIcon";
+import AuthIcon from "../../components/shared/Icons/AuthIcon";
 import Button from "../../components/shared/buttons/Button";
 import { CommonInput } from "../../components/shared/form";
 import { signupSchema } from "../../schemas/authSchemas";
 import type { SignupFormData } from "../../schemas/authSchemas";
 import { Link } from "react-router-dom";
 
-interface AlertState {
-  show: boolean;
-  variant: 'success' | 'error';
-  message: string;
-}
-
 export default function Signup() {
   const navigate = useNavigate();
-  const [alert, setAlert] = useState<AlertState>({
-    show: false,
-    variant: 'success',
-    message: ''
-  });
-
   const signupMutation = useSignup();
   
   const {
@@ -35,31 +21,24 @@ export default function Signup() {
     resolver: yupResolver(signupSchema)
   });
 
-  const showAlert = (variant: 'success' | 'error', message: string) => {
-    setAlert({ show: true, variant, message });
-    setTimeout(() => {
-      setAlert(prev => ({ ...prev, show: false }));
-    }, 5000);
-  };
-
   const onSubmit = (data: SignupFormData) => {
     signupMutation.mutate(data, {
-      onSuccess: (response) => {
-        showAlert('success', response.message || 'Please check your email to confirm your account before logging in.');
-        setTimeout(() => {
-          navigate('/login', { 
-            state: { 
-              message: 'Account created! Please check your email and confirm your account before logging in.',
-              email: data.email 
-            } 
-          });
-        }, 2000);
-      },
-      onError: (error: any) => {
-        const errorMessage = error?.response?.data?.message || 'Failed to create account. Please try again.';
-        showAlert('error', errorMessage);
+      onSuccess: () => {
+        navigate('/login', { 
+          state: { 
+            message: 'Account created! Please check your email and confirm your account before logging in.',
+            email: data.email 
+          } 
+        });
       }
     });
+  };
+
+  const getButtonText = () => {
+    if (signupMutation.isPending) {
+      return 'Creating account...';
+    }
+    return 'Create Account';
   };
 
   return (
@@ -78,10 +57,6 @@ export default function Signup() {
             <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Create Account</h2>
             <p className="mt-2 text-sm text-gray-600">Join us and start your journey</p>
           </div>
-          
-          {alert.show && (
-            <Alert variant={alert.variant} message={alert.message} />
-          )}
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <CommonInput 
@@ -120,10 +95,11 @@ export default function Signup() {
             <Button 
               type="submit" 
               loading={signupMutation.isPending}
+              disabled={signupMutation.isPending}
               fullWidth
               size="lg"
             >
-              {signupMutation.isPending ? "Creating Account..." : "Create Account"}
+              {getButtonText()}
             </Button>
             
             <div className="mt-6 text-center">

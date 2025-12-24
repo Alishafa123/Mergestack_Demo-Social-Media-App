@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { X, ImageIcon, Smile, MapPin, Calendar } from 'lucide-react';
+import { X, ImageIcon } from 'lucide-react';
 import { userProfileController } from '../../../jotai/userprofile.atom';
 import { useCreatePost } from '../../../hooks/usePost';
 import { validatePost } from '../../../schemas/postSchemas';
+import { showToast } from '../toast';
 import Button from '../buttons/Button';
-import Alert from '../Alert';
 import PostTextArea from '../post/PostTextArea';
 import PostImageUpload from '../post/PostImageUpload';
 import UserHeader from '../user/UserHeader';
@@ -12,12 +12,6 @@ import UserHeader from '../user/UserHeader';
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
-}
-
-interface AlertState {
-  show: boolean;
-  variant: 'success' | 'error';
-  message: string;
 }
 
 const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) => {
@@ -36,24 +30,12 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
   const createPostMutation = useCreatePost();
   const [content, setContent] = useState('');
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  const [alert, setAlert] = useState<AlertState>({
-    show: false,
-    variant: 'success',
-    message: ''
-  });
-
-  const showAlert = (variant: 'success' | 'error', message: string) => {
-    setAlert({ show: true, variant, message });
-    setTimeout(() => {
-      setAlert(prev => ({ ...prev, show: false }));
-    }, 5000);
-  };
 
   const handleSubmit = async () => {
     const validation = validatePost(content, selectedImages);
     
     if (!validation.isValid) {
-      showAlert('error', validation.errors[0]);
+      showToast.error(validation.errors[0]);
       return;
     }
 
@@ -64,14 +46,15 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
       },
       {
         onSuccess: () => {
-          showAlert('success', 'Post created successfully!');
+          showToast.success('Post created successfully! 🎉');
+          
           setTimeout(() => {
             handleClose();
           }, 1500);
         },
         onError: (error: any) => {
           const errorMessage = error?.response?.data?.message || 'Failed to create post. Please try again.';
-          showAlert('error', errorMessage);
+          showToast.error(errorMessage);
         }
       }
     );
@@ -80,11 +63,21 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
   const handleClose = () => {
     setContent('');
     setSelectedImages([]);
-    setAlert({ show: false, variant: 'success', message: '' });
     onClose();
   };
 
   const isSubmitDisabled = createPostMutation.isPending || (!content.trim() && selectedImages.length === 0);
+
+  const getButtonText = () => {
+    if (createPostMutation.isPending) {
+      const hasImages = selectedImages.length > 0;
+      if (hasImages) {
+        return `Publishing with ${selectedImages.length} image${selectedImages.length > 1 ? 's' : ''}...`;
+      }
+      return 'Publishing...';
+    }
+    return 'Post';
+  };
 
   const displayName = first_name && last_name
     ? `${first_name} ${last_name}`
@@ -108,12 +101,6 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
         </div>
 
         <div className="p-6 max-h-[calc(90vh-140px)] overflow-y-auto">
-          {alert.show && (
-            <div className="mb-4">
-              <Alert variant={alert.variant} message={alert.message} />
-            </div>
-          )}
-
           {id && (
             <UserHeader
               userId={id}
@@ -174,7 +161,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
               loading={createPostMutation.isPending}
               className="px-8 py-2 text-base"
             >
-              {createPostMutation.isPending ? 'Publishing...' : 'Post'}
+              {getButtonText()}
             </Button>
           </div>
         </div>
