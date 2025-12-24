@@ -7,7 +7,7 @@ import Navbar from "../../components/shared/navbar/Navbar";
 import { showToast } from "../../components/shared/toast";
 import { BackgroundDesign } from "../../components/shared/backgrounds";
 import Button from "../../components/shared/buttons/Button";
-import { CommonInput, CommonDateField, CustomSelectField, TextAreaField } from "../../components/shared/form";
+import { Input, DateField, SelectField, TextAreaField } from "../../components/shared/form";
 import ProfileImageUpload from "../../components/shared/form/ProfileImageUpload";
 import { profileSchema } from "../../schemas/profileSchemas";
 import type { ProfileFormData } from "../../schemas/profileSchemas";
@@ -197,7 +197,7 @@ export default function Profile() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <CommonInput
+        <Input
           name="first_name"
           label="First Name"
           placeholder="Enter your first name"
@@ -205,7 +205,7 @@ export default function Profile() {
           errors={errors}
         />
 
-        <CommonInput
+        <Input
           name="last_name"
           label="Last Name"
           placeholder="Enter your last name"
@@ -214,7 +214,7 @@ export default function Profile() {
         />
       </div>
 
-      <CommonInput
+      <Input
         name="phone"
         label="Phone Number"
         type="tel"
@@ -224,14 +224,14 @@ export default function Profile() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <CommonDateField
+        <DateField
           name="date_of_birth"
           label="Date of Birth"
           register={register}
           errors={errors}
         />
 
-        <CustomSelectField
+        <SelectField
           name="gender"
           label="Gender"
           register={register}
@@ -252,7 +252,7 @@ export default function Profile() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <CommonInput
+        <Input
           name="city"
           label="City"
           placeholder="Enter your city"
@@ -260,7 +260,7 @@ export default function Profile() {
           errors={errors}
         />
 
-        <CommonInput
+        <Input
           name="country"
           label="Country"
           placeholder="Enter your country"

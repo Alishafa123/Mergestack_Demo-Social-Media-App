@@ -5,7 +5,7 @@ import { useSignup } from "../../hooks/useAuth";
 import { BackgroundDesign } from "../../components/shared/backgrounds";
 import AuthIcon from "../../components/shared/Icons/AuthIcon";
 import Button from "../../components/shared/buttons/Button";
-import { CommonInput } from "../../components/shared/form";
+import { Input } from "../../components/shared/form";
 import { signupSchema } from "../../schemas/authSchemas";
 import type { SignupFormData } from "../../schemas/authSchemas";
 import { Link } from "react-router-dom";
@@ -55,7 +55,7 @@ export default function Signup() {
           </div>
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <CommonInput 
+            <Input 
               name="name" 
               label="Full Name" 
               placeholder="Enter your full name"
@@ -63,7 +63,7 @@ export default function Signup() {
               errors={errors} 
             />
             
-            <CommonInput 
+            <Input 
               name="email" 
               label="Email address" 
               type="email" 
@@ -71,7 +71,7 @@ export default function Signup() {
               errors={errors} 
             />
             
-            <CommonInput 
+            <Input 
               name="password" 
               label="Password" 
               type="password" 
@@ -79,7 +79,7 @@ export default function Signup() {
               errors={errors} 
             />
             
-            <CommonInput 
+            <Input 
               name="confirmPassword"
               label="Confirm Password"
               type="password"

@@ -4,7 +4,7 @@ import { useForgotPassword } from "../../hooks/useAuth";
 import { BackgroundDesign } from "../../components/shared/backgrounds";
 import AuthIcon from "../../components/shared/Icons/AuthIcon";
 import Button from "../../components/shared/buttons/Button";
-import { CommonInput } from "../../components/shared/form";
+import { Input } from "../../components/shared/form";
 import { forgotPasswordSchema } from "../../schemas/authSchemas";
 import type { ForgotPasswordFormData } from "../../schemas/authSchemas";
 import { Link } from "react-router-dom";
@@ -44,7 +44,7 @@ export default function ForgotPassword() {
           </div>
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <CommonInput 
+            <Input 
               name="email" 
               label="Email address" 
               type="email" 

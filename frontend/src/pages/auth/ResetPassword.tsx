@@ -6,7 +6,7 @@ import { showToast } from "../../components/shared/toast";
 import { BackgroundDesign } from "../../components/shared/backgrounds";
 import AuthIcon from "../../components/shared/Icons/AuthIcon";
 import Button from "../../components/shared/buttons/Button";
-import { CommonInput } from "../../components/shared/form";
+import { Input } from "../../components/shared/form";
 import { resetPasswordSchema } from "../../schemas/authSchemas";
 import type { ResetPasswordFormData } from "../../schemas/authSchemas";
 import { Link } from "react-router-dom";
@@ -80,7 +80,7 @@ export default function ResetPassword() {
           </div>
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <CommonInput 
+            <Input 
               name="password" 
               label="New Password" 
               type="password" 
@@ -89,7 +89,7 @@ export default function ResetPassword() {
               errors={errors} 
             />
             
-            <CommonInput 
+            <Input 
               name="confirmPassword"
               label="Confirm New Password"
               type="password"

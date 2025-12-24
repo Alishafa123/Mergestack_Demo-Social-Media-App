@@ -7,7 +7,7 @@ import { showToast } from "../../components/shared/toast";
 import { BackgroundDesign } from "../../components/shared/backgrounds";
 import AuthIcon from "../../components/shared/Icons/AuthIcon";
 import Button from "../../components/shared/buttons/Button";
-import { CommonInput } from "../../components/shared/form";
+import { Input } from "../../components/shared/form";
 import { loginSchema } from "../../schemas/authSchemas";
 import type { LoginFormData } from "../../schemas/authSchemas";
 import { Link } from "react-router-dom";
@@ -55,14 +55,14 @@ export default function Login() {
           </div>
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <CommonInput 
+            <Input 
               name="email" 
               label="Email address" 
               type="email" 
               register={register} 
               errors={errors} 
             />
-            <CommonInput 
+            <Input 
               name="password" 
               label="Password" 
               type="password" 

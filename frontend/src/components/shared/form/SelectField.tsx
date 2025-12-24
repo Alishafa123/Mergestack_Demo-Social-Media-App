@@ -6,7 +6,7 @@ interface SelectOption {
   label: string;
 }
 
-interface CustomSelectFieldProps {
+interface SelectFieldProps {
   name: string;
   label: string;
   register: UseFormRegister<any>;
@@ -18,7 +18,7 @@ interface CustomSelectFieldProps {
   defaultValue?: string;
 }
 
-export default function CustomSelectField({
+export default function SelectField({
   name,
   label,
   register,
@@ -28,7 +28,7 @@ export default function CustomSelectField({
   validation,
   className = '',
   defaultValue = ''
-}: CustomSelectFieldProps) {
+}: SelectFieldProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(defaultValue);
   const [selectedLabel, setSelectedLabel] = useState(() => {
