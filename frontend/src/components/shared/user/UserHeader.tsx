@@ -21,25 +21,25 @@ const UserHeader: React.FC<UserHeaderProps> = ({
   const navigate = useNavigate();
   const sizeClasses = {
     sm: {
-      container: "space-x-2",
-      avatar: "w-8 h-8",
-      text: "text-sm",
-      name: "font-medium",
-      subtitle: "text-xs"
-    },
-    md: {
       container: "space-x-3",
-      avatar: "w-12 h-12",
-      text: "text-lg",
-      name: "font-semibold",
+      avatar: "w-10 h-10",
+      text: "text-base",
+      name: "font-medium",
       subtitle: "text-sm"
     },
-    lg: {
+    md: {
       container: "space-x-4",
-      avatar: "w-16 h-16",
+      avatar: "w-14 h-14",
       text: "text-xl",
-      name: "font-bold text-lg",
+      name: "font-semibold",
       subtitle: "text-base"
+    },
+    lg: {
+      container: "space-x-5",
+      avatar: "w-18 h-18",
+      text: "text-2xl",
+      name: "font-bold text-xl",
+      subtitle: "text-lg"
     }
   };
 

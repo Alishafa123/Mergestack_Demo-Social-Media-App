@@ -11,6 +11,7 @@ const buttonVariants = cva(
         secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500 border border-gray-300",
         outline: "border border-blue-600 text-blue-600 hover:bg-blue-50 focus:ring-blue-500",
         ghost: "text-gray-700 hover:bg-gray-100 focus:ring-gray-500",
+        tab: "text-gray-600 hover:text-gray-900 hover:bg-gray-50 border-b-2 border-transparent rounded-none transition-all duration-200 focus:ring-0 focus:ring-offset-0 focus:outline-none",
         danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm",
         success: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-sm",
         warning: "bg-yellow-500 text-white hover:bg-yellow-600 focus:ring-yellow-500 shadow-sm",

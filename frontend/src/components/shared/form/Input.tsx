@@ -15,10 +15,8 @@ interface CommonInputProps {
   errors: FieldErrors;
   validation?: RegisterOptions;
   className?: string;
-  // Select specific props
   options?: SelectOption[];
   selectPlaceholder?: string;
-  // Password specific props
   showPasswordToggle?: boolean;
 }
 

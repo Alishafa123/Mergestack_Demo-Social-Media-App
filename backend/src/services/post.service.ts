@@ -9,17 +9,11 @@ export const createPost = async (
   imageUrls: string[] = []
 ): Promise<PostModel> => {
   try {
-    console.log('Creating post for user:', userId);
-    console.log('Content:', content);
-    console.log('Image URLs:', imageUrls);
     
     const post = await Post.create({
       user_id: userId,
       content: content || undefined,
     });
-
-    console.log('Post created with ID:', post.id);
-    console.log('Post data:', post.toJSON());
 
     if (imageUrls.length > 0) {
       console.log(`Creating ${imageUrls.length} post images...`);
@@ -32,10 +26,8 @@ export const createPost = async (
         });
       });
       await Promise.all(imagePromises);
-      console.log('All images created successfully');
     }
 
-    console.log('Fetching complete post...');
     return await getPost(post.id);
   } catch (error) {
     console.error('Error in createPost:', error);
@@ -389,13 +381,11 @@ export const deletePost = async (postId: string, userId: string): Promise<{ mess
 
     const postData = post.toJSON() as PostModel;
 
-    // Delete images from storage
     if (postData.images && postData.images.length > 0) {
       const imageUrls = postData.images.map(img => img.image_url);
       await StorageService.deletePostImages(imageUrls);
     }
 
-    // Delete post (cascade will handle related records)
     await Post.destroy({
       where: { id: postId, user_id: userId }
     });
@@ -463,7 +453,6 @@ export const getTrendingPosts = async (
   try {
     const offset = (page - 1) * limit;
 
-    // Get original trending posts
     const originalPosts = await Post.findAll({
       include: [
         {
@@ -500,7 +489,7 @@ export const getTrendingPosts = async (
       ],
     });
 
-    // Get shared posts (trending by share activity)
+    // Get shared posts
     const sharedPosts = await PostShare.findAll({
       include: [
         {
@@ -548,7 +537,7 @@ export const getTrendingPosts = async (
       order: [['createdAt', 'DESC']],
     });
 
-    // Combine and sort by trending score (likes_count + shares_count, then by timeline_date)
+    // Combine and sort by likes count (most liked posts first)
     const timeline = [
       ...originalPosts.map(post => {
         const postData = post.toJSON() as any;
@@ -556,7 +545,6 @@ export const getTrendingPosts = async (
           ...postData,
           type: 'original',
           timeline_date: post.createdAt,
-          trending_score: post.likes_count + post.shares_count,
           isLiked: currentUserId ? !!(postData.userLike) : false,
           isShared: currentUserId ? !!(postData.userShare) : false,
           userLike: undefined,
@@ -570,7 +558,6 @@ export const getTrendingPosts = async (
           ...postData,
           type: 'shared',
           timeline_date: share.createdAt,
-          trending_score: postData.likes_count + postData.shares_count,
           shared_by: shareData.user,
           shared_content: shareData.shared_content,
           shared_at: share.createdAt,
@@ -581,22 +568,18 @@ export const getTrendingPosts = async (
         };
       })
     ].sort((a, b) => {
-      // First sort by trending score (likes + shares)
-      if (b.trending_score !== a.trending_score) {
-        return b.trending_score - a.trending_score;
+      if (b.likes_count !== a.likes_count) {
+        return b.likes_count - a.likes_count;
       }
-      // Then by timeline date for posts with same score
-      return new Date(b.timeline_date).getTime() - new Date(a.timeline_date).getTime();
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
-    // Apply pagination
     const paginatedPosts = timeline.slice(offset, offset + limit);
 
     return {
       posts: paginatedPosts.map(post => {
         delete post.userLike;
         delete post.userShare;
-        delete post.trending_score;
         return post as PostModel;
       }),
       total: timeline.length,

@@ -28,32 +28,32 @@ const TopPostItem: React.FC<TopPostItemProps> = ({ post, rank, onClick }) => {
       onClick={() => onClick?.(post.id)}
     >
       {/* Rank Badge */}
-      <div className="absolute -top-2 -left-2 w-7 h-7 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-md">
-        <span className="text-white text-xs font-bold">#{rank}</span>
+      <div className="absolute -top-2 -left-2 w-8 h-8 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-md">
+        <span className="text-white text-sm font-bold">#{rank}</span>
       </div>
 
       {/* Post Content */}
-      <p className="text-sm text-gray-700 mb-3 leading-relaxed">
+      <p className="text-base text-gray-700 mb-4 leading-relaxed">
         {truncateText(post.content)}
       </p>
 
       {/* Post Stats */}
-      <div className="flex items-center justify-between text-xs">
-        <div className="flex items-center space-x-3">
+      <div className="flex items-center justify-between text-sm">
+        <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-1 text-red-500">
-            <Heart size={14} className="fill-current" />
+            <Heart size={16} className="fill-current" />
             <span className="font-semibold">{post.likes_count}</span>
           </div>
           <div className="flex items-center space-x-1 text-blue-500">
-            <MessageCircle size={14} />
+            <MessageCircle size={16} />
             <span className="font-medium">{post.comments_count}</span>
           </div>
           <div className="flex items-center space-x-1 text-green-500">
-            <Share2 size={14} />
+            <Share2 size={16} />
             <span className="font-medium">{post.shares_count}</span>
           </div>
         </div>
-        <span className="text-gray-400 text-xs">{post.createdAt}</span>
+        <span className="text-gray-400 text-sm">{post.createdAt}</span>
       </div>
 
       {/* Hover Effect */}

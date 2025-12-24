@@ -15,12 +15,7 @@ export const sharePost = async (
       throw err;
     }
 
-    // Check if user is trying to share their own post
-    if (post.user_id === userId) {
-      const err = new Error("You cannot share your own post") as CustomError;
-      err.status = 400;
-      throw err;
-    }
+
 
     const existingShare = await PostShare.findOne({
       where: { post_id: postId, user_id: userId }
