@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Share } from 'lucide-react';
+import { Heart, MessageCircle } from 'lucide-react';
 import Button from '../buttons/Button';
 import PostImageSlider from './PostImageSlider';
 import UserHeader from '../user/UserHeader';
@@ -7,6 +7,7 @@ import CommentSection from '../comment/CommentSection';
 import ShareDropdown from './ShareDropdown';
 import SharedPostHeader from './SharedPostHeader';
 import PostOptionsDropdown from './PostOptionsDropdown';
+import DeleteConfirmModal from '../modals/DeleteConfirmModal';
 import { userProfileController } from '../../../jotai/userprofile.atom';
 import type { Post } from '../../../api/post.api';
 
@@ -22,7 +23,8 @@ interface PostCardWithSliderProps {
   isLiked?: boolean;
   isShared?: boolean;
   showComments?: boolean;
-  useShareDropdown?: boolean;
+  isDeleting?: boolean;
+  isDeletingShare?: boolean;
 }
 
 const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
@@ -36,9 +38,11 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
   isLiked = false,
   isShared = false,
   showComments = false,
-  useShareDropdown = false
+  isDeleting = false,
+  isDeletingShare = false
 }) => {
   const [commentsExpanded, setCommentsExpanded] = useState(showComments);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { id: currentUserId } = userProfileController.useState(['id']);
   
   const displayName = post.user.profile?.first_name && post.user.profile?.last_name
@@ -57,7 +61,16 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
   };
 
   const handleDelete = () => {
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
     onDelete?.(post.id);
+    setShowDeleteModal(false);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
   };
 
   const handleEdit = () => {
@@ -70,7 +83,7 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
 
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 relative mb-8">
-      {post.type === 'shared' && <SharedPostHeader post={post} onDeleteShare={handleDeleteShare} />}
+      {post.type === 'shared' && <SharedPostHeader post={post} onDeleteShare={handleDeleteShare} isDeleting={isDeletingShare} />}
       
       <div className="p-6 pb-4">
         <div className="flex items-center justify-between">
@@ -153,30 +166,11 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
             <span className="font-medium">Comment</span>
           </Button>
 
-          {useShareDropdown ? (
-            <ShareDropdown
-              onQuickShare={() => onShare?.(post.id, isShared)}
-              onShareWithComment={() => onShareWithComment?.(post.id)}
-              isShared={isShared}
-            />
-          ) : (
-            <Button
-              variant="ghost"
-              size="md"
-              onClick={() => onShare?.(post.id, isShared)}
-              className={`flex items-center space-x-3 px-4 py-3 transition-colors ${
-                isShared ? 'text-blue-500 hover:text-blue-600' : 'text-gray-600 hover:text-blue-500'
-              }`}
-            >
-              <Share 
-                size={22} 
-                className={`transition-all duration-200 ${
-                  isShared ? 'scale-110' : 'hover:scale-105'
-                }`} 
-              />
-              <span className="font-medium">{isShared ? 'Shared' : 'Share'}</span>
-            </Button>
-          )}
+          <ShareDropdown
+            onQuickShare={() => onShare?.(post.id, isShared)}
+            onShareWithComment={() => onShareWithComment?.(post.id)}
+            isShared={isShared}
+          />
         </div>
       </div>
 
@@ -187,6 +181,15 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
           isExpanded={false}
         />
       )}
+
+      <DeleteConfirmModal
+        isOpen={showDeleteModal}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        isLoading={isDeleting}
+        title="Delete Post"
+        message="Are you sure you want to delete this post? This action cannot be undone."
+      />
     </div>
   );
 };

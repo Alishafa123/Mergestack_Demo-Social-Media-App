@@ -2,10 +2,9 @@ import { useState } from 'react';
 import { TrendingUp, Home, Users } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import Navbar from '../../components/shared/navbar/Navbar';
-import PostFeed from '../../components/shared/post/PostFeed';
-import TrendingPostsFeed from '../../components/shared/post/TrendingPostsFeed';
-import FollowersFeed from '../../components/shared/post/FollowersFeed';
+import Feed from '../../components/shared/post/Feed';
 import CreatePostPrompt from '../../components/shared/post/CreatePostPrompt';
+import Button from '../../components/shared/buttons/Button';
 import { UserProfileCard } from '../../components/shared/profile';
 import { TopPostsCard, RecentFollowersCard } from '../../components/shared/activity';
 
@@ -31,18 +30,22 @@ export default function Dashboard() {
     const isActive = activeTab === tab.id;
     
     return (
-      <button
+      <Button
         key={tab.id}
+        variant="tab"
+        size="lg"
+        leftIcon={<Icon size={20} />}
         onClick={() => setActiveTab(tab.id)}
-        className={`flex-1 flex items-center justify-center space-x-2 px-6 py-4 font-medium transition-colors ${
+        className={`flex-1 ${
           isActive
-            ? 'text-blue-600 border-b-2 border-blue-600'
-            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+            ? 'text-blue-600 border-blue-600 bg-blue-50 hover:bg-blue-100'
+            : 'border-transparent'
         }`}
+        aria-pressed={isActive}
+        role="tab"
       >
-        <Icon size={20} />
-        <span>{tab.label}</span>
-      </button>
+        {tab.label}
+      </Button>
     );
   };
 
@@ -54,7 +57,7 @@ export default function Dashboard() {
         <div className="max-w-[3000px] mx-auto">
           <div className="flex items-start gap-6 lg:gap-12">
             <div className="hidden lg:block w-[25%] flex-shrink-0">
-              <div className="sticky top-28 h-fit">
+              <div className="fixed w-[25%] top-28 h-fit">
                 <UserProfileCard />
               </div>
             </div>
@@ -69,16 +72,16 @@ export default function Dashboard() {
               </div>
 
               {activeTab === 'home' ? (
-                <PostFeed useShareDropdown={true} />
+                <Feed feedType="general" />
               ) : activeTab === 'following' ? (
-                <FollowersFeed useShareDropdown={true} />
+                <Feed feedType="followers" />
               ) : (
-                <TrendingPostsFeed useShareDropdown={true} />
+                <Feed feedType="trending" />
               )}
             </div>
 
             <div className="hidden xl:block w-[25%] flex-shrink-0">
-              <div className="sticky top-28 h-fit space-y-6">
+              <div className="fixed w-[25%] top-28 h-fit space-y-6">
                 <TopPostsCard />
                 <RecentFollowersCard />
               </div>

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Loader2, TrendingUp, Users } from 'lucide-react';
 import PostCardWithSlider from './PostCardWithSlider';
 import PostSkeleton from './PostSkeleton';
 import Button from '../buttons/Button';
@@ -8,15 +8,24 @@ import DeleteConfirmModal from '../modals/DeleteConfirmModal';
 import EditPostModal from '../modals/EditPostModal';
 import EmptyState from '../states/EmptyState';
 import ErrorState from '../states/ErrorState';
-import { useInfinitePosts, useToggleLike, useToggleShare, useDeletePost, useUpdatePost } from '../../../hooks/usePost';
+import { 
+  useInfinitePosts, 
+  useInfiniteTrendingPosts, 
+  useInfiniteFollowersFeed,
+  useToggleLike, 
+  useToggleShare, 
+  useDeletePost, 
+  useUpdatePost 
+} from '../../../hooks/usePost';
 
-interface PostFeedProps {
-  userId?: string; 
-  enableShareModal?: boolean;
-  useShareDropdown?: boolean; 
+type FeedType = 'general' | 'trending' | 'followers';
+
+interface FeedProps {
+  feedType: FeedType;
+  userId?: string;
 }
 
-const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, useShareDropdown = false }) => {
+const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
   const toggleLikeMutation = useToggleLike();
   const toggleShareMutation = useToggleShare();
   const deletePostMutation = useDeletePost();
@@ -27,6 +36,23 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<any>(null);
 
+  const generalFeedQuery = useInfinitePosts(10, userId);
+  const trendingFeedQuery = useInfiniteTrendingPosts(10);
+  const followersFeedQuery = useInfiniteFollowersFeed(10);
+
+  const getActiveQuery = () => {
+    switch (feedType) {
+      case 'general':
+        return generalFeedQuery;
+      case 'trending':
+        return trendingFeedQuery;
+      case 'followers':
+        return followersFeedQuery;
+      default:
+        return generalFeedQuery;
+    }
+  };
+
   const {
     data,
     error,
@@ -35,7 +61,55 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
     isFetchingNextPage,
     isLoading,
     isError,
-  } = useInfinitePosts(10, userId);
+  } = getActiveQuery();
+
+  // Feed configuration based on type
+  const getFeedConfig = (type: FeedType) => {
+    switch (type) {
+      case 'trending':
+        return {
+          emptyState: {
+            icon: <TrendingUp className="w-12 h-12 text-gray-400" />,
+            title: "No trending posts yet",
+            description: "Be the first to create a trending post!",
+            actionLabel: "Create Post",
+            actionPath: "/create-post",
+            showAction: true,
+          },
+          errorTitle: "Failed to load trending posts",
+          endMessage: "You've reached the end of trending posts! 🎉",
+          showLoadMoreButton: true,
+        };
+      case 'followers':
+        return {
+          emptyState: {
+            icon: <Users size={48} className="mx-auto mb-4 text-gray-400" />,
+            title: "No posts from followers",
+            description: "Follow some users to see their posts in your feed!",
+            showAction: false,
+          },
+          errorTitle: "Failed to load posts",
+          endMessage: "You've reached the end of your followers' posts!",
+          showLoadMoreButton: false,
+        };
+      case 'general':
+      default:
+        return {
+          emptyState: {
+            title: "No posts yet",
+            description: userId ? "This user hasn't posted anything yet." : "Be the first to share something!",
+            actionLabel: "Create Your First Post",
+            actionPath: "/create-post",
+            showAction: !userId,
+          },
+          errorTitle: "Failed to load posts",
+          endMessage: "You've reached the end of the feed! 🎉",
+          showLoadMoreButton: true,
+        };
+    }
+  };
+
+  const config = getFeedConfig(feedType);
 
   const handleDelete = (postId: string) => {
     const post = allPosts.find(p => p.id === postId);
@@ -91,16 +165,10 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
         isCurrentlyShared: true 
       });
     } else {
-      if (enableShareModal) {
-        const post = allPosts.find(p => p.id === postId);
-        setSelectedPost(post);
-        setShareModalOpen(true);
-      } else {
-        toggleShareMutation.mutate({ 
-          postId, 
-          isCurrentlyShared: false 
-        });
-      }
+      toggleShareMutation.mutate({ 
+        postId, 
+        isCurrentlyShared: false 
+      });
     }
   };
 
@@ -129,36 +197,38 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
     });
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - 1000 
-      ) {
-        if (hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      }
-    };
+  const handleScroll = useCallback(() => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop >=
+      document.documentElement.offsetHeight - 1000 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  useEffect(() => {
+    if (feedType === 'followers') {
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [handleScroll, feedType]);
 
   if (isLoading) {
     return (
       <div className="space-y-6">
         {Array.from({ length: 3 }).map((_, index) => (
-          <PostSkeleton key={index} />
+          <PostSkeleton key={`${feedType}-skeleton-${index}`} />
         ))}
       </div>
     );
   }
 
-  if (isError) {
+  if (isError || error) {
     return (
       <ErrorState
-        title="Failed to load posts"
+        title={config.errorTitle}
         message={error instanceof Error ? error.message : 'Something went wrong'}
       />
     );
@@ -169,20 +239,21 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
   if (allPosts.length === 0) {
     return (
       <EmptyState
-        title="No posts yet"
-        description={userId ? 'This user hasn\'t posted anything yet.' : 'Be the first to share something!'}
-        actionLabel="Create Your First Post"
-        actionPath="/create-post"
-        showAction={!userId}
+        icon={config.emptyState.icon}
+        title={config.emptyState.title}
+        description={config.emptyState.description}
+        actionLabel={config.emptyState.actionLabel}
+        actionPath={config.emptyState.actionPath}
+        showAction={config.emptyState.showAction}
       />
     );
   }
 
   return (
     <div className="space-y-6">
-      {allPosts.map((post) => (
+      {allPosts.map((post, index) => (
         <PostCardWithSlider
-          key={post.id}
+          key={`${feedType}-${post.id}-${index}`}
           post={post}
           onLike={handleLike}
           onShare={handleShare}
@@ -191,12 +262,13 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
           onEdit={handleEdit}
           onDeleteShare={handleDeleteShare}
           isLiked={post.isLiked || false} 
-          isShared={post.isShared || false} 
-          useShareDropdown={useShareDropdown}
+          isShared={post.isShared || false}
+          isDeleting={deletePostMutation.isPending && selectedPost?.id === post.id}
+          isDeletingShare={toggleShareMutation.isPending && selectedPost?.id === post.id}
         />
       ))}
 
-      {hasNextPage && (
+      {config.showLoadMoreButton && hasNextPage && (
         <div className="flex justify-center py-6">
           <Button
             onClick={() => fetchNextPage()}
@@ -217,31 +289,36 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
         </div>
       )}
 
+      {!config.showLoadMoreButton && isFetchingNextPage && (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 size={24} className="animate-spin text-blue-500" />
+          <span className="ml-2 text-gray-600">Loading more posts...</span>
+        </div>
+      )}
+
       {!hasNextPage && allPosts.length > 0 && (
         <div className="text-center py-6">
           <p className="text-gray-500 text-sm">
-            You've reached the end of the feed! 🎉
+            {config.endMessage}
           </p>
         </div>
       )}
 
-      {(enableShareModal || useShareDropdown) && (
-        <ShareModal
-          isOpen={shareModalOpen}
-          onClose={() => {
-            setShareModalOpen(false);
-            setSelectedPost(null);
-          }}
-          onShare={handleModalShare}
-          isLoading={toggleShareMutation.isPending}
-          postContent={selectedPost?.content}
-          authorName={
-            selectedPost?.user.profile?.first_name && selectedPost?.user.profile?.last_name
-              ? `${selectedPost.user.profile.first_name} ${selectedPost.user.profile.last_name}`
-              : selectedPost?.user.name
-          }
-        />
-      )}
+      <ShareModal
+        isOpen={shareModalOpen}
+        onClose={() => {
+          setShareModalOpen(false);
+          setSelectedPost(null);
+        }}
+        onShare={handleModalShare}
+        isLoading={toggleShareMutation.isPending}
+        postContent={selectedPost?.content}
+        authorName={
+          selectedPost?.user.profile?.first_name && selectedPost?.user.profile?.last_name
+            ? `${selectedPost.user.profile.first_name} ${selectedPost.user.profile.last_name}`
+            : selectedPost?.user.name
+        }
+      />
 
       <DeleteConfirmModal
         isOpen={deleteModalOpen}
@@ -268,4 +345,4 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId, enableShareModal = false, u
   );
 };
 
-export default PostFeed;
+export default Feed;

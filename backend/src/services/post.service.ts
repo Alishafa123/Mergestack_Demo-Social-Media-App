@@ -9,17 +9,11 @@ export const createPost = async (
   imageUrls: string[] = []
 ): Promise<PostModel> => {
   try {
-    console.log('Creating post for user:', userId);
-    console.log('Content:', content);
-    console.log('Image URLs:', imageUrls);
     
     const post = await Post.create({
       user_id: userId,
       content: content || undefined,
     });
-
-    console.log('Post created with ID:', post.id);
-    console.log('Post data:', post.toJSON());
 
     if (imageUrls.length > 0) {
       console.log(`Creating ${imageUrls.length} post images...`);
@@ -32,10 +26,8 @@ export const createPost = async (
         });
       });
       await Promise.all(imagePromises);
-      console.log('All images created successfully');
     }
 
-    console.log('Fetching complete post...');
     return await getPost(post.id);
   } catch (error) {
     console.error('Error in createPost:', error);
@@ -389,13 +381,11 @@ export const deletePost = async (postId: string, userId: string): Promise<{ mess
 
     const postData = post.toJSON() as PostModel;
 
-    // Delete images from storage
     if (postData.images && postData.images.length > 0) {
       const imageUrls = postData.images.map(img => img.image_url);
       await StorageService.deletePostImages(imageUrls);
     }
 
-    // Delete post (cascade will handle related records)
     await Post.destroy({
       where: { id: postId, user_id: userId }
     });

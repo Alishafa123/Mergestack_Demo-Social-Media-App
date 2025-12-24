@@ -7,7 +7,6 @@ import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import Dashboard from "../pages/dashboard/Dashboard";
 import Profile from "../pages/profile/Profile";
-import CreatePost from "../pages/posts/CreatePost";
 import UserTimeline from "../pages/user/UserTimeline";
 
 export default function AppRouter() {
@@ -72,16 +71,6 @@ export default function AppRouter() {
             <ProtectedRoute>
               <ClientComponent>
                 <Profile />
-              </ClientComponent>
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/create-post" 
-          element={
-            <ProtectedRoute>
-              <ClientComponent>
-                <CreatePost />
               </ClientComponent>
             </ProtectedRoute>
           } 

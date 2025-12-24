@@ -150,26 +150,6 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
         </div>
 
         <div className="border-t border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-2">
-              <span className="text-base font-medium text-gray-700">Add to your post</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <ImageIcon size={20} className="text-green-500" />
-              </button>
-              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <Smile size={20} className="text-yellow-500" />
-              </button>
-              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <MapPin size={20} className="text-red-500" />
-              </button>
-              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <Calendar size={20} className="text-blue-500" />
-              </button>
-            </div>
-          </div>
-
           {selectedImages.length > 0 && (
             <div className="flex items-center space-x-2 text-gray-600 mb-4">
               <ImageIcon size={16} />

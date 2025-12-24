@@ -79,7 +79,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                   className="w-12 h-12 rounded-full object-cover"
                   onError={(e) => {
                     console.log('Image failed to load:', user.profile?.profile_url);
-                    // Hide the broken image and show fallback
                     e.currentTarget.style.display = 'none';
                     if (e.currentTarget.nextElementSibling) {
                       (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';

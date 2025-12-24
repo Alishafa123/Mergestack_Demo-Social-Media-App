@@ -10,7 +10,7 @@ export const useGetPostComments = (postId: string, page: number = 1, limit: numb
     queryKey: [...COMMENT_QUERY_KEY, postId, { page, limit }],
     queryFn: () => getPostComments(postId, page, limit),
     enabled: !!postId,
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 2 * 60 * 1000, 
   });
 };
 
@@ -42,7 +42,6 @@ export const useCreateComment = () => {
         queryKey: ['posts'] 
       });
 
-      // Invalidate user stats to update UserProfileCard immediately
       queryClient.invalidateQueries({ 
         queryKey: USER_STATS_QUERY_KEY 
       });

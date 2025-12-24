@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import PostOptionsDropdown from './PostOptionsDropdown';
+import DeleteConfirmModal from '../modals/DeleteConfirmModal';
 import { userProfileController } from '../../../jotai/userprofile.atom';
 import type { Post } from '../../../api/post.api';
 
 interface SharedPostHeaderProps {
   post: Post;
   onDeleteShare?: () => void;
+  isDeleting?: boolean;
 }
 
-const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare }) => {
+const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare, isDeleting = false }) => {
   const navigate = useNavigate();
   const { id: currentUserId } = userProfileController.useState(['id']);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   if (post.type !== 'shared' || !post.shared_by) {
     return null;
@@ -34,7 +37,16 @@ const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare
   };
 
   const handleDeleteShare = () => {
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
     onDeleteShare?.();
+    setShowDeleteModal(false);
+  };
+
+  const handleCloseModal = () => {
+    setShowDeleteModal(false);
   };
 
   const handleUserClick = (userId: string) => {
@@ -94,6 +106,15 @@ const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare
           />
         )}
       </div>
+
+      <DeleteConfirmModal
+        isOpen={showDeleteModal}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmDelete}
+        isLoading={isDeleting}
+        title="Delete Shared Post"
+        message="Are you sure you want to delete this shared post? This action cannot be undone."
+      />
     </div>
   );
 };
