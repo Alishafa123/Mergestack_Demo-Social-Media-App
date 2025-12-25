@@ -3,6 +3,150 @@ import type { CustomError, PostModel } from "../types/index.js";
 import { StorageService } from "./storage.service.js";
 import { Op } from "sequelize";
 
+// Helper function to build common post includes
+const buildPostIncludes = (currentUserId?: string) => {
+  const baseIncludes: any[] = [
+    {
+      model: User,
+      as: 'user',
+      include: [{
+        model: Profile,
+        as: 'profile'
+      }]
+    },
+    {
+      model: PostImage,
+      as: 'images'
+    }
+  ];
+
+  if (currentUserId) {
+    baseIncludes.push(
+      {
+        model: PostLike,
+        as: 'userLike',
+        where: { user_id: currentUserId },
+        required: false,
+        attributes: ['id']
+      },
+      {
+        model: PostShare,
+        as: 'userShare',
+        where: { user_id: currentUserId },
+        required: false,
+        attributes: ['id']
+      }
+    );
+  }
+
+  return baseIncludes;
+};
+
+// Helper function to build shared post includes
+const buildSharedPostIncludes = (currentUserId?: string) => {
+  return [
+    {
+      model: Post,
+      as: 'post',
+      include: buildPostIncludes(currentUserId)
+    },
+    {
+      model: User,
+      as: 'user',
+      include: [{
+        model: Profile,
+        as: 'profile'
+      }]
+    }
+  ];
+};
+
+// Helper function to process timeline data
+const buildTimelineData = (originalPosts: any[], sharedPosts: any[], currentUserId?: string) => {
+  return [
+    ...originalPosts.map(post => {
+      const postData = post.toJSON() as any;
+      return {
+        ...postData,
+        type: 'original',
+        timeline_date: post.createdAt,
+        isLiked: currentUserId ? !!(postData.userLike) : false,
+        isShared: currentUserId ? !!(postData.userShare) : false,
+        userLike: undefined,
+        userShare: undefined
+      };
+    }),
+    ...sharedPosts.map(share => {
+      const shareData = share.toJSON() as any;
+      const postData = shareData.post;
+      return {
+        ...postData,
+        type: 'shared',
+        timeline_date: share.createdAt,
+        shared_by: shareData.user,
+        shared_content: shareData.shared_content,
+        shared_at: share.createdAt,
+        isLiked: currentUserId ? !!(postData.userLike) : false,
+        isShared: currentUserId ? !!(postData.userShare) : false,
+        userLike: undefined,
+        userShare: undefined
+      };
+    })
+  ];
+};
+
+// Helper function to apply pagination and cleanup
+const applyPaginationAndCleanup = (
+  timeline: any[], 
+  page: number, 
+  limit: number
+): { posts: PostModel[], total: number, hasMore: boolean } => {
+  const offset = (page - 1) * limit;
+  const sortedTimeline = timeline.sort((a, b) => 
+    new Date(b.timeline_date).getTime() - new Date(a.timeline_date).getTime()
+  );
+  
+  const paginatedPosts = sortedTimeline.slice(offset, offset + limit);
+
+  return {
+    posts: paginatedPosts.map(post => {
+      delete post.userLike;
+      delete post.userShare;
+      return post as PostModel;
+    }),
+    total: sortedTimeline.length,
+    hasMore: offset + limit < sortedTimeline.length
+  };
+};
+
+// Helper function to fetch original and shared posts
+const fetchPostsData = async (
+  whereClause: any = {},
+  currentUserId?: string,
+  orderBy: any[] = [['createdAt', 'DESC']]
+) => {
+  const originalPosts = await Post.findAll({
+    where: whereClause,
+    include: buildPostIncludes(currentUserId),
+    order: [
+      ...orderBy,
+      [{ model: PostImage, as: 'images' }, 'image_order', 'ASC']
+    ],
+  });
+
+  const sharedPostsWhere = Object.keys(whereClause).length > 0 ? whereClause : {};
+  const sharedPosts = await PostShare.findAll({
+    where: sharedPostsWhere,
+    include: buildSharedPostIncludes(currentUserId),
+    order: [
+      ['createdAt', 'DESC'],
+      [{ model: Post, as: 'post' }, { model: PostImage, as: 'images' }, 'image_order', 'ASC']
+    ],
+  });
+
+  return { originalPosts, sharedPosts };
+};
+
 export const createPost = async (
   userId: string, 
   content: string, 
@@ -77,260 +221,16 @@ export const getPosts = async (
   currentUserId?: string
 ): Promise<{ posts: PostModel[], total: number, hasMore: boolean }> => {
   try {
-    const offset = (page - 1) * limit;
+    const whereClause = userId ? { user_id: userId } : {};
     
-    if (userId) {
-      const originalPosts = await Post.findAll({
-        where: { user_id: userId },
-        include: [
-          {
-            model: User,
-            as: 'user',
-            include: [{
-              model: Profile,
-              as: 'profile'
-            }]
-          },
-          {
-            model: PostImage,
-            as: 'images',
-            order: [['image_order', 'ASC']]
-          },
-          ...(currentUserId ? [{
-            model: PostLike,
-            as: 'userLike',
-            where: { user_id: currentUserId },
-            required: false,
-            attributes: ['id'] 
-          }] : []),
-          ...(currentUserId ? [{
-            model: PostShare,
-            as: 'userShare',
-            where: { user_id: currentUserId },
-            required: false,
-            attributes: ['id']
-          }] : [])
-        ],
-        order: [['createdAt', 'DESC']],
-      });
+    const { originalPosts, sharedPosts } = await fetchPostsData(
+      whereClause,
+      currentUserId
+    );
 
-      // Get posts shared by the user
-      const sharedPosts = await PostShare.findAll({
-        where: { user_id: userId },
-        include: [
-          {
-            model: Post,
-            as: 'post',
-            include: [
-              {
-                model: User,
-                as: 'user',
-                include: [{
-                  model: Profile,
-                  as: 'profile'
-                }]
-              },
-              {
-                model: PostImage,
-                as: 'images',
-                order: [['image_order', 'ASC']]
-              },
-              ...(currentUserId ? [{
-                model: PostLike,
-                as: 'userLike',
-                where: { user_id: currentUserId },
-                required: false,
-                attributes: ['id']
-              }] : []),
-              ...(currentUserId ? [{
-                model: PostShare,
-                as: 'userShare',
-                where: { user_id: currentUserId },
-                required: false,
-                attributes: ['id']
-              }] : [])
-            ]
-          },
-          {
-            model: User,
-            as: 'user',
-            include: [{
-              model: Profile,
-              as: 'profile'
-            }]
-          }
-        ],
-        order: [['createdAt', 'DESC']],
-      });
+    const timeline = buildTimelineData(originalPosts, sharedPosts, currentUserId);
 
-      // Combine and sort by timeline date
-      const timeline = [
-        ...originalPosts.map(post => {
-          const postData = post.toJSON() as any;
-          return {
-            ...postData,
-            type: 'original',
-            timeline_date: post.createdAt,
-            isLiked: currentUserId ? !!(postData.userLike) : false,
-            isShared: currentUserId ? !!(postData.userShare) : false,
-            userLike: undefined,
-            userShare: undefined
-          };
-        }),
-        ...sharedPosts.map(share => {
-          const shareData = share.toJSON() as any;
-          const postData = shareData.post;
-          return {
-            ...postData,
-            type: 'shared',
-            timeline_date: share.createdAt,
-            shared_by: shareData.user,
-            shared_content: shareData.shared_content,
-            shared_at: share.createdAt,
-            isLiked: currentUserId ? !!(postData.userLike) : false,
-            isShared: currentUserId ? !!(postData.userShare) : false,
-            userLike: undefined,
-            userShare: undefined
-          };
-        })
-      ].sort((a, b) => new Date(b.timeline_date).getTime() - new Date(a.timeline_date).getTime());
-
-      // Apply pagination
-      const paginatedPosts = timeline.slice(offset, offset + limit);
-
-      return {
-        posts: paginatedPosts.map(post => {
-          delete post.userLike;
-          delete post.userShare;
-          return post as PostModel;
-        }),
-        total: timeline.length,
-        hasMore: offset + limit < timeline.length
-      };
-    }
-
-    const originalPosts = await Post.findAll({
-      include: [
-        {
-          model: User,
-          as: 'user',
-          include: [{
-            model: Profile,
-            as: 'profile'
-          }]
-        },
-        {
-          model: PostImage,
-          as: 'images',
-          order: [['image_order', 'ASC']]
-        },
-        ...(currentUserId ? [{
-          model: PostLike,
-          as: 'userLike',
-          where: { user_id: currentUserId },
-          required: false,
-          attributes: ['id'] 
-        }] : []),
-        ...(currentUserId ? [{
-          model: PostShare,
-          as: 'userShare',
-          where: { user_id: currentUserId },
-          required: false,
-          attributes: ['id']
-        }] : [])
-      ],
-      order: [['createdAt', 'DESC']],
-    });
-
-    const sharedPosts = await PostShare.findAll({
-      include: [
-        {
-          model: Post,
-          as: 'post',
-          include: [
-            {
-              model: User,
-              as: 'user',
-              include: [{
-                model: Profile,
-                as: 'profile'
-              }]
-            },
-            {
-              model: PostImage,
-              as: 'images',
-              order: [['image_order', 'ASC']]
-            },
-            ...(currentUserId ? [{
-              model: PostLike,
-              as: 'userLike',
-              where: { user_id: currentUserId },
-              required: false,
-              attributes: ['id']
-            }] : []),
-            ...(currentUserId ? [{
-              model: PostShare,
-              as: 'userShare',
-              where: { user_id: currentUserId },
-              required: false,
-              attributes: ['id']
-            }] : [])
-          ]
-        },
-        {
-          model: User,
-          as: 'user',
-          include: [{
-            model: Profile,
-            as: 'profile'
-          }]
-        }
-      ],
-      order: [['createdAt', 'DESC']],
-    });
-
-    const timeline = [
-      ...originalPosts.map(post => {
-        const postData = post.toJSON() as any;
-        return {
-          ...postData,
-          type: 'original',
-          timeline_date: post.createdAt,
-          isLiked: currentUserId ? !!(postData.userLike) : false,
-          isShared: currentUserId ? !!(postData.userShare) : false,
-          userLike: undefined,
-          userShare: undefined
-        };
-      }),
-      ...sharedPosts.map(share => {
-        const shareData = share.toJSON() as any;
-        const postData = shareData.post;
-        return {
-          ...postData,
-          type: 'shared',
-          timeline_date: share.createdAt,
-          shared_by: shareData.user,
-          shared_content: shareData.shared_content,
-          shared_at: share.createdAt,
-          isLiked: currentUserId ? !!(postData.userLike) : false,
-          isShared: currentUserId ? !!(postData.userShare) : false,
-          userLike: undefined,
-          userShare: undefined
-        };
-      })
-    ].sort((a, b) => new Date(b.timeline_date).getTime() - new Date(a.timeline_date).getTime());
-
-    const paginatedPosts = timeline.slice(offset, offset + limit);
-
-    return {
-      posts: paginatedPosts.map(post => {
-        delete post.userLike;
-        delete post.userShare;
-        return post as PostModel;
-      }),
-      total: timeline.length,
-      hasMore: offset + limit < timeline.length
-    };
+    return applyPaginationAndCleanup(timeline, page, limit);
   } catch (error) {
     throw error;
   }
@@ -451,130 +351,24 @@ export const getTrendingPosts = async (
   currentUserId?: string
 ): Promise<{ posts: PostModel[], total: number, hasMore: boolean }> => {
   try {
-    const offset = (page - 1) * limit;
+    const { originalPosts, sharedPosts } = await fetchPostsData(
+      {}, 
+      currentUserId,
+      [['likes_count', 'DESC'], ['createdAt', 'DESC']]
+    );
 
-    const originalPosts = await Post.findAll({
-      include: [
-        {
-          model: User,
-          as: 'user',
-          include: [{
-            model: Profile,
-            as: 'profile'
-          }]
-        },
-        {
-          model: PostImage,
-          as: 'images',
-          order: [['image_order', 'ASC']]
-        },
-        ...(currentUserId ? [{
-          model: PostLike,
-          as: 'userLike',
-          where: { user_id: currentUserId },
-          required: false,
-          attributes: ['id']
-        }] : []),
-        ...(currentUserId ? [{
-          model: PostShare,
-          as: 'userShare',
-          where: { user_id: currentUserId },
-          required: false,
-          attributes: ['id']
-        }] : [])
-      ],
-      order: [
-        ['likes_count', 'DESC'],
-        ['createdAt', 'DESC']
-      ],
-    });
+    const timeline = buildTimelineData(originalPosts, sharedPosts, currentUserId);
 
-    // Get shared posts
-    const sharedPosts = await PostShare.findAll({
-      include: [
-        {
-          model: Post,
-          as: 'post',
-          include: [
-            {
-              model: User,
-              as: 'user',
-              include: [{
-                model: Profile,
-                as: 'profile'
-              }]
-            },
-            {
-              model: PostImage,
-              as: 'images',
-              order: [['image_order', 'ASC']]
-            },
-            ...(currentUserId ? [{
-              model: PostLike,
-              as: 'userLike',
-              where: { user_id: currentUserId },
-              required: false,
-              attributes: ['id']
-            }] : []),
-            ...(currentUserId ? [{
-              model: PostShare,
-              as: 'userShare',
-              where: { user_id: currentUserId },
-              required: false,
-              attributes: ['id']
-            }] : [])
-          ]
-        },
-        {
-          model: User,
-          as: 'user',
-          include: [{
-            model: Profile,
-            as: 'profile'
-          }]
-        }
-      ],
-      order: [['createdAt', 'DESC']],
-    });
-
-    // Combine and sort by likes count (most liked posts first)
-    const timeline = [
-      ...originalPosts.map(post => {
-        const postData = post.toJSON() as any;
-        return {
-          ...postData,
-          type: 'original',
-          timeline_date: post.createdAt,
-          isLiked: currentUserId ? !!(postData.userLike) : false,
-          isShared: currentUserId ? !!(postData.userShare) : false,
-          userLike: undefined,
-          userShare: undefined
-        };
-      }),
-      ...sharedPosts.map(share => {
-        const shareData = share.toJSON() as any;
-        const postData = shareData.post;
-        return {
-          ...postData,
-          type: 'shared',
-          timeline_date: share.createdAt,
-          shared_by: shareData.user,
-          shared_content: shareData.shared_content,
-          shared_at: share.createdAt,
-          isLiked: currentUserId ? !!(postData.userLike) : false,
-          isShared: currentUserId ? !!(postData.userShare) : false,
-          userLike: undefined,
-          userShare: undefined
-        };
-      })
-    ].sort((a, b) => {
+    const trendingTimeline = timeline.sort((a, b) => {
       if (b.likes_count !== a.likes_count) {
         return b.likes_count - a.likes_count;
       }
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
-    const paginatedPosts = timeline.slice(offset, offset + limit);
+    // Apply pagination manually since we need custom sorting
+    const offset = (page - 1) * limit;
+    const paginatedPosts = trendingTimeline.slice(offset, offset + limit);
 
     return {
       posts: paginatedPosts.map(post => {
@@ -582,8 +376,8 @@ export const getTrendingPosts = async (
         delete post.userShare;
         return post as PostModel;
       }),
-      total: timeline.length,
-      hasMore: offset + limit < timeline.length
+      total: trendingTimeline.length,
+      hasMore: offset + limit < trendingTimeline.length
     };
   } catch (error) {
     throw error;
@@ -618,8 +412,7 @@ export const getFollowersFeed = async (
   limit: number = 10
 ): Promise<{ posts: PostModel[], total: number, hasMore: boolean }> => {
   try {
-    const offset = (page - 1) * limit;
-
+    // Get followed users
     const followedUsers = await UserFollow.findAll({
       where: { follower_id: userId },
       attributes: ['following_id']
@@ -635,142 +428,17 @@ export const getFollowersFeed = async (
       };
     }
 
-   
-    const originalPosts = await Post.findAll({
-      where: {
-        user_id: {
-          [Op.in]: followedUserIds
-        }
-      },
-      include: [
-        {
-          model: User,
-          as: 'user',
-          include: [{
-            model: Profile,
-            as: 'profile'
-          }]
-        },
-        {
-          model: PostImage,
-          as: 'images',
-          order: [['image_order', 'ASC']]
-        },
-        {
-          model: PostLike,
-          as: 'userLike',
-          where: { user_id: userId },
-          required: false,
-          attributes: ['id']
-        },
-        {
-          model: PostShare,
-          as: 'userShare',
-          where: { user_id: userId },
-          required: false,
-          attributes: ['id']
-        }
-      ],
-      order: [['createdAt', 'DESC']],
-    });
+    // Fetch posts from followed users using helper function
+    const { originalPosts, sharedPosts } = await fetchPostsData(
+      { user_id: { [Op.in]: followedUserIds } },
+      userId // Always pass userId as currentUserId for followers feed
+    );
 
-    // Get posts shared by followed users
-    const sharedPosts = await PostShare.findAll({
-      where: {
-        user_id: {
-          [Op.in]: followedUserIds
-        }
-      },
-      include: [
-        {
-          model: Post,
-          as: 'post',
-          include: [
-            {
-              model: User,
-              as: 'user',
-              include: [{
-                model: Profile,
-                as: 'profile'
-              }]
-            },
-            {
-              model: PostImage,
-              as: 'images',
-              order: [['image_order', 'ASC']]
-            },
-            {
-              model: PostLike,
-              as: 'userLike',
-              where: { user_id: userId },
-              required: false,
-              attributes: ['id']
-            },
-            {
-              model: PostShare,
-              as: 'userShare',
-              where: { user_id: userId },
-              required: false,
-              attributes: ['id']
-            }
-          ]
-        },
-        {
-          model: User,
-          as: 'user',
-          include: [{
-            model: Profile,
-            as: 'profile'
-          }]
-        }
-      ],
-      order: [['createdAt', 'DESC']],
-    });
+    // Build timeline data using helper function
+    const timeline = buildTimelineData(originalPosts, sharedPosts, userId);
 
-    // Combine and sort by timeline date
-    const timeline = [
-      ...originalPosts.map(post => {
-        const postData = post.toJSON() as any;
-        return {
-          ...postData,
-          type: 'original',
-          timeline_date: post.createdAt,
-          isLiked: !!(postData.userLike),
-          isShared: !!(postData.userShare),
-          userLike: undefined,
-          userShare: undefined
-        };
-      }),
-      ...sharedPosts.map(share => {
-        const shareData = share.toJSON() as any;
-        const postData = shareData.post;
-        return {
-          ...postData,
-          type: 'shared',
-          timeline_date: share.createdAt,
-          shared_by: shareData.user,
-          shared_content: shareData.shared_content,
-          shared_at: share.createdAt,
-          isLiked: !!(postData.userLike),
-          isShared: !!(postData.userShare),
-          userLike: undefined,
-          userShare: undefined
-        };
-      })
-    ].sort((a, b) => new Date(b.timeline_date).getTime() - new Date(a.timeline_date).getTime());
-
-    // Apply pagination
-    const paginatedPosts = timeline.slice(offset, offset + limit);
-
-    return {
-      posts: paginatedPosts.map(post => {
-        delete post.userLike;
-        delete post.userShare;
-        return post as PostModel;
-      }),
-      total: timeline.length,
-      hasMore: offset + limit < timeline.length
-    };
+    // Apply pagination and cleanup using helper function
+    return applyPaginationAndCleanup(timeline, page, limit);
   } catch (error) {
     throw error;
   }
