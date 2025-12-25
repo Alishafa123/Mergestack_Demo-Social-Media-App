@@ -32,8 +32,8 @@ export default function ForgotPassword() {
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
           <div className="text-center mb-8">
             <AuthIcon />
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Forgot Password</h2>
-            <p className="mt-2 text-sm text-gray-600">Enter your email to receive a password reset link</p>
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Forgot Password</h2>
+            <p className="mt-2 text-bold text-gray-600">Enter your email to receive a password reset link</p>
           </div>
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -57,7 +57,7 @@ export default function ForgotPassword() {
             </Button>
             
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-500">
+              <p className="text-base text-gray-500">
                 Remember your password?{' '}
                 <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
                   Sign in here

@@ -4,7 +4,6 @@ import PostCardWithSlider from './PostCardWithSlider';
 import PostSkeleton from './PostSkeleton';
 import Button from '@components/shared/buttons/Button';
 import ShareModal from './ShareModal';
-import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
 import EditPostModal from '@components/shared/modals/EditPostModal';
 import { showToast } from '@components/shared/toast';
 import EmptyState from '@components/shared/states/EmptyState';
@@ -28,7 +27,6 @@ interface FeedProps {
 
 const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
   const [shareModalOpen, setShareModalOpen] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<any>(null);
 
@@ -113,23 +111,15 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
   const config = getFeedConfig(feedType);
 
   const handleDelete = (postId: string) => {
-    const post = allPosts.find(p => p.id === postId);
-    setSelectedPost(post);
-    setDeleteModalOpen(true);
-  };
-
-  const handleConfirmDelete = () => {
-    if (selectedPost) {
-      deletePostMutation.mutate(selectedPost.id, {
-        onSuccess: () => {
-          setDeleteModalOpen(false);
-          setSelectedPost(null);
-        },
-        onError: (error) => {
-          console.error('Failed to delete post:', error);
-        }
-      });
-    }
+    deletePostMutation.mutate(postId, {
+      onSuccess: () => {
+        showToast.success('Post deleted successfully');
+      },
+      onError: (error) => {
+        console.error('Failed to delete post:', error);
+        showToast.error('Failed to delete post. Please try again.');
+      }
+    });
   };
 
   const handleEdit = (postId: string) => {
@@ -267,8 +257,8 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
           onDeleteShare={handleDeleteShare}
           isLiked={post.isLiked || false}
           isShared={post.isShared || false}
-          isDeleting={deletePostMutation.isPending && selectedPost?.id === post.id}
-          isDeletingShare={toggleShareMutation.isPending && selectedPost?.id === post.id}
+          isDeleting={deletePostMutation.isPending}
+          isDeletingShare={toggleShareMutation.isPending}
         />
       ))}
 
@@ -322,17 +312,6 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
             ? `${selectedPost.user.profile.first_name} ${selectedPost.user.profile.last_name}`
             : selectedPost?.user.name
         }
-      />
-
-      <DeleteConfirmModal
-        isOpen={deleteModalOpen}
-        onClose={() => {
-          setDeleteModalOpen(false);
-          setSelectedPost(null);
-        }}
-        onConfirm={handleConfirmDelete}
-        isLoading={deletePostMutation.isPending}
-        message="Are you sure you want to delete this post? This action cannot be undone and will also remove all shares of this post."
       />
 
       <EditPostModal

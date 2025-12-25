@@ -188,7 +188,7 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
         onConfirm={handleConfirmDelete}
         isLoading={isDeleting}
         title="Delete Post"
-        message="Are you sure you want to delete this post? This action cannot be undone."
+        message="Are you sure you want to delete this post? This action cannot be undone and will also remove all shares of this post."
       />
     </div>
   );
