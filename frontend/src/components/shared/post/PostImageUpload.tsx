@@ -27,20 +27,16 @@ export default function PostImageUpload({
       alert('Please select only image files');
       return;
     }
-
     // Check file sizes (5MB limit per file)
     const oversizedFiles = validFiles.filter(file => file.size > 5 * 1024 * 1024);
     if (oversizedFiles.length > 0) {
       alert('Some files are larger than 5MB. Please choose smaller files.');
       return;
     }
-
     // Combine with existing images, respect max limit
     const newImages = [...selectedImages, ...validFiles].slice(0, maxImages);
-    
     // Create preview URLs
     const newPreviewUrls = newImages.map(file => URL.createObjectURL(file));
-    
     // Clean up old URLs
     previewUrls.forEach(url => URL.revokeObjectURL(url));
     

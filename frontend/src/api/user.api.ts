@@ -68,19 +68,16 @@ export const unfollowUser = async (userId: string): Promise<FollowResponse> => {
   return res.data;
 };
 
-// Follow status
 export const getFollowStatus = async (userId: string): Promise<FollowStatusResponse> => {
   const res = await api.get(`/users/${userId}/follow-status`);
   return res.data;
 };
 
-// Follow stats
 export const getFollowStats = async (userId: string): Promise<FollowStatsResponse> => {
   const res = await api.get(`/users/${userId}/follow-stats`);
   return res.data;
 };
 
-// Get followers/following lists
 export const getFollowers = async (userId: string, page: number = 1, limit: number = 10): Promise<FollowersResponse> => {
   const res = await api.get(`/users/${userId}/followers?page=${page}&limit=${limit}`);
   return res.data;
@@ -91,7 +88,6 @@ export const getFollowing = async (userId: string, page: number = 1, limit: numb
   return res.data;
 };
 
-// User suggestions
 export const getUserSuggestions = async (page: number = 1, limit: number = 10): Promise<SuggestionsResponse> => {
   const res = await api.get(`/users/suggestions/to-follow?page=${page}&limit=${limit}`);
   return res.data;

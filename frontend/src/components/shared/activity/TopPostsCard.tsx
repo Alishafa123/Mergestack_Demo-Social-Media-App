@@ -30,10 +30,6 @@ const TopPostsCard: React.FC = () => {
     createdAt: formatCreatedAt(post.createdAt)
   })) || [];
 
-  const handlePostClick = (postId: string) => {
-    console.log('Clicked post:', postId);
-  };
-
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
       <div className="flex items-center space-x-3 mb-6">
@@ -71,7 +67,6 @@ const TopPostsCard: React.FC = () => {
               key={post.id}
               post={post}
               rank={index + 1}
-              onClick={handlePostClick}
             />
           ))
         )}

@@ -1,19 +1,18 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { ProtectedRoute, PublicRoute } from "../components/auth";
-import { ClientComponent } from "../components/client";
-import Login from "../pages/auth/Login";
-import Signup from "../pages/auth/Signup";
-import ForgotPassword from "../pages/auth/ForgotPassword";
-import ResetPassword from "../pages/auth/ResetPassword";
-import Dashboard from "../pages/dashboard/Dashboard";
-import Profile from "../pages/profile/Profile";
-import UserTimeline from "../pages/user/UserTimeline";
+import { ProtectedRoute, PublicRoute } from "@components/auth";
+import { ClientComponent } from "@components/client";
+import Login from "@pages/auth/Login";
+import Signup from "@pages/auth/Signup";
+import ForgotPassword from "@pages/auth/ForgotPassword";
+import ResetPassword from "@pages/auth/ResetPassword";
+import Dashboard from "@pages/dashboard/Dashboard";
+import Profile from "@pages/profile/Profile";
+import UserTimeline from "@pages/user/UserTimeline";
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Routes - redirect to dashboard if authenticated */}
         <Route 
           path="/" 
           element={
@@ -96,7 +95,6 @@ export default function AppRouter() {
           } 
         />
 
-        {/* Catch all route - redirect to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>

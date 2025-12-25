@@ -9,14 +9,14 @@ import EditPostModal from '@components/shared/modals/EditPostModal';
 import { showToast } from '@components/shared/toast';
 import EmptyState from '@components/shared/states/EmptyState';
 import ErrorState from '@components/shared/states/ErrorState';
-import { 
-  useInfinitePosts, 
-  useInfiniteTrendingPosts, 
+import {
+  useInfinitePosts,
+  useInfiniteTrendingPosts,
   useInfiniteFollowersFeed,
-  useToggleLike, 
-  useToggleShare, 
-  useDeletePost, 
-  useUpdatePost 
+  useToggleLike,
+  useToggleShare,
+  useDeletePost,
+  useUpdatePost
 } from '@hooks/usePost';
 
 type FeedType = 'general' | 'trending' | 'followers';
@@ -27,15 +27,15 @@ interface FeedProps {
 }
 
 const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
-  const toggleLikeMutation = useToggleLike();
-  const toggleShareMutation = useToggleShare();
-  const deletePostMutation = useDeletePost();
-  const updatePostMutation = useUpdatePost();
-  
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<any>(null);
+
+  const toggleLikeMutation = useToggleLike();
+  const toggleShareMutation = useToggleShare();
+  const deletePostMutation = useDeletePost();
+  const updatePostMutation = useUpdatePost();
 
   const generalFeedQuery = useInfinitePosts(10, userId);
   const trendingFeedQuery = useInfiniteTrendingPosts(10);
@@ -164,24 +164,24 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
 
   const handleShare = (postId: string, isCurrentlyShared: boolean) => {
     if (isCurrentlyShared) {
-      toggleShareMutation.mutate({ 
-        postId, 
-        isCurrentlyShared: true 
+      toggleShareMutation.mutate({
+        postId,
+        isCurrentlyShared: true
       });
     } else {
-      toggleShareMutation.mutate({ 
-        postId, 
-        isCurrentlyShared: false 
+      toggleShareMutation.mutate({
+        postId,
+        isCurrentlyShared: false
       });
     }
   };
 
   const handleModalShare = (message?: string) => {
     if (selectedPost) {
-      toggleShareMutation.mutate({ 
-        postId: selectedPost.id, 
+      toggleShareMutation.mutate({
+        postId: selectedPost.id,
         sharedContent: message,
-        isCurrentlyShared: false 
+        isCurrentlyShared: false
       });
       setShareModalOpen(false);
       setSelectedPost(null);
@@ -195,9 +195,9 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
   };
 
   const handleDeleteShare = (postId: string) => {
-    toggleShareMutation.mutate({ 
-      postId, 
-      isCurrentlyShared: true 
+    toggleShareMutation.mutate({
+      postId,
+      isCurrentlyShared: true
     });
   };
 
@@ -239,7 +239,7 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
   }
 
   const allPosts = data?.pages.flatMap(page => page.posts) || [];
-  
+
   if (allPosts.length === 0) {
     return (
       <EmptyState
@@ -265,7 +265,7 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
           onDelete={handleDelete}
           onEdit={handleEdit}
           onDeleteShare={handleDeleteShare}
-          isLiked={post.isLiked || false} 
+          isLiked={post.isLiked || false}
           isShared={post.isShared || false}
           isDeleting={deletePostMutation.isPending && selectedPost?.id === post.id}
           isDeletingShare={toggleShareMutation.isPending && selectedPost?.id === post.id}

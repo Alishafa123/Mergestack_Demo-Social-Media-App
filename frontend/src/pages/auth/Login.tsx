@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
+
 import { useLogin } from "@hooks/useAuth";
 import { showToast } from "@components/shared/toast";
 import { BackgroundDesign } from "@components/shared/backgrounds";
@@ -10,19 +11,9 @@ import Button from "@components/shared/buttons/Button";
 import { Input } from "@components/shared/form";
 import { loginSchema } from "@schemas/authSchemas";
 import type { LoginFormData } from "@schemas/authSchemas";
-import { Link } from "react-router-dom";
+
 
 export default function Login() {
-  const location = useLocation();
-  const loginMutation = useLogin();
-  
-  useEffect(() => {
-    if (location.state?.message) {
-      showToast.success(location.state.message);
-      window.history.replaceState({}, document.title);
-    }
-  }, [location]);
-  
   const {
     register,
     handleSubmit,
@@ -31,21 +22,23 @@ export default function Login() {
     resolver: yupResolver(loginSchema)
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    loginMutation.mutate(data);
-  };
+  const location = useLocation();
+  const loginMutation = useLogin();
+  const onSubmit = (data: LoginFormData) => loginMutation.mutate(data);
+  const getButtonText = () => loginMutation.isPending ? 'Signing in...' : 'Sign in';
 
-  const getButtonText = () => {
-    if (loginMutation.isPending) {
-      return 'Signing in...';
+
+  useEffect(() => {
+    if (location.state?.message) {
+      showToast.success(location.state.message);
+      window.history.replaceState({}, document.title);
     }
-    return 'Sign in';
-  };
+  }, [location]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <BackgroundDesign />
-      
+
       <div className="max-w-md w-full space-y-8 relative z-10">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
           <div className="text-center mb-8">
@@ -53,25 +46,25 @@ export default function Login() {
             <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Welcome Back</h2>
             <p className="mt-2 text-sm text-gray-600">Sign in to your account to continue</p>
           </div>
-          
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <Input 
-              name="email" 
-              label="Email address" 
-              type="email" 
-              register={register} 
-              errors={errors} 
+            <Input
+              name="email"
+              label="Email address"
+              type="email"
+              register={register}
+              errors={errors}
             />
-            <Input 
-              name="password" 
-              label="Password" 
-              type="password" 
-              register={register} 
-              errors={errors} 
+            <Input
+              name="password"
+              label="Password"
+              type="password"
+              register={register}
+              errors={errors}
             />
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               loading={loginMutation.isPending}
               disabled={loginMutation.isPending}
               fullWidth
@@ -85,7 +78,7 @@ export default function Login() {
                 Forgot password?
               </Link>
             </div>
-            
+
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-500">
                 Don't have an account?{' '}

@@ -1,17 +1,17 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Link } from "react-router-dom";
+
 import { useForgotPassword } from "@hooks/useAuth";
 import { BackgroundDesign } from "@components/shared/backgrounds";
 import AuthIcon from "@components/shared/Icons/AuthIcon";
 import Button from "@components/shared/buttons/Button";
 import { Input } from "@components/shared/form";
 import { forgotPasswordSchema } from "@schemas/authSchemas";
+
 import type { ForgotPasswordFormData } from "@schemas/authSchemas";
-import { Link } from "react-router-dom";
 
 export default function ForgotPassword() {
-  const forgotPasswordMutation = useForgotPassword();
-  
   const {
     register,
     handleSubmit,
@@ -19,17 +19,10 @@ export default function ForgotPassword() {
   } = useForm<ForgotPasswordFormData>({
     resolver: yupResolver(forgotPasswordSchema)
   });
-
-  const onSubmit = (data: ForgotPasswordFormData) => {
-    forgotPasswordMutation.mutate(data);
-  };
-
-  const getButtonText = () => {
-    if (forgotPasswordMutation.isPending) {
-      return 'Sending reset link...';
-    }
-    return 'Send Reset Link';
-  };
+  
+  const forgotPasswordMutation = useForgotPassword();
+  const onSubmit = (data: ForgotPasswordFormData) => forgotPasswordMutation.mutate(data);
+  const getButtonText = () => forgotPasswordMutation.isPending ? 'Sending reset link...' : 'Send Reset Link';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">

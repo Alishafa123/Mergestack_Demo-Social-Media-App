@@ -15,6 +15,8 @@ interface CreatePostModalProps {
 }
 
 const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) => {
+  const [content, setContent] = useState('');
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const {
     id,
     first_name,
@@ -28,12 +30,9 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
   ]);
 
   const createPostMutation = useCreatePost();
-  const [content, setContent] = useState('');
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
-
   const handleSubmit = async () => {
-    const validation = validatePost(content, selectedImages);
-    
+  const validation = validatePost(content, selectedImages);
+
     if (!validation.isValid) {
       showToast.error(validation.errors[0]);
       return;
@@ -47,7 +46,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
       {
         onSuccess: () => {
           showToast.success('Post created successfully! 🎉');
-          
+
           setTimeout(() => {
             handleClose();
           }, 1500);

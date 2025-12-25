@@ -20,6 +20,15 @@ export default function PostTextArea({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isFocused, setIsFocused] = useState(false);
 
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    if (newValue.length <= maxLength) {
+      onChange(newValue);
+    }
+  };
+  
+  const remainingChars = maxLength - value.length;
+  const isNearLimit = remainingChars <= 100;
   // Auto-resize textarea
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -28,16 +37,6 @@ export default function PostTextArea({
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
   }, [value]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value;
-    if (newValue.length <= maxLength) {
-      onChange(newValue);
-    }
-  };
-
-  const remainingChars = maxLength - value.length;
-  const isNearLimit = remainingChars <= 100;
 
   return (
     <div className="space-y-2">

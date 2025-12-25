@@ -14,7 +14,6 @@ const PublicRoute: React.FC<PublicRouteProps> = ({
 }) => {
   const { id } = userController.useState(['id']);
 
-  // Check both Jotai state and localStorage for authentication
   const isAuthenticated = id || AuthUtils.isAuthenticated();
 
   if (isAuthenticated) {

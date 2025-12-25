@@ -10,11 +10,13 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ onSearch, placeholder = "Search..." }: SearchBarProps) {
+  const navigate=useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
-  const navigate=useNavigate();
+  
+  const { data: searchResults, isLoading } = useSearchUsers(debouncedQuery, 1, 8);
   
   // Debounce search query
   useEffect(() => {
@@ -25,9 +27,6 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Use search hook
-  const { data: searchResults, isLoading } = useSearchUsers(debouncedQuery, 1, 8);
-
   // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -35,7 +34,6 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
         setIsFocused(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);

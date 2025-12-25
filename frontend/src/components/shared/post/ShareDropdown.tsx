@@ -19,29 +19,40 @@ const ShareDropdown: React.FC<ShareDropdownProps> = ({
   const [horizontalPosition, setHorizontalPosition] = useState<'left' | 'right'>('left');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  
+  const handleQuickShare = () => {
+    onQuickShare();
+    setIsOpen(false);
+  };
 
-  useEffect(() => {
+  const handleShareWithComment = () => {
+    onShareWithComment();
+    setIsOpen(false);
+  };
+  
+  const updatePosition = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      const spaceRight = window.innerWidth - rect.right;
+      const spaceLeft = rect.left;
+      
+      setDropdownPosition(spaceBelow < 150 && spaceAbove > 150 ? 'top' : 'bottom');
+      
+      if (spaceRight < 180 && spaceLeft > 180) {
+        setHorizontalPosition('right');
+      } else {
+        setHorizontalPosition('left');
+      }
+    }
+  };
+
+
+    useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
-      }
-    };
-
-    const updatePosition = () => {
-      if (buttonRef.current) {
-        const rect = buttonRef.current.getBoundingClientRect();
-        const spaceBelow = window.innerHeight - rect.bottom;
-        const spaceAbove = rect.top;
-        const spaceRight = window.innerWidth - rect.right;
-        const spaceLeft = rect.left;
-        
-        setDropdownPosition(spaceBelow < 150 && spaceAbove > 150 ? 'top' : 'bottom');
-        
-        if (spaceRight < 180 && spaceLeft > 180) {
-          setHorizontalPosition('right');
-        } else {
-          setHorizontalPosition('left');
-        }
       }
     };
 
@@ -59,16 +70,6 @@ const ShareDropdown: React.FC<ShareDropdownProps> = ({
       window.removeEventListener('resize', updatePosition);
     };
   }, [isOpen]);
-
-  const handleQuickShare = () => {
-    onQuickShare();
-    setIsOpen(false);
-  };
-
-  const handleShareWithComment = () => {
-    onShareWithComment();
-    setIsOpen(false);
-  };
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>

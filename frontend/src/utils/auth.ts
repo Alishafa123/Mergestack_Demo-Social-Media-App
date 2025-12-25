@@ -1,5 +1,3 @@
-// Simple localStorage-based auth utilities
-
 export const AuthUtils = {
   getToken: (): string | null => {
     return localStorage.getItem('access_token');
