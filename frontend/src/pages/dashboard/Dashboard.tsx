@@ -8,6 +8,7 @@ import Button from '@components/shared/buttons/Button';
 import { UserProfileCard } from '@components/shared/profile';
 import CreatePostPrompt from '@components/shared/post/CreatePostPrompt';
 import { TopPostsCard, RecentFollowersCard } from '@components/shared/activity';
+import { StatsModal, LatestModal } from '@components/shared/modals';
 
 type FeedTab = 'home' | 'trending' | 'following';
 
@@ -25,6 +26,16 @@ const tabs: TabConfig[] = [
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<FeedTab>('home');
+  const [showStatsModal, setShowStatsModal] = useState(false);
+  const [showLatestModal, setShowLatestModal] = useState(false);
+
+  const handleStatsClick = () => {
+    setShowStatsModal(true);
+  };
+
+  const handleLatestClick = () => {
+    setShowLatestModal(true);
+  };
 
   const renderTabButton = (tab: TabConfig) => {
     const Icon = tab.icon;
@@ -52,7 +63,10 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+      <Navbar 
+        onStatsClick={handleStatsClick}
+        onLatestClick={handleLatestClick}
+      />
       
       <div className="w-full px-2 sm:px-4 py-6">
         <div className="max-w-[3000px] mx-auto">
@@ -90,6 +104,16 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <StatsModal 
+        isOpen={showStatsModal} 
+        onClose={() => setShowStatsModal(false)} 
+      />
+      <LatestModal 
+        isOpen={showLatestModal} 
+        onClose={() => setShowLatestModal(false)} 
+      />
     </div>
   );
 }
