@@ -3,6 +3,8 @@ import { useState, useRef, useEffect } from 'react';
 
 import { useLogout } from '@hooks/useAuth';
 import { userProfileController } from '@jotai/userprofile.atom'
+import { useLogout } from '@hooks/useAuth';
+import Avatar from '@components/shared/ui/Avatar';
 
 export default function ProfileDropdown() {
   const navigate = useNavigate();
@@ -50,19 +52,12 @@ export default function ProfileDropdown() {
         onClick={toggleDropdown}
         className="flex items-center justify-center w-14 h-14 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
-        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
-          {profile_url ? (
-            <img
-              src={profile_url}
-              alt="Profile"
-              className="w-full h-full object-cover rounded-full"
-            />
-          ) : (
-            <span className="text-white text-lg font-medium">
-              {'U'}
-            </span>
-          )}
-        </div>
+        <Avatar
+          src={profile_url}
+          name={first_name && last_name ? `${first_name} ${last_name}` : 'User'}
+          size="lg"
+          className="w-12 h-12"
+        />
       </button>
 
       {isOpen && (

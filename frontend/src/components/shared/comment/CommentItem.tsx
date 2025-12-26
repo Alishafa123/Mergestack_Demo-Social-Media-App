@@ -5,6 +5,7 @@ import { useDeleteComment, useUpdateComment } from '@hooks/useComment';
 import { userController } from '@jotai/user.atom';
 import type { Comment } from '@api/comment.api';
 import { formatRelativeTime } from '@utils/dateUtils';
+import Avatar from '@components/shared/ui/Avatar';
 
 interface CommentItemProps {
   comment: Comment;
@@ -67,19 +68,11 @@ const CommentItem: React.FC<CommentItemProps> = ({
     <div className={`${isReply ? 'ml-8 mt-3' : 'mt-4'}`}>
       <div className="flex space-x-3">
         <div className="flex-shrink-0">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-            {comment.user.profile?.profile_url ? (
-              <img
-                src={comment.user.profile.profile_url}
-                alt={displayName}
-                className="w-8 h-8 rounded-full object-cover"
-              />
-            ) : (
-              <span className="text-white font-semibold text-xs">
-                {displayName.charAt(0).toUpperCase()}
-              </span>
-            )}
-          </div>
+          <Avatar
+            src={comment.user.profile?.profile_url}
+            name={displayName}
+            size="sm"
+          />
         </div>
 
         <div className="flex-1 min-w-0">

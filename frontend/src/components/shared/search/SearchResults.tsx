@@ -2,6 +2,7 @@ import React from 'react';
 import { User, MapPin, Loader2 } from 'lucide-react';
 
 import type { SearchUser } from '@api/profile.api';
+import Avatar from '@components/shared/ui/Avatar';
 
 interface SearchResultsProps {
   users: SearchUser[];
@@ -73,28 +74,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
           >
             <div className="flex-shrink-0">
-              {user.profile?.profile_url ? (
-                <img
-                  src={user.profile.profile_url}
-                  alt={displayName}
-                  className="w-12 h-12 rounded-full object-cover"
-                  onError={(e) => {
-                    console.log('Image failed to load:', user.profile?.profile_url);
-                    e.currentTarget.style.display = 'none';
-                    if (e.currentTarget.nextElementSibling) {
-                      (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
-                    }
-                  }}
-                />
-              ) : null}
-              <div
-                className={`w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center ${user.profile?.profile_url ? 'hidden' : 'flex'
-                  }`}
-              >
-                <span className="text-white font-semibold text-lg">
-                  {displayName.charAt(0).toUpperCase()}
-                </span>
-              </div>
+              <Avatar
+                src={user.profile?.profile_url}
+                name={displayName}
+                size="md"
+              />
             </div>
 
             {/* User Info */}

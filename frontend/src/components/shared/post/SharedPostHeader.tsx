@@ -8,6 +8,7 @@ import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
 import { userProfileController } from '@jotai/userprofile.atom';
 import type { Post } from '@api/post.api';
 import { formatRelativeTime } from '@utils/dateUtils';
+import Avatar from '@components/shared/ui/Avatar';
 
 interface SharedPostHeaderProps {
   post: Post;
@@ -60,19 +61,11 @@ const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2">
               <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 rounded-full overflow-hidden bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">
-                  {post.shared_by.profile?.profile_url ? (
-                    <img
-                      src={post.shared_by.profile.profile_url}
-                      alt={getDisplayName(post.shared_by)}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-white font-semibold text-xs">
-                      {getDisplayName(post.shared_by).charAt(0).toUpperCase()}
-                    </span>
-                  )}
-                </div>
+                <Avatar
+                  src={post.shared_by.profile?.profile_url}
+                  name={getDisplayName(post.shared_by)}
+                  size="xs"
+                />
                 
                 <button
                   onClick={() => handleUserClick(post.shared_by!.id)}
