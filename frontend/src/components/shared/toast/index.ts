@@ -1,1 +1,1 @@
-export { default as ToastProvider, showToast } from './Toast';
+export { default as ToastProvider, showToast } from '@components/shared/toast/Toast';

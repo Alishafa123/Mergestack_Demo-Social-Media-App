@@ -1,18 +1,19 @@
 import { useState } from "react";
+import { Edit, Eye } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Edit, Eye } from "lucide-react";
-import Navbar from "@components/shared/navbar/Navbar";
+
 import { showToast } from "@components/shared/toast";
-import { BackgroundDesign } from "@components/shared/backgrounds";
+import { useUpdateProfile } from "@hooks/useProfile";
+import Navbar from "@components/shared/navbar/Navbar";
 import Button from "@components/shared/buttons/Button";
-import { Input, DateField, SelectField, TextAreaField } from "@components/shared/form";
-import ProfileImageUpload from "@components/shared/form/ProfileImageUpload";
 import { profileSchema } from "@schemas/profileSchemas";
 import type { ProfileFormData } from "@schemas/profileSchemas";
-import { useUpdateProfile } from "@hooks/useProfile";
 import { userProfileController } from "@jotai/userprofile.atom";
+import { BackgroundDesign } from "@components/shared/backgrounds";
+import ProfileImageUpload from "@components/shared/form/ProfileImageUpload";
+import { Input, DateField, SelectField, TextAreaField } from "@components/shared/form";
 
 const genderOptions = [
   { value: 'male', label: 'Male' },

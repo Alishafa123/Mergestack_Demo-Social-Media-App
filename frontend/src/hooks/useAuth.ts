@@ -1,9 +1,10 @@
-import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { userController } from '@jotai/user.atom';
+import { useMutation } from '@tanstack/react-query';
+
 import { AuthUtils } from '@utils/auth';
-import { userProfileController } from '@jotai/userprofile.atom';
+import { userController } from '@jotai/user.atom';
 import { showToast } from '@components/shared/toast';
+import { userProfileController } from '@jotai/userprofile.atom';
 import { loginUser, signupUser, forgotPassword, resetPassword } from '@api/auth.api';
 import type { LoginFormData, SignupFormData, ForgotPasswordFormData, ResetPasswordFormData } from '@schemas/authSchemas';
 

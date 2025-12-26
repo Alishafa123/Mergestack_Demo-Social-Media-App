@@ -1,6 +1,6 @@
 import React from 'react';
-import { toast, ToastContainer, type ToastOptions } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer, type ToastOptions } from 'react-toastify';
 
 // Custom toast configuration
 const defaultToastConfig: ToastOptions = {

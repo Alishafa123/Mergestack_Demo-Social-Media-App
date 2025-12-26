@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import SearchBar from './SearchBar';
-import ProfileDropdown from './ProfileDropdown';
+
+import SearchBar from '@components/shared/navbar/SearchBar';
+import ProfileDropdown from '@components/shared/navbar/ProfileDropdown';
 
 export default function Navbar() {
   const navigate = useNavigate();

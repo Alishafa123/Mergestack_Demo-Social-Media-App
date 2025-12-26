@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import * as profileService from "../services/profile.service.js";
-import { StorageService } from "../services/storage.service.js";
+
+import { StorageService } from "@services/storage.service.js";
+import * as profileService from "@services/profile.service.js";
 
 export const getMyProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {

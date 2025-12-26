@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { MoreHorizontal, Reply, Edit, Trash2 } from 'lucide-react';
-import CommentForm from './CommentForm';
-import { useDeleteComment, useUpdateComment } from '@hooks/useComment';
-import { userController } from '@jotai/user.atom';
+
 import type { Comment } from '@api/comment.api';
+import { userController } from '@jotai/user.atom';
+import CommentForm from '@components/shared/comment/CommentForm';
+import { useDeleteComment, useUpdateComment } from '@hooks/useComment';
 
 interface CommentItemProps {
   comment: Comment;

@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { userProfileController } from '@jotai/userprofile.atom'
+import { useState, useRef, useEffect } from 'react';
+
 import { useLogout } from '@hooks/useAuth';
+import { userProfileController } from '@jotai/userprofile.atom'
 
 export default function ProfileDropdown() {
   const navigate = useNavigate();

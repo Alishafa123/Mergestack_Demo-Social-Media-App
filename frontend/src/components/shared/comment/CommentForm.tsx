@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
 import { Send } from 'lucide-react';
-import Button from '@components/shared/buttons/Button';
+import React, { useState } from 'react';
+
 import { useCreateComment } from '@hooks/useComment';
+import Button from '@components/shared/buttons/Button';
 import { validateComment } from '@schemas/commentSchemas';
 
 interface CommentFormProps {

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import * as shareService from "../services/share.service.js";
+
+import * as shareService from "@services/share.service.js";
 
 export const sharePost = async (req: Request, res: Response, next: NextFunction) => {
   try {

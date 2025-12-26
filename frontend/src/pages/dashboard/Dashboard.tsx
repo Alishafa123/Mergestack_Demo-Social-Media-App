@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { TrendingUp, Home, Users } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import Navbar from '@components/shared/navbar/Navbar';
+import { TrendingUp, Home, Users } from 'lucide-react';
+
 import Feed from '@components/shared/post/Feed';
-import CreatePostPrompt from '@components/shared/post/CreatePostPrompt';
+import Navbar from '@components/shared/navbar/Navbar';
 import Button from '@components/shared/buttons/Button';
 import { UserProfileCard } from '@components/shared/profile';
+import CreatePostPrompt from '@components/shared/post/CreatePostPrompt';
 import { TopPostsCard, RecentFollowersCard } from '@components/shared/activity';
 
 type FeedTab = 'home' | 'trending' | 'following';

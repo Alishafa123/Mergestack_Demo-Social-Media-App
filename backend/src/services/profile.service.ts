@@ -1,8 +1,9 @@
-import { User, Profile, Post, UserFollow } from "../models/index.js";
 import { Op } from "sequelize";
-import  sequelize  from "../config/database.js";
-import type { CustomError, UserModel } from "../types/index.js";
-import { StorageService } from "./storage.service.js";
+
+import  sequelize  from "@config/database.js";
+import type { CustomError, UserModel } from "@/types/index";
+import { StorageService } from "@services/storage.service.js";
+import { User, Profile, Post, UserFollow } from "@models/index.js";
 
 export const getProfile = async (userId: string): Promise<UserModel> => {
   try {

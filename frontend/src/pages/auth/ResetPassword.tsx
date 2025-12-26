@@ -1,17 +1,16 @@
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useState, useEffect } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
 
+import { Input } from "@components/shared/form";
 import { useResetPassword } from "@hooks/useAuth";
 import { showToast } from "@components/shared/toast";
-import { BackgroundDesign } from "@components/shared/backgrounds";
-import AuthIcon from "@components/shared/Icons/AuthIcon";
 import Button from "@components/shared/buttons/Button";
-import { Input } from "@components/shared/form";
+import AuthIcon from "@components/shared/Icons/AuthIcon";
 import { resetPasswordSchema } from "@schemas/authSchemas";
+import { BackgroundDesign } from "@components/shared/backgrounds";
 import type { ResetPasswordFormData } from "@schemas/authSchemas";
-
 
 export default function ResetPassword() {
   const [token, setToken] = useState<string | null>(null);

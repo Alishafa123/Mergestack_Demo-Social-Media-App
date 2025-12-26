@@ -1,6 +1,7 @@
 import React from 'react';
-import { Heart, MessageCircle, Share2, Edit, Loader2, UserPlus, Users } from 'lucide-react';
+
 import { useGetUserStats, useGetUserStatsById } from '@hooks/useProfile';
+import { Heart, MessageCircle, Share2, Edit, Loader2, UserPlus, Users } from 'lucide-react';
 
 interface UserStatsProps {
   userId?: string;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { AlertTriangle, X } from 'lucide-react';
+
 import Button from '@components/shared/buttons/Button';
 
 interface DeleteConfirmModalProps {

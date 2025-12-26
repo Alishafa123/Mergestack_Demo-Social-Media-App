@@ -1,7 +1,8 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { userController } from '@jotai/user.atom';
+
 import { AuthUtils } from '@utils/auth';
+import { userController } from '@jotai/user.atom';
 
 interface PublicRouteProps {
   children: React.ReactNode;

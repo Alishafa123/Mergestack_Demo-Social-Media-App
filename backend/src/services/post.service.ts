@@ -1,7 +1,8 @@
-import { Post, PostImage, PostLike, PostShare, User, Profile, UserFollow } from "../models/index.js";
-import type { CustomError, PostModel } from "../types/index.js";
-import { StorageService } from "./storage.service.js";
 import { Op } from "sequelize";
+
+import type { CustomError, PostModel } from "@/types/index";
+import { StorageService } from "@services/storage.service.js";
+import { Post, PostImage, PostLike, PostShare, User, Profile, UserFollow } from "@models/index.js";
 
 // Helper function to build common post includes
 const buildPostIncludes = (currentUserId?: string) => {

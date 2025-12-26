@@ -1,9 +1,10 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
-import CommentItem from './CommentItem';
+
+import type { Comment } from '@api/comment.api';
 import Button from '@components/shared/buttons/Button';
 import { useInfiniteComments } from '@hooks/useComment';
-import type { Comment } from '@api/comment.api';
+import CommentItem from '@components/shared/comment/CommentItem';
 
 interface CommentListProps {
   postId: string;

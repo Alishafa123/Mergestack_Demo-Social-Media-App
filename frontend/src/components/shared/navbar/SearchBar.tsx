@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
 import { Search } from 'lucide-react';
-import SearchResults from '@components/shared/search/SearchResults';
-import { useSearchUsers } from '@hooks/useSearch';
+import { useState, useEffect, useRef } from 'react';
+
 import { useNavigate } from 'react-router-dom';
+import { useSearchUsers } from '@hooks/useSearch';
+import SearchResults from '@components/shared/search/SearchResults';
 
 interface SearchBarProps {
   onSearch?: (query: string) => void;

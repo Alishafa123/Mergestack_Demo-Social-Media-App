@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import * as authService from "../services/auth.service.js";
-import type { LoginCredentials, SignupCredentials, ForgotPasswordRequest, ResetPasswordRequest } from "../types/index.js";
+
+import * as authService from "@services/auth.service.js";
+import type { LoginCredentials, SignupCredentials } from "@/types/index";
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {

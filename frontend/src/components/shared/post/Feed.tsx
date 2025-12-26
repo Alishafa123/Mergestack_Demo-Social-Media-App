@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Loader2, TrendingUp, Users } from 'lucide-react';
-import PostCardWithSlider from './PostCardWithSlider';
-import PostSkeleton from './PostSkeleton';
-import Button from '@components/shared/buttons/Button';
-import ShareModal from './ShareModal';
-import EditPostModal from '@components/shared/modals/EditPostModal';
+
 import { showToast } from '@components/shared/toast';
+import Button from '@components/shared/buttons/Button';
+import ShareModal from '@components/shared/post/ShareModal';
 import EmptyState from '@components/shared/states/EmptyState';
 import ErrorState from '@components/shared/states/ErrorState';
+import PostSkeleton from '@components/shared/post/PostSkeleton';
+import EditPostModal from '@components/shared/modals/EditPostModal';
+import PostCardWithSlider from '@components/shared/post/PostCardWithSlider';
 import {
   useInfinitePosts,
   useInfiniteTrendingPosts,

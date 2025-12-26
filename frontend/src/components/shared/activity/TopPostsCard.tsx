@@ -1,9 +1,10 @@
 import React from 'react';
-import { TrendingUp, Loader2 } from 'lucide-react';
-import TopPostItem from './TopPostItem';
-import Button from '@components/shared/buttons/Button';
-import { useGetUserTopPosts } from '@hooks/usePost';
 import { formatDistanceToNow } from 'date-fns';
+import { TrendingUp, Loader2 } from 'lucide-react';
+
+import { useGetUserTopPosts } from '@hooks/usePost';
+import Button from '@components/shared/buttons/Button';
+import TopPostItem from '@components/shared/activity/TopPostItem';
 
 interface TopPost {
   id: string;

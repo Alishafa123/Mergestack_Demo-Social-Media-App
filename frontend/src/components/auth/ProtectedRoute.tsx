@@ -1,7 +1,8 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { userController } from '@jotai/user.atom';
+
 import { AuthUtils } from '@utils/auth';
+import { userController } from '@jotai/user.atom';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { X, ImageIcon } from 'lucide-react';
-import { userProfileController } from '@jotai/userprofile.atom';
+
 import { useCreatePost } from '@hooks/usePost';
 import { validatePost } from '@schemas/postSchemas';
 import { showToast } from '@components/shared/toast';
 import Button from '@components/shared/buttons/Button';
-import PostTextArea from '@components/shared/post/PostTextArea';
-import PostImageUpload from '@components/shared/post/PostImageUpload';
 import UserHeader from '@components/shared/user/UserHeader';
+import PostTextArea from '@components/shared/post/PostTextArea';
+import { userProfileController } from '@jotai/userprofile.atom';
+import PostImageUpload from '@components/shared/post/PostImageUpload';
 
 interface CreatePostModalProps {
   isOpen: boolean;

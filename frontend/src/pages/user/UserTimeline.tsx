@@ -1,10 +1,11 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+
+import Feed from '@components/shared/post/Feed';
 import Navbar from '@components/shared/navbar/Navbar';
 import { UserProfileCard } from '@components/shared/profile';
-import CreatePostPrompt from '@components/shared/post/CreatePostPrompt';
-import Feed from '@components/shared/post/Feed';
 import { userProfileController } from '@jotai/userprofile.atom';
+import CreatePostPrompt from '@components/shared/post/CreatePostPrompt';
 
 const UserTimeline: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();

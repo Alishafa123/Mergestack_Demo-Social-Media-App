@@ -1,17 +1,16 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { useLocation, Link } from "react-router-dom";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import { useLogin } from "@hooks/useAuth";
-import { showToast } from "@components/shared/toast";
-import { BackgroundDesign } from "@components/shared/backgrounds";
-import AuthIcon from "@components/shared/Icons/AuthIcon";
-import Button from "@components/shared/buttons/Button";
 import { Input } from "@components/shared/form";
 import { loginSchema } from "@schemas/authSchemas";
+import { showToast } from "@components/shared/toast";
+import Button from "@components/shared/buttons/Button";
+import AuthIcon from "@components/shared/Icons/AuthIcon";
 import type { LoginFormData } from "@schemas/authSchemas";
-
+import { BackgroundDesign } from "@components/shared/backgrounds";
 
 export default function Login() {
   const {

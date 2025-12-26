@@ -1,7 +1,8 @@
 import { Router } from "express";
-import * as postController from "../controllers/post.controller.js";
-import { authenticateSupabaseToken } from "../middleware/supabase-auth.middleware.js";
-import { uploadMultiple } from "../middleware/upload.middleware.js";
+
+import * as postController from "@controllers/post.controller.js";
+import { uploadMultiple } from "@middleware/upload.middleware.js";
+import { authenticateSupabaseToken } from "@middleware/supabase-auth.middleware.js";
 
 const router = Router();
 

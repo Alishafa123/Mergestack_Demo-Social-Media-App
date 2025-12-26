@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import * as userService from "../services/user.service.js";
+
+import * as userService from "@services/user.service.js";
 
 export const followUser = async (req: Request, res: Response, next: NextFunction) => {
   try {

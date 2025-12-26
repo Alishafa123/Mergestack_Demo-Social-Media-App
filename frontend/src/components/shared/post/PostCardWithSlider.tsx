@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { Heart, MessageCircle } from 'lucide-react';
-import Button from '@components/shared/buttons/Button';
-import PostImageSlider from './PostImageSlider';
-import UserHeader from '@components/shared/user/UserHeader';
-import CommentSection from '@components/shared/comment/CommentSection';
-import ShareDropdown from './ShareDropdown';
-import SharedPostHeader from './SharedPostHeader';
-import PostOptionsDropdown from './PostOptionsDropdown';
-import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
-import { userProfileController } from '@jotai/userprofile.atom';
+
 import type { Post } from '@api/post.api';
+import Button from '@components/shared/buttons/Button';
+import UserHeader from '@components/shared/user/UserHeader';
+import { userProfileController } from '@jotai/userprofile.atom';
+import ShareDropdown from '@components/shared/post/ShareDropdown';
+import PostImageSlider from '@components/shared/post/PostImageSlider';
+import CommentSection from '@components/shared/comment/CommentSection';
+import SharedPostHeader from '@components/shared/post/SharedPostHeader';
+import PostOptionsDropdown from '@components/shared/post/PostOptionsDropdown';
+import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
 
 interface PostCardWithSliderProps {
   post: Post;

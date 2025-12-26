@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
-import { Box, Avatar, CircularProgress, Typography } from '@mui/material';
 import { PhotoCamera,} from '@mui/icons-material';
+import { Box, Avatar, CircularProgress, Typography } from '@mui/material';
 
 interface ProfileImageUploadProps {
   currentImageUrl?: string;

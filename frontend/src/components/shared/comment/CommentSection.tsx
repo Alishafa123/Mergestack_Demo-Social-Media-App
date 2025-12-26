@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { MessageCircle, ChevronDown, ChevronUp } from 'lucide-react';
-import CommentForm from './CommentForm';
-import CommentList from './CommentList';
+
 import Button from '@components/shared/buttons/Button';
+import CommentForm from '@components/shared/comment/CommentForm';
+import CommentList from '@components/shared/comment/CommentList';
 
 interface CommentSectionProps {
   postId: string;

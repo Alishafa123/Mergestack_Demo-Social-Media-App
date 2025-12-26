@@ -1,8 +1,7 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import AppRouter from "@router/AppRouter";
+import { ToastProvider } from '@components/shared/toast';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { ToastProvider } from './components/shared/toast';
-import AppRouter from "./router/AppRouter";
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
   defaultOptions: {
