@@ -18,8 +18,8 @@ interface RecentFollower {
 
 const RecentFollowersCard: React.FC = () => {
   const navigate = useNavigate();
-  const currentUser = userProfileController.useState(['id']);
-  const { data, isLoading, error } = useGetRecentFollowers(currentUser.id || '');
+  const { id: currentUserId } = userProfileController.useState(['id']);
+  const { data, isLoading, error } = useGetRecentFollowers(currentUserId || '');
 
   const formatFollowedAt = (dateString: string) => {
     return formatRelativeTime(dateString);

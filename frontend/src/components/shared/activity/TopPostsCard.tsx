@@ -1,11 +1,12 @@
 import React from 'react';
-import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 import { TrendingUp, Loader2 } from 'lucide-react';
 
 import { useGetUserTopPosts } from '@hooks/usePost';
 import Button from '@components/shared/buttons/Button';
 import { useGetUserTopPosts } from '@hooks/usePost';
 import { formatRelativeTime } from '@utils/dateUtils';
+import { userProfileController } from '@jotai/userprofile.atom';
 
 interface TopPost {
   id: string;
@@ -17,6 +18,8 @@ interface TopPost {
 }
 
 const TopPostsCard: React.FC = () => {
+  const navigate = useNavigate();
+  const { id: currentUserId } = userProfileController.useState(['id']);
   const { data, isLoading, error } = useGetUserTopPosts();
 
   const formatCreatedAt = (dateString: string) => {
@@ -27,6 +30,10 @@ const TopPostsCard: React.FC = () => {
     ...post,
     createdAt: formatCreatedAt(post.createdAt)
   })) || [];
+
+  const handleviewpost = () => {
+    navigate(`/user/${currentUserId}`)
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
@@ -75,7 +82,7 @@ const TopPostsCard: React.FC = () => {
           variant="ghost"
           size="md"
           className="w-full text-base text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text hover:from-blue-600 hover:via-purple-600 hover:to-pink-600"
-          onClick={() => console.log('Navigate to all posts')}
+          onClick={handleviewpost}
         >
           View All My Posts
         </Button>
