@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
-import { getPostComments, createComment, updateComment, deleteComment } from '../api/comment.api';
-import type { CreateCommentData, CommentsResponse } from '../api/comment.api';
-import { USER_STATS_QUERY_KEY } from './useProfile';
+
+import { USER_STATS_QUERY_KEY } from '@hooks/useProfile';
+import type { CreateCommentData, CommentsResponse } from '@api/comment.api';
+import { getPostComments, createComment, updateComment, deleteComment } from '@api/comment.api';
 
 export const COMMENT_QUERY_KEY = ['comments'];
 

@@ -13,10 +13,9 @@ interface TopPost {
 interface TopPostItemProps {
   post: TopPost;
   rank: number;
-  onClick?: (postId: string) => void;
 }
 
-const TopPostItem: React.FC<TopPostItemProps> = ({ post, rank, onClick }) => {
+const TopPostItem: React.FC<TopPostItemProps> = ({ post, rank }) => {
   const truncateText = (text: string, maxLength: number = 80) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
@@ -24,8 +23,7 @@ const TopPostItem: React.FC<TopPostItemProps> = ({ post, rank, onClick }) => {
 
   return (
     <div 
-      className="group p-4 rounded-lg border border-gray-100 hover:border-purple-200 hover:shadow-md transition-all duration-200 cursor-pointer relative"
-      onClick={() => onClick?.(post.id)}
+      className="group p-4 rounded-lg border border-gray-100 hover:border-purple-200 hover:shadow-md transition-all duration-200 relative"
     >
       {/* Rank Badge */}
       <div className="absolute -top-2 -left-2 w-8 h-8 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-md">

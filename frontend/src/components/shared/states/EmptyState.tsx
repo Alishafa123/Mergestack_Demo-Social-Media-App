@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from '../buttons/Button';
+
+import Button from '@components/shared/buttons/Button';
 
 interface EmptyStateProps {
   icon?: React.ReactNode;

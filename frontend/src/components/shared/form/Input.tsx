@@ -6,7 +6,7 @@ interface SelectOption {
   label: string;
 }
 
-interface CommonInputProps {
+interface InputProps {
   name: string;
   label: string;
   type?: 'text' | 'email' | 'password' | 'date' | 'number' | 'tel' | 'url' | 'select';
@@ -20,7 +20,7 @@ interface CommonInputProps {
   showPasswordToggle?: boolean;
 }
 
-export default function CommonInput({
+export default function Input({
   name,
   label,
   type = 'text',
@@ -32,7 +32,7 @@ export default function CommonInput({
   options = [],
   selectPlaceholder = 'Select an option',
   showPasswordToggle = true
-}: CommonInputProps) {
+}: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const error = errors[name];
 

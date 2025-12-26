@@ -1,22 +1,23 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Loader2, TrendingUp, Users } from 'lucide-react';
-import PostCardWithSlider from './PostCardWithSlider';
-import PostSkeleton from './PostSkeleton';
-import Button from '../buttons/Button';
-import ShareModal from './ShareModal';
-import DeleteConfirmModal from '../modals/DeleteConfirmModal';
-import EditPostModal from '../modals/EditPostModal';
-import EmptyState from '../states/EmptyState';
-import ErrorState from '../states/ErrorState';
-import { 
-  useInfinitePosts, 
-  useInfiniteTrendingPosts, 
+
+import { showToast } from '@components/shared/toast';
+import Button from '@components/shared/buttons/Button';
+import ShareModal from '@components/shared/post/ShareModal';
+import EmptyState from '@components/shared/states/EmptyState';
+import ErrorState from '@components/shared/states/ErrorState';
+import PostSkeleton from '@components/shared/post/PostSkeleton';
+import EditPostModal from '@components/shared/modals/EditPostModal';
+import PostCardWithSlider from '@components/shared/post/PostCardWithSlider';
+import {
+  useInfinitePosts,
+  useInfiniteTrendingPosts,
   useInfiniteFollowersFeed,
-  useToggleLike, 
-  useToggleShare, 
-  useDeletePost, 
-  useUpdatePost 
-} from '../../../hooks/usePost';
+  useToggleLike,
+  useToggleShare,
+  useDeletePost,
+  useUpdatePost
+} from '@hooks/usePost';
 
 type FeedType = 'general' | 'trending' | 'followers';
 
@@ -26,15 +27,14 @@ interface FeedProps {
 }
 
 const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<any>(null);
+
   const toggleLikeMutation = useToggleLike();
   const toggleShareMutation = useToggleShare();
   const deletePostMutation = useDeletePost();
   const updatePostMutation = useUpdatePost();
-  
-  const [shareModalOpen, setShareModalOpen] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedPost, setSelectedPost] = useState<any>(null);
 
   const generalFeedQuery = useInfinitePosts(10, userId);
   const trendingFeedQuery = useInfiniteTrendingPosts(10);
@@ -112,23 +112,15 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
   const config = getFeedConfig(feedType);
 
   const handleDelete = (postId: string) => {
-    const post = allPosts.find(p => p.id === postId);
-    setSelectedPost(post);
-    setDeleteModalOpen(true);
-  };
-
-  const handleConfirmDelete = () => {
-    if (selectedPost) {
-      deletePostMutation.mutate(selectedPost.id, {
-        onSuccess: () => {
-          setDeleteModalOpen(false);
-          setSelectedPost(null);
-        },
-        onError: (error) => {
-          console.error('Failed to delete post:', error);
-        }
-      });
-    }
+    deletePostMutation.mutate(postId, {
+      onSuccess: () => {
+        showToast.success('Post deleted successfully');
+      },
+      onError: (error) => {
+        console.error('Failed to delete post:', error);
+        showToast.error('Failed to delete post. Please try again.');
+      }
+    });
   };
 
   const handleEdit = (postId: string) => {
@@ -143,11 +135,14 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
         { postId: selectedPost.id, content },
         {
           onSuccess: () => {
+            showToast.success('Post updated successfully! ✏️');
             setEditModalOpen(false);
             setSelectedPost(null);
           },
-          onError: (error) => {
+          onError: (error: any) => {
             console.error('Failed to update post:', error);
+            const errorMessage = error?.response?.data?.message || 'Failed to update post. Please try again.';
+            showToast.error(errorMessage);
           }
         }
       );
@@ -160,24 +155,24 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
 
   const handleShare = (postId: string, isCurrentlyShared: boolean) => {
     if (isCurrentlyShared) {
-      toggleShareMutation.mutate({ 
-        postId, 
-        isCurrentlyShared: true 
+      toggleShareMutation.mutate({
+        postId,
+        isCurrentlyShared: true
       });
     } else {
-      toggleShareMutation.mutate({ 
-        postId, 
-        isCurrentlyShared: false 
+      toggleShareMutation.mutate({
+        postId,
+        isCurrentlyShared: false
       });
     }
   };
 
   const handleModalShare = (message?: string) => {
     if (selectedPost) {
-      toggleShareMutation.mutate({ 
-        postId: selectedPost.id, 
+      toggleShareMutation.mutate({
+        postId: selectedPost.id,
         sharedContent: message,
-        isCurrentlyShared: false 
+        isCurrentlyShared: false
       });
       setShareModalOpen(false);
       setSelectedPost(null);
@@ -191,9 +186,9 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
   };
 
   const handleDeleteShare = (postId: string) => {
-    toggleShareMutation.mutate({ 
-      postId, 
-      isCurrentlyShared: true 
+    toggleShareMutation.mutate({
+      postId,
+      isCurrentlyShared: true
     });
   };
 
@@ -235,7 +230,7 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
   }
 
   const allPosts = data?.pages.flatMap(page => page.posts) || [];
-  
+
   if (allPosts.length === 0) {
     return (
       <EmptyState
@@ -261,10 +256,10 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
           onDelete={handleDelete}
           onEdit={handleEdit}
           onDeleteShare={handleDeleteShare}
-          isLiked={post.isLiked || false} 
+          isLiked={post.isLiked || false}
           isShared={post.isShared || false}
-          isDeleting={deletePostMutation.isPending && selectedPost?.id === post.id}
-          isDeletingShare={toggleShareMutation.isPending && selectedPost?.id === post.id}
+          isDeleting={deletePostMutation.isPending}
+          isDeletingShare={toggleShareMutation.isPending}
         />
       ))}
 
@@ -318,17 +313,6 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
             ? `${selectedPost.user.profile.first_name} ${selectedPost.user.profile.last_name}`
             : selectedPost?.user.name
         }
-      />
-
-      <DeleteConfirmModal
-        isOpen={deleteModalOpen}
-        onClose={() => {
-          setDeleteModalOpen(false);
-          setSelectedPost(null);
-        }}
-        onConfirm={handleConfirmDelete}
-        isLoading={deletePostMutation.isPending}
-        message="Are you sure you want to delete this post? This action cannot be undone and will also remove all shares of this post."
       />
 
       <EditPostModal

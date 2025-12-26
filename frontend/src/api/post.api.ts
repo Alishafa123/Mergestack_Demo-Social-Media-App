@@ -1,4 +1,4 @@
-import api from "../services/axios";
+import api from "@services/axios";
 
 export interface CreatePostData {
   content?: string;
@@ -14,8 +14,8 @@ export interface Post {
   shares_count: number;
   createdAt: string;
   updatedAt: string;
-  isLiked?: boolean; // Whether current user has liked this post
-  isShared?: boolean; // Whether current user has shared this post
+  isLiked?: boolean;
+  isShared?: boolean; 
   type?: 'original' | 'shared';
   timeline_date?: string;
   shared_by?: {

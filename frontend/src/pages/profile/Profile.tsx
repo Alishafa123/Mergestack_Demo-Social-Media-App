@@ -1,23 +1,19 @@
 import { useState } from "react";
+import { Edit, Eye } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Edit, Eye } from "lucide-react";
-import Navbar from "../../components/shared/navbar/Navbar";
-import Alert from "../../components/shared/Alert";
-import Button from "../../components/shared/buttons/Button";
-import { CommonInput, CommonDateField, CustomSelectField, TextAreaField } from "../../components/shared/form";
-import ProfileImageUpload from "../../components/shared/form/ProfileImageUpload";
-import { profileSchema } from "../../schemas/profileSchemas";
-import type { ProfileFormData } from "../../schemas/profileSchemas";
-import { useUpdateProfile } from "../../hooks/useProfile";
-import { userProfileController } from "../../jotai/userprofile.atom";
 
-interface AlertState {
-  show: boolean;
-  variant: 'success' | 'error';
-  message: string;
-}
+import { showToast } from "@components/shared/toast";
+import { useUpdateProfile } from "@hooks/useProfile";
+import Navbar from "@components/shared/navbar/Navbar";
+import Button from "@components/shared/buttons/Button";
+import { profileSchema } from "@schemas/profileSchemas";
+import type { ProfileFormData } from "@schemas/profileSchemas";
+import { userProfileController } from "@jotai/userprofile.atom";
+import { BackgroundDesign } from "@components/shared/backgrounds";
+import ProfileImageUpload from "@components/shared/form/ProfileImageUpload";
+import { Input, DateField, SelectField, TextAreaField } from "@components/shared/form";
 
 const genderOptions = [
   { value: 'male', label: 'Male' },
@@ -36,13 +32,7 @@ export default function Profile() {
   
   
   const navigate = useNavigate();
-  const [alert, setAlert] = useState<AlertState>({
-    show: false,
-    variant: 'success',
-    message: ''
-  });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
   const updateProfileMutation = useUpdateProfile();
 
   const {
@@ -71,15 +61,6 @@ export default function Profile() {
     ? `${city}, ${country}` 
     : city || country || null;
 
-
-
-  const showAlert = (variant: 'success' | 'error', message: string) => {
-    setAlert({ show: true, variant, message });
-    setTimeout(() => {
-      setAlert(prev => ({ ...prev, show: false }));
-    }, 5000);
-  };
-
   const onSubmit = (data: ProfileFormData) => {
     const submitData = {
       ...data,
@@ -88,12 +69,14 @@ export default function Profile() {
 
     updateProfileMutation.mutate(submitData, {
       onSuccess: () => {
-        showAlert('success', 'Profile updated successfully!');
+        showToast.success('Profile updated successfully! 👤');
         setSelectedFile(null);
+        // Switch back to view mode after successful update
+        setSearchParams({ mode: 'view' });
       },
       onError: (error: any) => {
         const errorMessage = error?.response?.data?.message || 'Failed to update profile. Please try again.';
-        showAlert('error', errorMessage);
+        showToast.error(errorMessage);
       }
     });
   };
@@ -105,6 +88,18 @@ export default function Profile() {
   const handleModeToggle = () => {
     const newMode = isEditMode ? 'view' : 'edit';
     setSearchParams({ mode: newMode });
+    
+    // Clear selected file when switching modes
+    if (newMode === 'view') {
+      setSelectedFile(null);
+    }
+  };
+
+  const getButtonText = () => {
+    if (updateProfileMutation.isPending) {
+      return 'Updating profile...';
+    }
+    return 'Update Profile';
   };
 
   const renderViewMode = () => (
@@ -203,7 +198,7 @@ export default function Profile() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <CommonInput
+        <Input
           name="first_name"
           label="First Name"
           placeholder="Enter your first name"
@@ -211,7 +206,7 @@ export default function Profile() {
           errors={errors}
         />
 
-        <CommonInput
+        <Input
           name="last_name"
           label="Last Name"
           placeholder="Enter your last name"
@@ -220,7 +215,7 @@ export default function Profile() {
         />
       </div>
 
-      <CommonInput
+      <Input
         name="phone"
         label="Phone Number"
         type="tel"
@@ -230,14 +225,14 @@ export default function Profile() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <CommonDateField
+        <DateField
           name="date_of_birth"
           label="Date of Birth"
           register={register}
           errors={errors}
         />
 
-        <CustomSelectField
+        <SelectField
           name="gender"
           label="Gender"
           register={register}
@@ -258,7 +253,7 @@ export default function Profile() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <CommonInput
+        <Input
           name="city"
           label="City"
           placeholder="Enter your city"
@@ -266,7 +261,7 @@ export default function Profile() {
           errors={errors}
         />
 
-        <CommonInput
+        <Input
           name="country"
           label="Country"
           placeholder="Enter your country"
@@ -295,23 +290,18 @@ export default function Profile() {
           fullWidth
           size="lg"
         >
-          {updateProfileMutation.isPending ? "Updating Profile..." : "Update Profile"}
+          {getButtonText()}
         </Button>
       </div>
     </form>
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
       
-      <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full opacity-50"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-100 rounded-full opacity-50"></div>
-          <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-blue-200 rounded-full opacity-30"></div>
-          <div className="absolute top-1/4 right-1/4 w-24 h-24 bg-purple-200 rounded-full opacity-30"></div>
-        </div>
+      <div className="flex-1 bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <BackgroundDesign />
 
         <div className="max-w-2xl w-full space-y-8 relative z-10">
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
@@ -330,10 +320,6 @@ export default function Profile() {
                 </span>
               </div>
             </div>
-
-            {alert.show && (
-              <Alert variant={alert.variant} message={alert.message} />
-            )}
 
             {isEditMode ? renderEditMode() : renderViewMode()}
           </div>

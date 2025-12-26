@@ -1,15 +1,37 @@
-import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { userProfileController } from '../../../jotai/userprofile.atom'
-import { useLogout } from '../../../hooks/useAuth';
+import { useState, useRef, useEffect } from 'react';
+
+import { useLogout } from '@hooks/useAuth';
+import { userProfileController } from '@jotai/userprofile.atom'
 
 export default function ProfileDropdown() {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   const logoutMutation = useLogout();
   const { id, first_name, last_name, profile_url } = userProfileController.useState(['id', 'first_name', 'last_name', 'profile_url'])
-
+  
+  const handleProfileClick = () => {
+    navigate('/profile');
+    setIsOpen(false);
+  };
+  
+  const handleTimelineClick = () => {
+    if (id) {
+      navigate(`/user/${id}`);
+      setIsOpen(false);
+    }
+  };
+  
+  const handleLogout = () => {
+    logoutMutation.mutate();
+    setIsOpen(false);
+  };
+  
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -22,28 +44,6 @@ export default function ProfileDropdown() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  const handleProfileClick = () => {
-    navigate('/profile');
-    setIsOpen(false);
-  };
-
-  const handleTimelineClick = () => {
-    if (id) {
-      navigate(`/user/${id}`);
-      setIsOpen(false);
-    }
-  };
-
-  const handleLogout = () => {
-    logoutMutation.mutate();
-    setIsOpen(false);
-  };
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
     <div className="relative" ref={dropdownRef}>
       <button

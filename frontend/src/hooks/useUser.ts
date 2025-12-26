@@ -7,7 +7,7 @@ import {
   getFollowers,
   getFollowing,
   getUserSuggestions
-} from '../api/user.api';
+} from '@api/user.api';
 
 export const USER_QUERY_KEY = ['user'];
 export const FOLLOW_STATUS_QUERY_KEY = ['followStatus'];

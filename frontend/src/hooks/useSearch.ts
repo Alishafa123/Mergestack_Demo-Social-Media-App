@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { searchUsers } from '../api/profile.api';
+
+import { searchUsers } from '@api/profile.api';
 
 export const SEARCH_QUERY_KEY = ['search'];
 

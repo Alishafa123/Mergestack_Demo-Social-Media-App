@@ -1,6 +1,7 @@
 import React from 'react';
 import { User, MapPin, Loader2 } from 'lucide-react';
-import type { SearchUser } from '../../../api/profile.api';
+
+import type { SearchUser } from '@api/profile.api';
 
 interface SearchResultsProps {
   users: SearchUser[];

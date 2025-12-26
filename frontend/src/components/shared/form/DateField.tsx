@@ -1,6 +1,6 @@
 import type { UseFormRegister, FieldErrors, RegisterOptions } from 'react-hook-form';
 
-interface CommonDateFieldProps {
+interface DateFieldProps {
   name: string;
   label: string;
   register: UseFormRegister<any>;
@@ -9,14 +9,14 @@ interface CommonDateFieldProps {
   className?: string;
 }
 
-export default function CommonDateField({
+export default function DateField({
   name,
   label,
   register,
   errors,
   validation,
   className = ''
-}: CommonDateFieldProps) {
+}: DateFieldProps) {
   const error = errors[name];
 
   return (

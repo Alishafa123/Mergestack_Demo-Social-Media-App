@@ -10,6 +10,20 @@ const PostOptionsDropdown: React.FC<PostOptionsDropdownProps> = ({ onDelete, onE
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const handleToggle = () => {
+    setIsOpen(!isOpen);
+  };
+  
+  const handleDelete = () => {
+    setIsOpen(false);
+    onDelete();
+  };
+  
+  const handleEdit = () => {
+    setIsOpen(false);
+    onEdit?.();
+  };
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -25,20 +39,6 @@ const PostOptionsDropdown: React.FC<PostOptionsDropdownProps> = ({ onDelete, onE
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
-
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleDelete = () => {
-    setIsOpen(false);
-    onDelete();
-  };
-
-  const handleEdit = () => {
-    setIsOpen(false);
-    onEdit?.();
-  };
 
   return (
     <div className="relative" ref={dropdownRef}>

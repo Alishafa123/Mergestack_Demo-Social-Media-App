@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { Heart, MessageCircle } from 'lucide-react';
-import Button from '../buttons/Button';
-import PostImageSlider from './PostImageSlider';
-import UserHeader from '../user/UserHeader';
-import CommentSection from '../comment/CommentSection';
-import ShareDropdown from './ShareDropdown';
-import SharedPostHeader from './SharedPostHeader';
-import PostOptionsDropdown from './PostOptionsDropdown';
-import DeleteConfirmModal from '../modals/DeleteConfirmModal';
-import { userProfileController } from '../../../jotai/userprofile.atom';
-import type { Post } from '../../../api/post.api';
+
+import type { Post } from '@api/post.api';
+import Button from '@components/shared/buttons/Button';
+import UserHeader from '@components/shared/user/UserHeader';
+import { userProfileController } from '@jotai/userprofile.atom';
+import ShareDropdown from '@components/shared/post/ShareDropdown';
+import PostImageSlider from '@components/shared/post/PostImageSlider';
+import CommentSection from '@components/shared/comment/CommentSection';
+import SharedPostHeader from '@components/shared/post/SharedPostHeader';
+import PostOptionsDropdown from '@components/shared/post/PostOptionsDropdown';
+import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
 
 interface PostCardWithSliderProps {
   post: Post;
@@ -188,7 +189,7 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
         onConfirm={handleConfirmDelete}
         isLoading={isDeleting}
         title="Delete Post"
-        message="Are you sure you want to delete this post? This action cannot be undone."
+        message="Are you sure you want to delete this post? This action cannot be undone and will also remove all shares of this post."
       />
     </div>
   );

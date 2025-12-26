@@ -1,32 +1,16 @@
-import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigate } from "react-router-dom";
-import { useForgotPassword } from "../../hooks/useAuth";
-import Alert from "../../components/shared/Alert";
-import AuthIcon from "../../components/shared/AuthIcon";
-import Button from "../../components/shared/buttons/Button";
-import { CommonInput } from "../../components/shared/form";
-import { forgotPasswordSchema } from "../../schemas/authSchemas";
-import type { ForgotPasswordFormData } from "../../schemas/authSchemas";
-import { Link } from "react-router-dom";
 
-interface AlertState {
-  show: boolean;
-  variant: 'success' | 'error';
-  message: string;
-}
+import { Input } from "@components/shared/form";
+import { useForgotPassword } from "@hooks/useAuth";
+import Button from "@components/shared/buttons/Button";
+import AuthIcon from "@components/shared/Icons/AuthIcon";
+import { forgotPasswordSchema } from "@schemas/authSchemas";
+import { BackgroundDesign } from "@components/shared/backgrounds";
+import type { ForgotPasswordFormData } from "@schemas/authSchemas";
 
 export default function ForgotPassword() {
-  const navigate = useNavigate();
-  const [alert, setAlert] = useState<AlertState>({
-    show: false,
-    variant: 'success',
-    message: ''
-  });
-
-  const forgotPasswordMutation = useForgotPassword();
-  
   const {
     register,
     handleSubmit,
@@ -34,56 +18,25 @@ export default function ForgotPassword() {
   } = useForm<ForgotPasswordFormData>({
     resolver: yupResolver(forgotPasswordSchema)
   });
-
-  const showAlert = (variant: 'success' | 'error', message: string) => {
-    setAlert({ show: true, variant, message });
-    setTimeout(() => {
-      setAlert(prev => ({ ...prev, show: false }));
-    }, 5000);
-  };
-
-  const onSubmit = (data: ForgotPasswordFormData) => {
-    forgotPasswordMutation.mutate(data, {
-      onSuccess: (response) => {
-        showAlert('success', response.message);
-        setTimeout(() => {
-          navigate('/login', { 
-            state: { 
-              message: 'Password reset email sent! Please check your inbox.',
-            } 
-          });
-        }, 2000);
-      },
-      onError: (error: any) => {
-        const errorMessage = error?.response?.data?.message || 'Failed to send reset email. Please try again.';
-        showAlert('error', errorMessage);
-      }
-    });
-  };
+  
+  const forgotPasswordMutation = useForgotPassword();
+  const onSubmit = (data: ForgotPasswordFormData) => forgotPasswordMutation.mutate(data);
+  const getButtonText = () => forgotPasswordMutation.isPending ? 'Sending reset link...' : 'Send Reset Link';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full opacity-50"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-100 rounded-full opacity-50"></div>
-        <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-blue-200 rounded-full opacity-30"></div>
-        <div className="absolute top-1/4 right-1/4 w-24 h-24 bg-purple-200 rounded-full opacity-30"></div>
-      </div>
+      <BackgroundDesign />
       
       <div className="max-w-md w-full space-y-8 relative z-10">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
           <div className="text-center mb-8">
             <AuthIcon />
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Forgot Password</h2>
-            <p className="mt-2 text-sm text-gray-600">Enter your email to receive a password reset link</p>
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Forgot Password</h2>
+            <p className="mt-2 text-bold text-gray-600">Enter your email to receive a password reset link</p>
           </div>
           
-          {alert.show && (
-            <Alert variant={alert.variant} message={alert.message} />
-          )}
-          
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <CommonInput 
+            <Input 
               name="email" 
               label="Email address" 
               type="email" 
@@ -95,14 +48,15 @@ export default function ForgotPassword() {
             <Button 
               type="submit" 
               loading={forgotPasswordMutation.isPending}
+              disabled={forgotPasswordMutation.isPending}
               fullWidth
               size="lg"
             >
-              {forgotPasswordMutation.isPending ? "Sending..." : "Send Reset Link"}
+              {getButtonText()}
             </Button>
             
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-500">
+              <p className="text-base text-gray-500">
                 Remember your password?{' '}
                 <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
                   Sign in here

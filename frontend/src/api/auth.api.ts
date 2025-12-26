@@ -1,5 +1,5 @@
-import api from "../services/axios";
-import type { LoginFormData, SignupFormData, ForgotPasswordFormData, ResetPasswordFormData } from "../schemas/authSchemas";
+import api from "@services/axios";
+import type { LoginFormData, SignupFormData, ForgotPasswordFormData, ResetPasswordFormData } from "@schemas/authSchemas";
 
 export const loginUser = async (data: LoginFormData) => {
   const res = await api.post("/auth/login", data);

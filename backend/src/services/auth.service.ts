@@ -1,6 +1,6 @@
-import { supabase } from "../config/supabase.js";
-import { User, Profile } from "../models/index.js";
-import type { CustomError, LoginCredentials, SignupCredentials } from "../types/index.js";
+import { supabase } from "@config/supabase.js";
+import { User, Profile } from "@models/index.js";
+import type { CustomError, LoginCredentials, SignupCredentials } from "@/types/index";
 
 export const login = async ({ email, password }: LoginCredentials) => {
   if (!email || !password) {

@@ -1,5 +1,6 @@
 import React from 'react';
-import Button from '../buttons/Button';
+
+import Button from '@components/shared/buttons/Button';
 
 interface ErrorStateProps {
   title?: string;

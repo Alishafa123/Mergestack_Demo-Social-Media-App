@@ -1,7 +1,8 @@
 import { Router } from "express";
-import * as profileController from "../controllers/profile.controller.js";
-import { authenticateSupabaseToken } from "../middleware/supabase-auth.middleware.js";
-import { uploadSingle } from "../middleware/upload.middleware.js";
+
+import { uploadSingle } from "@middleware/upload.middleware.js";
+import * as profileController from "@controllers/profile.controller.js";
+import { authenticateSupabaseToken } from "@middleware/supabase-auth.middleware.js";
 
 const router = Router();
 

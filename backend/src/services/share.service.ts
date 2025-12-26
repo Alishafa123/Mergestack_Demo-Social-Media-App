@@ -1,6 +1,5 @@
-import { Op } from "sequelize";
-import { Post, PostShare, User, Profile } from "../models/index.js";
-import type { CustomError, PostShareModel, PostModel } from "../types/index.js";
+import { Post, PostShare, User, Profile } from "@models/index.js";
+import type { CustomError, PostShareModel, PostModel } from "@/types/index";
 
 export const sharePost = async (
   postId: string,

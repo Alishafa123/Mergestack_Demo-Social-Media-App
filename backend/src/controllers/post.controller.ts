@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import * as postService from "../services/post.service.js";
-import { StorageService } from "../services/storage.service.js";
+
+import * as postService from "@services/post.service.js";
+import { StorageService } from "@services/storage.service.js";
 
 export const createPost = async (req: Request, res: Response, next: NextFunction) => {
   try {

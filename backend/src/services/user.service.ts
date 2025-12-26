@@ -1,6 +1,7 @@
-import { User, Profile, UserFollow } from "../models/index.js";
 import { Op } from "sequelize";
-import type { CustomError } from "../types/index.js";
+
+import type { CustomError } from "@/types/index";
+import { User, Profile, UserFollow } from "@models/index.js";
 
 export const followUser = async (
   followerId: string, 

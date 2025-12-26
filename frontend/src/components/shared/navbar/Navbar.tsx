@@ -1,13 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import SearchBar from './SearchBar';
-import ProfileDropdown from './ProfileDropdown';
+
+import SearchBar from '@components/shared/navbar/SearchBar';
+import ProfileDropdown from '@components/shared/navbar/ProfileDropdown';
 
 export default function Navbar() {
   const navigate = useNavigate();
-
-  const handleSearch = (query: string) => {
-    console.log('Search query:', query);
-  };
 
   const handleFeedClick = () => {
     navigate('/dashboard');
@@ -28,7 +25,6 @@ export default function Navbar() {
 
           <div className="flex-1 min-w-0 mx-1 sm:mx-2 md:flex-initial md:w-96 lg:w-[500px] xl:w-[600px] md:mx-8">
             <SearchBar 
-              onSearch={handleSearch}
               placeholder="Search..."
             />
           </div>

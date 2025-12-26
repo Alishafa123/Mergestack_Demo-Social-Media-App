@@ -1,9 +1,10 @@
 import React from 'react';
-import { TrendingUp, Loader2 } from 'lucide-react';
-import TopPostItem from './TopPostItem';
-import Button from '../buttons/Button';
-import { useGetUserTopPosts } from '../../../hooks/usePost';
 import { formatDistanceToNow } from 'date-fns';
+import { TrendingUp, Loader2 } from 'lucide-react';
+
+import { useGetUserTopPosts } from '@hooks/usePost';
+import Button from '@components/shared/buttons/Button';
+import TopPostItem from '@components/shared/activity/TopPostItem';
 
 interface TopPost {
   id: string;
@@ -29,10 +30,6 @@ const TopPostsCard: React.FC = () => {
     ...post,
     createdAt: formatCreatedAt(post.createdAt)
   })) || [];
-
-  const handlePostClick = (postId: string) => {
-    console.log('Clicked post:', postId);
-  };
 
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
@@ -71,7 +68,6 @@ const TopPostsCard: React.FC = () => {
               key={post.id}
               post={post}
               rank={index + 1}
-              onClick={handlePostClick}
             />
           ))
         )}

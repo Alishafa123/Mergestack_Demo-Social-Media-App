@@ -1,11 +1,13 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { MapPin, Heart, MessageCircle, Share2, Edit, Loader2, UserPlus, UserMinus, Users } from 'lucide-react';
-import { userController } from '../../../jotai/user.atom';
-import { userProfileController } from '../../../jotai/userprofile.atom';
-import { useGetUserStats, useGetProfileById, useGetUserStatsById } from '../../../hooks/useProfile';
-import { useFollowUser, useUnfollowUser, useGetFollowStatus } from '../../../hooks/useUser';
-import Button from '../buttons/Button';
+import { MapPin, Edit, Loader2, UserPlus, UserMinus } from 'lucide-react';
+
+import { userController } from '@jotai/user.atom';
+import { useGetProfileById } from '@hooks/useProfile';
+import Button from '@components/shared/buttons/Button';
+import UserStats from '@components/shared/profile/UserStats';
+import { userProfileController } from '@jotai/userprofile.atom';
+import { useFollowUser, useUnfollowUser, useGetFollowStatus } from '@hooks/useUser';
 
 const UserProfileCard: React.FC = () => {
   const navigate = useNavigate();
@@ -45,11 +47,6 @@ const UserProfileCard: React.FC = () => {
   }
   
   const { data: otherUserProfile, isLoading: profileLoading } = useGetProfileById(userId || '');
-  const { data: otherUserStats, isLoading: otherStatsLoading, error: otherStatsError } = useGetUserStatsById(userId || '');
-  const { data: currentUserStats, isLoading: currentStatsLoading, error: currentStatsError } = useGetUserStats({
-    enabled: !isViewingOtherUser
-  });
-
   const { data: followStatus, isLoading: followStatusLoading } = useGetFollowStatus(userId || '');
   const followMutation = useFollowUser();
   const unfollowMutation = useUnfollowUser();
@@ -65,19 +62,6 @@ const UserProfileCard: React.FC = () => {
     bio: currentBio,
     city: currentCity,
     country: currentCountry
-  };
-
-  const statsData = isViewingOtherUser ? otherUserStats : currentUserStats;
-  const statsLoading = isViewingOtherUser ? otherStatsLoading : currentStatsLoading;
-  const statsError = isViewingOtherUser ? otherStatsError : currentStatsError;
-  
-  const stats = {
-    likes: statsData?.stats?.totalLikes || 0,
-    comments: statsData?.stats?.totalComments || 0,
-    shares: statsData?.stats?.totalShares || 0,
-    posts: statsData?.stats?.totalPosts || 0,
-    followers: statsData?.stats?.followersCount || 0,
-    following: statsData?.stats?.followingCount || 0
   };
 
   const displayName = profileData?.first_name && profileData?.last_name 
@@ -102,57 +86,6 @@ const UserProfileCard: React.FC = () => {
       followMutation.mutate(userId);
     }
   };
-
-  const statsConfig = [
-  {
-    label: "Likes",
-    value: stats.likes,
-    icon: Heart,
-    bg: "bg-red-50",
-    border: "border-red-100",
-    text: "text-red-500",
-  },
-  {
-    label: "Comments",
-    value: stats.comments,
-    icon: MessageCircle,
-    bg: "bg-blue-50",
-    border: "border-blue-100",
-    text: "text-blue-500",
-  },
-  {
-    label: "Shares",
-    value: stats.shares,
-    icon: Share2,
-    bg: "bg-green-50",
-    border: "border-green-100",
-    text: "text-green-500",
-  },
-  {
-    label: "Posts",
-    value: stats.posts,
-    icon: Edit,
-    bg: "bg-purple-50",
-    border: "border-purple-100",
-    text: "text-purple-500",
-  },
-  {
-    label: "Followers",
-    value: stats.followers,
-    icon: Users,
-    bg: "bg-indigo-50",
-    border: "border-indigo-100",
-    text: "text-indigo-500",
-  },
-  {
-    label: "Following",
-    value: stats.following,
-    icon: UserPlus,
-    bg: "bg-teal-50",
-    border: "border-teal-100",
-    text: "text-teal-500",
-  },
-];
 
   if (isViewingOtherUser && profileLoading) {
     return (
@@ -281,39 +214,10 @@ const UserProfileCard: React.FC = () => {
         <div className="border-t border-gray-200 pt-6">
           <h4 className="text-base font-semibold text-gray-800 mb-4 text-center">Activity Overview</h4>
           
-          {statsLoading ? (
-            <div className="flex justify-center py-6">
-              <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-            </div>
-          ) : statsError ? (
-            <div className="text-center py-4">
-              <p className="text-sm text-red-500">Failed to load stats</p>
-            </div>
-          ) : (<div className="grid grid-cols-2 gap-4">
-  {statsConfig.map(({ label, value, icon: Icon, bg, border, text }) => (
-    <div
-      key={label}
-      className={`flex flex-col items-center p-4 rounded-xl border ${border} bg-white 
-                 hover:shadow-md transition-shadow duration-200`}
-    >
-      <div
-        className={`flex items-center justify-center w-11 h-11 rounded-full mb-3 border ${bg} ${border}`}
-      >
-        <Icon size={18} className={text} />
-      </div>
-
-      <div className="text-xl font-semibold text-gray-900">
-        {value}
-      </div>
-
-      <div className="text-sm text-gray-500">
-        {label}
-      </div>
-    </div>
-  ))}
-</div>
-
-          )}
+          <UserStats 
+            userId={userId}
+            isViewingOtherUser={isViewingOtherUser}
+          />
         </div>
       </div>
     </div>
