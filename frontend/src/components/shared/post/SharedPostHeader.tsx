@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import type { Post } from '@api/post.api';
@@ -20,6 +20,7 @@ const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare
   const navigate = useNavigate();
   const { id: currentUserId } = userProfileController.useState(['id']);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [wasDeleting, setWasDeleting] = useState(false);
 
   if (post.type !== 'shared' || !post.shared_by) {
     return null;
@@ -42,7 +43,6 @@ const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare
 
   const handleConfirmDelete = () => {
     onDeleteShare?.();
-    setShowDeleteModal(false);
   };
 
   const handleCloseModal = () => {
@@ -52,6 +52,15 @@ const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare
   const handleUserClick = (userId: string) => {
     navigate(`/user/${userId}`);
   };
+
+  useEffect(() => {
+    if (wasDeleting && !isDeleting) {
+      setShowDeleteModal(false);
+      setWasDeleting(false);
+    } else if (isDeleting && !wasDeleting) {
+      setWasDeleting(true);
+    }
+  }, [isDeleting, wasDeleting]);
 
   return (
     <div className="bg-gray-50 border-b border-gray-200 px-4 py-3">

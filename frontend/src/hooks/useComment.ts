@@ -3,6 +3,9 @@ import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tansta
 import { USER_STATS_QUERY_KEY } from '@hooks/useProfile';
 import type { CreateCommentData, CommentsResponse } from '@api/comment.api';
 import { getPostComments, createComment, updateComment, deleteComment } from '@api/comment.api';
+import type { CreateCommentData, CommentsResponse } from '@api/comment.api';
+import { USER_STATS_QUERY_KEY } from '@hooks/useProfile';
+import { showToast } from '@components/shared/toast';
 
 export const COMMENT_QUERY_KEY = ['comments'];
 
@@ -46,9 +49,13 @@ export const useCreateComment = () => {
       queryClient.invalidateQueries({ 
         queryKey: USER_STATS_QUERY_KEY 
       });
+
+      showToast.success('Comment posted successfully! 💬');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Comment creation failed:', error);
+      const errorMessage = error?.response?.data?.message || 'Failed to post comment. Please try again.';
+      showToast.error(errorMessage);
     },
   });
 };
@@ -61,9 +68,12 @@ export const useUpdateComment = () => {
       updateComment(commentId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEY });
+      showToast.success('Comment updated successfully! ✏️');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Comment update failed:', error);
+      const errorMessage = error?.response?.data?.message || 'Failed to update comment. Please try again.';
+      showToast.error(errorMessage);
     },
   });
 };
@@ -76,9 +86,12 @@ export const useDeleteComment = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: ['posts'] });
+      showToast.success('Comment deleted successfully! 🗑️');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Comment deletion failed:', error);
+      const errorMessage = error?.response?.data?.message || 'Failed to delete comment. Please try again.';
+      showToast.error(errorMessage);
     },
   });
 };

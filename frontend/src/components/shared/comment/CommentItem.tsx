@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { MoreHorizontal, Reply, Edit, Trash2 } from 'lucide-react';
-import CommentForm from './CommentForm';
+import CommentForm from '@components/shared/comment/CommentForm';
 import { useDeleteComment, useUpdateComment } from '@hooks/useComment';
-import { userController } from '@jotai/user.atom';
+import { userProfileController } from '@jotai/userprofile.atom';
 import type { Comment } from '@api/comment.api';
 import { formatRelativeTime } from '@utils/dateUtils';
 import Avatar from '@components/shared/ui/Avatar';
+import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
 
 interface CommentItemProps {
   comment: Comment;
@@ -23,13 +24,13 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const [showActions, setShowActions] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   
-  const { id, name, email } = userController.useState(['id', 'name', 'email']);
-  const currentUser = id ? { id, name, email } : null;
+  const { id } = userProfileController.useState(['id']);
   const deleteCommentMutation = useDeleteComment();
   const updateCommentMutation = useUpdateComment();
 
-  const isOwner = currentUser?.id === comment.user_id;
+  const isOwner = id === comment.user_id || id === comment.user?.id;
 
   const displayName = comment.user.profile?.first_name && comment.user.profile?.last_name
     ? `${comment.user.profile.first_name} ${comment.user.profile.last_name}`
@@ -51,9 +52,20 @@ const CommentItem: React.FC<CommentItemProps> = ({
   };
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this comment?')) {
-      deleteCommentMutation.mutate(comment.id);
-    }
+    deleteCommentMutation.mutate(comment.id, {
+      onSuccess: () => {
+        setShowDeleteModal(false);
+      },
+      onError: () => {
+        // Keep modal open on error so user can try again
+        // Toast notification is handled in the hook
+      }
+    });
+  };
+
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true);
+    setShowActions(false);
   };
 
   const handleReply = () => {
@@ -103,10 +115,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                         <span>Edit</span>
                       </button>
                       <button
-                        onClick={() => {
-                          handleDelete();
-                          setShowActions(false);
-                        }}
+                        onClick={handleDeleteClick}
                         className="flex items-center space-x-2 px-3 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
                       >
                         <Trash2 size={14} />
@@ -177,6 +186,16 @@ const CommentItem: React.FC<CommentItemProps> = ({
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        isLoading={deleteCommentMutation.isPending}
+        title="Delete Comment"
+        message="Are you sure you want to delete this comment? This action cannot be undone."
+      />
     </div>
   );
 };

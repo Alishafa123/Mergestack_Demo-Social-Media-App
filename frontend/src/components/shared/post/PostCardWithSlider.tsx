@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, MessageCircle } from 'lucide-react';
 
 import type { Post } from '@api/post.api';
@@ -47,7 +47,20 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
 }) => {
   const [commentsExpanded, setCommentsExpanded] = useState(showComments);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [wasDeleting, setWasDeleting] = useState(false);
   const { id: currentUserId } = userProfileController.useState(['id']);
+  
+  // Handle modal closing when deletion completes
+  useEffect(() => {
+    if (wasDeleting && !isDeleting) {
+      // Deletion completed - close modal
+      setShowDeleteModal(false);
+      setWasDeleting(false);
+    } else if (isDeleting && !wasDeleting) {
+      // Deletion started
+      setWasDeleting(true);
+    }
+  }, [isDeleting, wasDeleting]);
   
   const displayName = post.user.profile?.first_name && post.user.profile?.last_name
     ? `${post.user.profile.first_name} ${post.user.profile.last_name}`
@@ -62,8 +75,11 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
   };
 
   const handleConfirmDelete = () => {
-    onDelete?.(post.id);
-    setShowDeleteModal(false);
+    if (onDelete) {
+      onDelete(post.id);
+      // Don't close modal here - it will be closed when deletion succeeds
+      // The isDeleting prop will handle the loading state
+    }
   };
 
   const handleCloseDeleteModal = () => {
