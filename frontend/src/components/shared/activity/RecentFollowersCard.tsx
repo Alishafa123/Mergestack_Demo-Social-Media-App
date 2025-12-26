@@ -5,6 +5,7 @@ import { formatDistanceToNow } from 'date-fns';
 
 import { useGetRecentFollowers } from '@hooks/useUser';
 import { userProfileController } from '@jotai/userprofile.atom';
+import { formatRelativeTime } from '@utils/dateUtils';
 
 interface RecentFollower {
   id: string;
@@ -20,11 +21,7 @@ const RecentFollowersCard: React.FC = () => {
   const { data, isLoading, error } = useGetRecentFollowers(currentUser.id || '');
 
   const formatFollowedAt = (dateString: string) => {
-    try {
-      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
-    } catch {
-      return 'Recently';
-    }
+    return formatRelativeTime(dateString);
   };
 
   // Transform API data to component format

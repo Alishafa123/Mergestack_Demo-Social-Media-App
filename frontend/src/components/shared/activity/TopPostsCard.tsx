@@ -4,7 +4,8 @@ import { TrendingUp, Loader2 } from 'lucide-react';
 
 import { useGetUserTopPosts } from '@hooks/usePost';
 import Button from '@components/shared/buttons/Button';
-import TopPostItem from '@components/shared/activity/TopPostItem';
+import { useGetUserTopPosts } from '@hooks/usePost';
+import { formatRelativeTime } from '@utils/dateUtils';
 
 interface TopPost {
   id: string;
@@ -19,11 +20,7 @@ const TopPostsCard: React.FC = () => {
   const { data, isLoading, error } = useGetUserTopPosts();
 
   const formatCreatedAt = (dateString: string) => {
-    try {
-      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
-    } catch {
-      return 'Unknown time';
-    }
+    return formatRelativeTime(dateString);
   };
 
   const topPosts: TopPost[] = data?.posts?.map(post => ({

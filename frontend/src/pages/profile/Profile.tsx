@@ -11,9 +11,7 @@ import Button from "@components/shared/buttons/Button";
 import { profileSchema } from "@schemas/profileSchemas";
 import type { ProfileFormData } from "@schemas/profileSchemas";
 import { userProfileController } from "@jotai/userprofile.atom";
-import { BackgroundDesign } from "@components/shared/backgrounds";
-import ProfileImageUpload from "@components/shared/form/ProfileImageUpload";
-import { Input, DateField, SelectField, TextAreaField } from "@components/shared/form";
+import { formatLocalDate } from "@utils/dateUtils";
 
 const genderOptions = [
   { value: 'male', label: 'Male' },
@@ -143,7 +141,7 @@ export default function Profile() {
         {date_of_birth && (
           <div className="bg-gray-50 rounded-lg p-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-            <p className="text-base text-gray-900">{new Date(date_of_birth).toLocaleDateString()}</p>
+            <p className="text-base text-gray-900">{formatLocalDate(date_of_birth)}</p>
           </div>
         )}
 

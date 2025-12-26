@@ -8,6 +8,9 @@ import Button from '@components/shared/buttons/Button';
 import UserStats from '@components/shared/profile/UserStats';
 import { userProfileController } from '@jotai/userprofile.atom';
 import { useFollowUser, useUnfollowUser, useGetFollowStatus } from '@hooks/useUser';
+import Button from '@components/shared/buttons/Button';
+import UserStats from './UserStats';
+import { formatLocalDate } from '@utils/dateUtils';
 
 const UserProfileCard: React.FC = () => {
   const navigate = useNavigate();
@@ -161,7 +164,7 @@ const UserProfileCard: React.FC = () => {
                 <div className="w-5 h-5 mr-3 flex-shrink-0 flex items-center justify-center">
                   <span className="text-gray-400 text-sm">🎂</span>
                 </div>
-                <span className="text-gray-700">{new Date(profileData.date_of_birth).toLocaleDateString()}</span>
+                <span className="text-gray-700">{formatLocalDate(profileData.date_of_birth)}</span>
               </div>
             )}
             

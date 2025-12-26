@@ -11,6 +11,9 @@ import CommentSection from '@components/shared/comment/CommentSection';
 import SharedPostHeader from '@components/shared/post/SharedPostHeader';
 import PostOptionsDropdown from '@components/shared/post/PostOptionsDropdown';
 import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
+import { userProfileController } from '@jotai/userprofile.atom';
+import type { Post } from '@api/post.api';
+import { formatRelativeTime } from '@utils/dateUtils';
 
 interface PostCardWithSliderProps {
   post: Post;
@@ -51,14 +54,7 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
     : post.user.name;
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
-    if (diffInHours < 1) return 'Just now';
-    if (diffInHours < 24) return `${diffInHours}h ago`;
-    if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
-    return date.toLocaleDateString();
+    return formatRelativeTime(dateString);
   };
 
   const handleDelete = () => {

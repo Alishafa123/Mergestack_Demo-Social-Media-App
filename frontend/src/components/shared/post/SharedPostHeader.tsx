@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
 import type { Post } from '@api/post.api';
 import { userProfileController } from '@jotai/userprofile.atom';
 import PostOptionsDropdown from '@components/shared/post/PostOptionsDropdown';
 import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
+import { userProfileController } from '@jotai/userprofile.atom';
+import type { Post } from '@api/post.api';
+import { formatRelativeTime } from '@utils/dateUtils';
 
 interface SharedPostHeaderProps {
   post: Post;
@@ -30,11 +32,7 @@ const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare
   };
 
   const formatSharedTime = (dateString: string) => {
-    try {
-      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
-    } catch {
-      return 'Recently';
-    }
+    return formatRelativeTime(dateString);
   };
 
   const handleDeleteShare = () => {
