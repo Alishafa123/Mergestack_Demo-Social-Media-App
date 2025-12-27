@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import type { Post } from '@api/post.api';
+import Avatar from '@components/shared/ui/Avatar';
+import { formatRelativeTime } from '@utils/dateUtils';
 import { userProfileController } from '@jotai/userprofile.atom';
 import PostOptionsDropdown from '@components/shared/post/PostOptionsDropdown';
 import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
-import { userProfileController } from '@jotai/userprofile.atom';
-import type { Post } from '@api/post.api';
-import { formatRelativeTime } from '@utils/dateUtils';
-import Avatar from '@components/shared/ui/Avatar';
 
 interface SharedPostHeaderProps {
   post: Post;

@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { TrendingUp, Loader2 } from 'lucide-react';
 
 import { useGetUserTopPosts } from '@hooks/usePost';
-import Button from '@components/shared/buttons/Button';
-import { useGetUserTopPosts } from '@hooks/usePost';
 import { formatRelativeTime } from '@utils/dateUtils';
+import Button from '@components/shared/buttons/Button';
 import { userProfileController } from '@jotai/userprofile.atom';
+import TopPostItem from './TopPostItem';
 
 interface TopPost {
   id: string;

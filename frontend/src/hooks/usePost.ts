@@ -3,8 +3,6 @@ import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tansta
 import { USER_STATS_QUERY_KEY } from '@hooks/useProfile';
 import type { CreatePostData, PostsResponse } from '@api/post.api';
 import { createPost, getPosts, getPost, updatePost, deletePost, toggleLike, sharePost, unsharePost, getTrendingPosts, getUserTopPosts, getFollowersFeed } from '@api/post.api';
-import type { CreatePostData, PostsResponse } from '@api/post.api';
-import { USER_STATS_QUERY_KEY } from './useProfile';
 import { showToast } from '@components/shared/toast';
 
 export const POST_QUERY_KEY = ['posts'];
@@ -236,7 +234,7 @@ export const useToggleShare = () => {
 
       return { previousGeneralData, previousTrendingData, previousFollowersData };
     },
-    onError: (err: any, variables, context) => {
+    onError: (err: any, _variables, context) => {
       // Rollback all caches on error
       if (context?.previousGeneralData) {
         context.previousGeneralData.forEach(([queryKey, data]) => {
@@ -257,7 +255,7 @@ export const useToggleShare = () => {
       const errorMessage = err?.response?.data?.message || 'Failed to share post. Please try again.';
       showToast.error(errorMessage);
     },
-    onSettled: (data, error, variables) => {
+    onSettled: (_data, error, variables) => {
       // Invalidate all post-related queries to ensure consistency
       queryClient.invalidateQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
       queryClient.invalidateQueries({ queryKey: [...TRENDING_QUERY_KEY, 'infinite'] });

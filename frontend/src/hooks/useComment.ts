@@ -3,8 +3,6 @@ import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tansta
 import { USER_STATS_QUERY_KEY } from '@hooks/useProfile';
 import type { CreateCommentData, CommentsResponse } from '@api/comment.api';
 import { getPostComments, createComment, updateComment, deleteComment } from '@api/comment.api';
-import type { CreateCommentData, CommentsResponse } from '@api/comment.api';
-import { USER_STATS_QUERY_KEY } from '@hooks/useProfile';
 import { showToast } from '@components/shared/toast';
 
 export const COMMENT_QUERY_KEY = ['comments'];

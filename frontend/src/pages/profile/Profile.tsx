@@ -4,15 +4,21 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+import Avatar from "@components/shared/ui/Avatar";
+import Input from "@components/shared/form/Input";
+import { formatLocalDate } from "@utils/dateUtils";
 import { showToast } from "@components/shared/toast";
 import { useUpdateProfile } from "@hooks/useProfile";
 import Navbar from "@components/shared/navbar/Navbar";
 import Button from "@components/shared/buttons/Button";
 import { profileSchema } from "@schemas/profileSchemas";
+import DateField from "@components/shared/form/DateField";
+import SelectField from "@components/shared/form/SelectField";
 import type { ProfileFormData } from "@schemas/profileSchemas";
 import { userProfileController } from "@jotai/userprofile.atom";
-import { formatLocalDate } from "@utils/dateUtils";
-import Avatar from "@components/shared/ui/Avatar";
+import TextAreaField from "@components/shared/form/TextAreaField";
+import ProfileImageUpload from "@components/shared/form/ProfileImageUpload";
+import BackgroundDesign from "@components/shared/backgrounds/BackgroundDesign";
 
 const genderOptions = [
   { value: 'male', label: 'Male' },

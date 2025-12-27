@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { BarChart3, Clock } from 'lucide-react';
 import { userProfileController } from '@jotai/userprofile.atom'
 import { useLogout } from '@hooks/useAuth';

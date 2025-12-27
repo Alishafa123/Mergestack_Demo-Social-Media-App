@@ -11,8 +11,6 @@ import CommentSection from '@components/shared/comment/CommentSection';
 import SharedPostHeader from '@components/shared/post/SharedPostHeader';
 import PostOptionsDropdown from '@components/shared/post/PostOptionsDropdown';
 import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
-import { userProfileController } from '@jotai/userprofile.atom';
-import type { Post } from '@api/post.api';
 import { formatRelativeTime } from '@utils/dateUtils';
 
 interface PostCardWithSliderProps {

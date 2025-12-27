@@ -8,8 +8,6 @@ import Button from '@components/shared/buttons/Button';
 import UserStats from '@components/shared/profile/UserStats';
 import { userProfileController } from '@jotai/userprofile.atom';
 import { useFollowUser, useUnfollowUser, useGetFollowStatus } from '@hooks/useUser';
-import Button from '@components/shared/buttons/Button';
-import UserStats from './UserStats';
 import { formatLocalDate } from '@utils/dateUtils';
 import Avatar from '@components/shared/ui/Avatar';
 
