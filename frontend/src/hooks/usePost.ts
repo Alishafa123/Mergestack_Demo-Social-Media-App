@@ -3,6 +3,9 @@ import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tansta
 import { USER_STATS_QUERY_KEY } from '@hooks/useProfile';
 import type { CreatePostData, PostsResponse } from '@api/post.api';
 import { createPost, getPosts, getPost, updatePost, deletePost, toggleLike, sharePost, unsharePost, getTrendingPosts, getUserTopPosts, getFollowersFeed } from '@api/post.api';
+import type { CreatePostData, PostsResponse } from '@api/post.api';
+import { USER_STATS_QUERY_KEY } from './useProfile';
+import { showToast } from '@components/shared/toast';
 
 export const POST_QUERY_KEY = ['posts'];
 
@@ -15,9 +18,12 @@ export const useCreatePost = () => {
       queryClient.invalidateQueries({ queryKey: POST_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: FOLLOWERS_FEED_QUERY_KEY });
+      showToast.success('Post created successfully! 🎉');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Post creation failed:', error);
+      const errorMessage = error?.response?.data?.message || 'Failed to create post. Please try again.';
+      showToast.error(errorMessage);
     },
   });
 };
@@ -61,9 +67,12 @@ export const useUpdatePost = () => {
       queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: FOLLOWERS_FEED_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: TRENDING_QUERY_KEY });
+      showToast.success('Post updated successfully! ✏️');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Post update failed:', error);
+      const errorMessage = error?.response?.data?.message || 'Failed to update post. Please try again.';
+      showToast.error(errorMessage);
     },
   });
 };
@@ -79,9 +88,12 @@ export const useDeletePost = () => {
       queryClient.invalidateQueries({ queryKey: FOLLOWERS_FEED_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: TRENDING_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: USER_STATS_QUERY_KEY });
+      showToast.success('Post deleted successfully! 🗑️');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Post deletion failed:', error);
+      const errorMessage = error?.response?.data?.message || 'Failed to delete post. Please try again.';
+      showToast.error(errorMessage);
     },
   });
 };
@@ -92,51 +104,72 @@ export const useToggleLike = () => {
   return useMutation({
     mutationFn: ({ postId }: { postId: string; postOwnerId?: string }) => toggleLike(postId),
     onMutate: async ({ postId }: { postId: string; postOwnerId?: string }) => {
+      // Cancel outgoing refetches for all post queries
       await queryClient.cancelQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
+      await queryClient.cancelQueries({ queryKey: [...TRENDING_QUERY_KEY, 'infinite'] });
+      await queryClient.cancelQueries({ queryKey: [...FOLLOWERS_FEED_QUERY_KEY, 'infinite'] });
 
-      const previousData = queryClient.getQueriesData({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
+      // Get previous data for rollback
+      const previousGeneralData = queryClient.getQueriesData({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
+      const previousTrendingData = queryClient.getQueriesData({ queryKey: [...TRENDING_QUERY_KEY, 'infinite'] });
+      const previousFollowersData = queryClient.getQueriesData({ queryKey: [...FOLLOWERS_FEED_QUERY_KEY, 'infinite'] });
 
-      queryClient.setQueriesData(
-        { queryKey: [...POST_QUERY_KEY, 'infinite'] },
-        (old: any) => {
-          if (!old) return old;
+      // Update function for optimistic updates
+      const updatePostInPages = (old: any) => {
+        if (!old) return old;
 
-          return {
-            ...old,
-            pages: old.pages.map((page: any) => ({
-              ...page,
-              posts: page.posts.map((post: any) => {
-                if (post.id === postId) {
-                  return {
-                    ...post,
-                    isLiked: !post.isLiked,
-                    likes_count: post.isLiked 
-                      ? Math.max(0, post.likes_count - 1)
-                      : post.likes_count + 1
-                  };
-                }
-                return post;
-              })
-            }))
-          };
-        }
-      );
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            posts: page.posts.map((post: any) => {
+              if (post.id === postId) {
+                return {
+                  ...post,
+                  isLiked: !post.isLiked,
+                  likes_count: post.isLiked 
+                    ? Math.max(0, post.likes_count - 1)
+                    : post.likes_count + 1
+                };
+              }
+              return post;
+            })
+          }))
+        };
+      };
 
-      return { previousData };
+      // Optimistically update all feed caches
+      queryClient.setQueriesData({ queryKey: [...POST_QUERY_KEY, 'infinite'] }, updatePostInPages);
+      queryClient.setQueriesData({ queryKey: [...TRENDING_QUERY_KEY, 'infinite'] }, updatePostInPages);
+      queryClient.setQueriesData({ queryKey: [...FOLLOWERS_FEED_QUERY_KEY, 'infinite'] }, updatePostInPages);
+
+      return { previousGeneralData, previousTrendingData, previousFollowersData };
     },
     onError: (err, _variables, context) => {
-      if (context?.previousData) {
-        context.previousData.forEach(([queryKey, data]) => {
+      // Rollback all caches on error
+      if (context?.previousGeneralData) {
+        context.previousGeneralData.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+      if (context?.previousTrendingData) {
+        context.previousTrendingData.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+      if (context?.previousFollowersData) {
+        context.previousFollowersData.forEach(([queryKey, data]) => {
           queryClient.setQueryData(queryKey, data);
         });
       }
       console.error('Like toggle failed:', err);
     },
     onSettled: (_data, _error, { postOwnerId }) => {
-      
+      // Invalidate all post-related queries to ensure consistency
       queryClient.invalidateQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
-      queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: [...TRENDING_QUERY_KEY, 'infinite'] });
       queryClient.invalidateQueries({ queryKey: [...FOLLOWERS_FEED_QUERY_KEY, 'infinite'] });
+      queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
       
       if (postOwnerId) {
         const queryKey = [...USER_STATS_QUERY_KEY, postOwnerId];
@@ -162,50 +195,82 @@ export const useToggleShare = () => {
       return isCurrentlyShared ? unsharePost(postId) : sharePost(postId, sharedContent);
     },
     onMutate: async ({ postId, isCurrentlyShared }) => {
+      // Cancel outgoing refetches for all post queries
       await queryClient.cancelQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
+      await queryClient.cancelQueries({ queryKey: [...TRENDING_QUERY_KEY, 'infinite'] });
+      await queryClient.cancelQueries({ queryKey: [...FOLLOWERS_FEED_QUERY_KEY, 'infinite'] });
 
-      const previousData = queryClient.getQueriesData({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
+      // Get previous data for rollback
+      const previousGeneralData = queryClient.getQueriesData({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
+      const previousTrendingData = queryClient.getQueriesData({ queryKey: [...TRENDING_QUERY_KEY, 'infinite'] });
+      const previousFollowersData = queryClient.getQueriesData({ queryKey: [...FOLLOWERS_FEED_QUERY_KEY, 'infinite'] });
 
-      queryClient.setQueriesData(
-        { queryKey: [...POST_QUERY_KEY, 'infinite'] },
-        (old: any) => {
-          if (!old) return old;
+      // Update function for optimistic updates
+      const updatePostInPages = (old: any) => {
+        if (!old) return old;
 
-          return {
-            ...old,
-            pages: old.pages.map((page: any) => ({
-              ...page,
-              posts: page.posts.map((post: any) => {
-                if (post.id === postId) {
-                  return {
-                    ...post,
-                    isShared: !isCurrentlyShared,
-                    shares_count: isCurrentlyShared 
-                      ? Math.max(0, post.shares_count - 1)
-                      : post.shares_count + 1
-                  };
-                }
-                return post;
-              })
-            }))
-          };
-        }
-      );
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            posts: page.posts.map((post: any) => {
+              if (post.id === postId) {
+                return {
+                  ...post,
+                  isShared: !isCurrentlyShared,
+                  shares_count: isCurrentlyShared 
+                    ? Math.max(0, post.shares_count - 1)
+                    : post.shares_count + 1
+                };
+              }
+              return post;
+            })
+          }))
+        };
+      };
 
-      return { previousData };
+      // Optimistically update all feed caches
+      queryClient.setQueriesData({ queryKey: [...POST_QUERY_KEY, 'infinite'] }, updatePostInPages);
+      queryClient.setQueriesData({ queryKey: [...TRENDING_QUERY_KEY, 'infinite'] }, updatePostInPages);
+      queryClient.setQueriesData({ queryKey: [...FOLLOWERS_FEED_QUERY_KEY, 'infinite'] }, updatePostInPages);
+
+      return { previousGeneralData, previousTrendingData, previousFollowersData };
     },
-    onError: (err, _variables, context) => {
-      if (context?.previousData) {
-        context.previousData.forEach(([queryKey, data]) => {
+    onError: (err: any, variables, context) => {
+      // Rollback all caches on error
+      if (context?.previousGeneralData) {
+        context.previousGeneralData.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+      if (context?.previousTrendingData) {
+        context.previousTrendingData.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+      if (context?.previousFollowersData) {
+        context.previousFollowersData.forEach(([queryKey, data]) => {
           queryClient.setQueryData(queryKey, data);
         });
       }
       console.error('Share toggle failed:', err);
+      const errorMessage = err?.response?.data?.message || 'Failed to share post. Please try again.';
+      showToast.error(errorMessage);
     },
-    onSettled: () => {
+    onSettled: (data, error, variables) => {
+      // Invalidate all post-related queries to ensure consistency
       queryClient.invalidateQueries({ queryKey: [...POST_QUERY_KEY, 'infinite'] });
-      queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: [...TRENDING_QUERY_KEY, 'infinite'] });
       queryClient.invalidateQueries({ queryKey: [...FOLLOWERS_FEED_QUERY_KEY, 'infinite'] });
+      queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
+      
+      // Show success toast only if no error
+      if (!error) {
+        const message = variables.isCurrentlyShared 
+          ? 'Post unshared successfully! 📤' 
+          : 'Post shared successfully! 📢';
+        showToast.success(message);
+      }
     },
   });
 };

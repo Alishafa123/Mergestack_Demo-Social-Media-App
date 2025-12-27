@@ -11,9 +11,8 @@ import Button from "@components/shared/buttons/Button";
 import { profileSchema } from "@schemas/profileSchemas";
 import type { ProfileFormData } from "@schemas/profileSchemas";
 import { userProfileController } from "@jotai/userprofile.atom";
-import { BackgroundDesign } from "@components/shared/backgrounds";
-import ProfileImageUpload from "@components/shared/form/ProfileImageUpload";
-import { Input, DateField, SelectField, TextAreaField } from "@components/shared/form";
+import { formatLocalDate } from "@utils/dateUtils";
+import Avatar from "@components/shared/ui/Avatar";
 
 const genderOptions = [
   { value: 'male', label: 'Male' },
@@ -106,21 +105,13 @@ export default function Profile() {
     <div className="space-y-6">
       {/* Profile Image Display */}
       <div className="flex justify-center mb-6">
-        <div className="w-32 h-32">
-          {profile_url ? (
-            <img 
-              src={profile_url} 
-              alt="Profile" 
-              className="w-full h-full object-cover rounded-full border-4 border-white shadow-lg"
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
-              <span className="text-white text-4xl font-bold">
-                {displayName.charAt(0).toUpperCase()}
-              </span>
-            </div>
-          )}
-        </div>
+        <Avatar
+          src={profile_url}
+          name={displayName}
+          size="2xl"
+          showBorder={true}
+          borderColor="border-white"
+        />
       </div>
 
       {/* Name */}
@@ -143,7 +134,7 @@ export default function Profile() {
         {date_of_birth && (
           <div className="bg-gray-50 rounded-lg p-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-            <p className="text-base text-gray-900">{new Date(date_of_birth).toLocaleDateString()}</p>
+            <p className="text-base text-gray-900">{formatLocalDate(date_of_birth)}</p>
           </div>
         )}
 

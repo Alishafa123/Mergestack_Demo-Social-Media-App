@@ -5,6 +5,8 @@ import { formatDistanceToNow } from 'date-fns';
 
 import { useGetRecentFollowers } from '@hooks/useUser';
 import { userProfileController } from '@jotai/userprofile.atom';
+import { formatRelativeTime } from '@utils/dateUtils';
+import Avatar from '@components/shared/ui/Avatar';
 
 interface RecentFollower {
   id: string;
@@ -16,15 +18,11 @@ interface RecentFollower {
 
 const RecentFollowersCard: React.FC = () => {
   const navigate = useNavigate();
-  const currentUser = userProfileController.useState(['id']);
-  const { data, isLoading, error } = useGetRecentFollowers(currentUser.id || '');
+  const { id: currentUserId } = userProfileController.useState(['id']);
+  const { data, isLoading, error } = useGetRecentFollowers(currentUserId || '');
 
   const formatFollowedAt = (dateString: string) => {
-    try {
-      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
-    } catch {
-      return 'Recently';
-    }
+    return formatRelativeTime(dateString);
   };
 
   // Transform API data to component format
@@ -86,19 +84,11 @@ const RecentFollowersCard: React.FC = () => {
               className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors group"
             >
               <div className="flex-shrink-0">
-                <div className="w-14 h-14 rounded-full overflow-hidden bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
-                  {follower.profileUrl ? (
-                    <img
-                      src={follower.profileUrl}
-                      alt={follower.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-white font-semibold text-xl">
-                      {follower.name.charAt(0).toUpperCase()}
-                    </span>
-                  )}
-                </div>
+                <Avatar
+                  src={follower.profileUrl}
+                  name={follower.name}
+                  size="lg"
+                />
               </div>
               
               <div className="flex-1 min-w-0">

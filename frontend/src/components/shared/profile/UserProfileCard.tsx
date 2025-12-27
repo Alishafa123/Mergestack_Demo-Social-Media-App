@@ -8,6 +8,10 @@ import Button from '@components/shared/buttons/Button';
 import UserStats from '@components/shared/profile/UserStats';
 import { userProfileController } from '@jotai/userprofile.atom';
 import { useFollowUser, useUnfollowUser, useGetFollowStatus } from '@hooks/useUser';
+import Button from '@components/shared/buttons/Button';
+import UserStats from './UserStats';
+import { formatLocalDate } from '@utils/dateUtils';
+import Avatar from '@components/shared/ui/Avatar';
 
 const UserProfileCard: React.FC = () => {
   const navigate = useNavigate();
@@ -106,21 +110,13 @@ const UserProfileCard: React.FC = () => {
       
       <div className="relative px-6 pb-6">
         <div className="flex justify-center -mt-12 mb-4">
-          <div className="w-24 h-24">
-            {profileData?.profile_url ? (
-              <img 
-                src={profileData.profile_url} 
-                alt="Profile" 
-                className="w-full h-full object-cover rounded-full border-4 border-white shadow-lg"
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
-                <span className="text-white text-2xl font-bold">
-                  {displayName.charAt(0).toUpperCase()}
-                </span>
-              </div>
-            )}
-          </div>
+          <Avatar
+            src={profileData?.profile_url}
+            name={displayName}
+            size="xl"
+            showBorder={true}
+            borderColor="border-white"
+          />
         </div>
 
         <div className="text-center mb-6">
@@ -161,7 +157,7 @@ const UserProfileCard: React.FC = () => {
                 <div className="w-5 h-5 mr-3 flex-shrink-0 flex items-center justify-center">
                   <span className="text-gray-400 text-sm">🎂</span>
                 </div>
-                <span className="text-gray-700">{new Date(profileData.date_of_birth).toLocaleDateString()}</span>
+                <span className="text-gray-700">{formatLocalDate(profileData.date_of_birth)}</span>
               </div>
             )}
             

@@ -30,6 +30,7 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<any>(null);
+  const [deletingPostId, setDeletingPostId] = useState<string | null>(null);
 
   const toggleLikeMutation = useToggleLike();
   const toggleShareMutation = useToggleShare();
@@ -112,13 +113,15 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
   const config = getFeedConfig(feedType);
 
   const handleDelete = (postId: string) => {
+    setDeletingPostId(postId);
     deletePostMutation.mutate(postId, {
       onSuccess: () => {
-        showToast.success('Post deleted successfully');
+        setDeletingPostId(null);
+        // Toast is handled in the hook
       },
-      onError: (error) => {
-        console.error('Failed to delete post:', error);
-        showToast.error('Failed to delete post. Please try again.');
+      onError: () => {
+        setDeletingPostId(null);
+        // Toast is handled in the hook
       }
     });
   };
@@ -258,7 +261,7 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
           onDeleteShare={handleDeleteShare}
           isLiked={post.isLiked || false}
           isShared={post.isShared || false}
-          isDeleting={deletePostMutation.isPending}
+          isDeleting={deletePostMutation.isPending && deletingPostId === post.id}
           isDeletingShare={toggleShareMutation.isPending}
         />
       ))}

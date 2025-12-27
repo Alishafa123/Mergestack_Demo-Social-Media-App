@@ -3,7 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import SearchBar from '@components/shared/navbar/SearchBar';
 import ProfileDropdown from '@components/shared/navbar/ProfileDropdown';
 
-export default function Navbar() {
+interface NavbarProps {
+  onStatsClick?: () => void;
+  onLatestClick?: () => void;
+}
+
+export default function Navbar({ onStatsClick, onLatestClick }: NavbarProps = {}) {
   const navigate = useNavigate();
 
   const handleFeedClick = () => {
@@ -30,7 +35,10 @@ export default function Navbar() {
           </div>
 
           <div className="flex-shrink-0">
-            <ProfileDropdown />
+            <ProfileDropdown 
+              onStatsClick={onStatsClick}
+              onLatestClick={onLatestClick}
+            />
           </div>
         </div>
       </div>

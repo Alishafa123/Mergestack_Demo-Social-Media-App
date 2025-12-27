@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, MessageCircle } from 'lucide-react';
 
 import type { Post } from '@api/post.api';
@@ -11,6 +11,9 @@ import CommentSection from '@components/shared/comment/CommentSection';
 import SharedPostHeader from '@components/shared/post/SharedPostHeader';
 import PostOptionsDropdown from '@components/shared/post/PostOptionsDropdown';
 import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
+import { userProfileController } from '@jotai/userprofile.atom';
+import type { Post } from '@api/post.api';
+import { formatRelativeTime } from '@utils/dateUtils';
 
 interface PostCardWithSliderProps {
   post: Post;
@@ -44,21 +47,27 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
 }) => {
   const [commentsExpanded, setCommentsExpanded] = useState(showComments);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [wasDeleting, setWasDeleting] = useState(false);
   const { id: currentUserId } = userProfileController.useState(['id']);
+  
+  // Handle modal closing when deletion completes
+  useEffect(() => {
+    if (wasDeleting && !isDeleting) {
+      // Deletion completed - close modal
+      setShowDeleteModal(false);
+      setWasDeleting(false);
+    } else if (isDeleting && !wasDeleting) {
+      // Deletion started
+      setWasDeleting(true);
+    }
+  }, [isDeleting, wasDeleting]);
   
   const displayName = post.user.profile?.first_name && post.user.profile?.last_name
     ? `${post.user.profile.first_name} ${post.user.profile.last_name}`
     : post.user.name;
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
-    if (diffInHours < 1) return 'Just now';
-    if (diffInHours < 24) return `${diffInHours}h ago`;
-    if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
-    return date.toLocaleDateString();
+    return formatRelativeTime(dateString);
   };
 
   const handleDelete = () => {
@@ -66,8 +75,11 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
   };
 
   const handleConfirmDelete = () => {
-    onDelete?.(post.id);
-    setShowDeleteModal(false);
+    if (onDelete) {
+      onDelete(post.id);
+      // Don't close modal here - it will be closed when deletion succeeds
+      // The isDeleting prop will handle the loading state
+    }
   };
 
   const handleCloseDeleteModal = () => {

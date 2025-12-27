@@ -1,10 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
-
-import { useLogout } from '@hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { BarChart3, Clock } from 'lucide-react';
 import { userProfileController } from '@jotai/userprofile.atom'
+import { useLogout } from '@hooks/useAuth';
+import Avatar from '@components/shared/ui/Avatar';
 
-export default function ProfileDropdown() {
+interface ProfileDropdownProps {
+  onStatsClick?: () => void;
+  onLatestClick?: () => void;
+}
+
+export default function ProfileDropdown({ onStatsClick, onLatestClick }: ProfileDropdownProps = {}) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -25,6 +32,16 @@ export default function ProfileDropdown() {
   
   const handleLogout = () => {
     logoutMutation.mutate();
+    setIsOpen(false);
+  };
+
+  const handleStatsClick = () => {
+    onStatsClick?.();
+    setIsOpen(false);
+  };
+
+  const handleLatestClick = () => {
+    onLatestClick?.();
     setIsOpen(false);
   };
   
@@ -50,19 +67,12 @@ export default function ProfileDropdown() {
         onClick={toggleDropdown}
         className="flex items-center justify-center w-14 h-14 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
-        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
-          {profile_url ? (
-            <img
-              src={profile_url}
-              alt="Profile"
-              className="w-full h-full object-cover rounded-full"
-            />
-          ) : (
-            <span className="text-white text-lg font-medium">
-              {'U'}
-            </span>
-          )}
-        </div>
+        <Avatar
+          src={profile_url}
+          name={first_name && last_name ? `${first_name} ${last_name}` : 'User'}
+          size="lg"
+          className="w-12 h-12"
+        />
       </button>
 
       {isOpen && (
@@ -113,6 +123,26 @@ export default function ProfileDropdown() {
               </svg>
               Timeline
             </button>
+
+            {onStatsClick && (
+              <button
+                onClick={handleStatsClick}
+                className="lg:hidden w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center"
+              >
+                <BarChart3 className="mr-3 h-4 w-4 text-gray-400" />
+                Stats
+              </button>
+            )}
+
+            {onLatestClick && (
+              <button
+                onClick={handleLatestClick}
+                className="xl:hidden w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center"
+              >
+                <Clock className="mr-3 h-4 w-4 text-gray-400" />
+                Activity
+              </button>
+            )}
 
             <button
               onClick={handleLogout}

@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import { formatDistanceToNow } from 'date-fns';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import type { Post } from '@api/post.api';
 import { userProfileController } from '@jotai/userprofile.atom';
 import PostOptionsDropdown from '@components/shared/post/PostOptionsDropdown';
 import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
+import { userProfileController } from '@jotai/userprofile.atom';
+import type { Post } from '@api/post.api';
+import { formatRelativeTime } from '@utils/dateUtils';
+import Avatar from '@components/shared/ui/Avatar';
 
 interface SharedPostHeaderProps {
   post: Post;
@@ -17,6 +20,7 @@ const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare
   const navigate = useNavigate();
   const { id: currentUserId } = userProfileController.useState(['id']);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [wasDeleting, setWasDeleting] = useState(false);
 
   if (post.type !== 'shared' || !post.shared_by) {
     return null;
@@ -30,11 +34,7 @@ const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare
   };
 
   const formatSharedTime = (dateString: string) => {
-    try {
-      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
-    } catch {
-      return 'Recently';
-    }
+    return formatRelativeTime(dateString);
   };
 
   const handleDeleteShare = () => {
@@ -43,7 +43,6 @@ const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare
 
   const handleConfirmDelete = () => {
     onDeleteShare?.();
-    setShowDeleteModal(false);
   };
 
   const handleCloseModal = () => {
@@ -54,6 +53,15 @@ const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare
     navigate(`/user/${userId}`);
   };
 
+  useEffect(() => {
+    if (wasDeleting && !isDeleting) {
+      setShowDeleteModal(false);
+      setWasDeleting(false);
+    } else if (isDeleting && !wasDeleting) {
+      setWasDeleting(true);
+    }
+  }, [isDeleting, wasDeleting]);
+
   return (
     <div className="bg-gray-50 border-b border-gray-200 px-4 py-3">
       <div className="flex items-center justify-between">
@@ -62,19 +70,11 @@ const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2">
               <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 rounded-full overflow-hidden bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">
-                  {post.shared_by.profile?.profile_url ? (
-                    <img
-                      src={post.shared_by.profile.profile_url}
-                      alt={getDisplayName(post.shared_by)}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-white font-semibold text-xs">
-                      {getDisplayName(post.shared_by).charAt(0).toUpperCase()}
-                    </span>
-                  )}
-                </div>
+                <Avatar
+                  src={post.shared_by.profile?.profile_url}
+                  name={getDisplayName(post.shared_by)}
+                  size="xs"
+                />
                 
                 <button
                   onClick={() => handleUserClick(post.shared_by!.id)}
