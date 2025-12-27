@@ -12,14 +12,14 @@ const ShareDropdown: React.FC<ShareDropdownProps> = ({
   onQuickShare,
   onShareWithComment,
   isShared,
-  className = ''
+  className = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<'top' | 'bottom'>('bottom');
   const [horizontalPosition, setHorizontalPosition] = useState<'left' | 'right'>('left');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  
+
   const handleQuickShare = () => {
     onQuickShare();
     setIsOpen(false);
@@ -29,7 +29,7 @@ const ShareDropdown: React.FC<ShareDropdownProps> = ({
     onShareWithComment();
     setIsOpen(false);
   };
-  
+
   const updatePosition = () => {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
@@ -37,9 +37,9 @@ const ShareDropdown: React.FC<ShareDropdownProps> = ({
       const spaceAbove = rect.top;
       const spaceRight = window.innerWidth - rect.right;
       const spaceLeft = rect.left;
-      
+
       setDropdownPosition(spaceBelow < 150 && spaceAbove > 150 ? 'top' : 'bottom');
-      
+
       if (spaceRight < 180 && spaceLeft > 180) {
         setHorizontalPosition('right');
       } else {
@@ -48,8 +48,7 @@ const ShareDropdown: React.FC<ShareDropdownProps> = ({
     }
   };
 
-
-    useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
@@ -63,7 +62,7 @@ const ShareDropdown: React.FC<ShareDropdownProps> = ({
     document.addEventListener('mousedown', handleClickOutside);
     window.addEventListener('scroll', updatePosition);
     window.addEventListener('resize', updatePosition);
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       window.removeEventListener('scroll', updatePosition);
@@ -77,8 +76,8 @@ const ShareDropdown: React.FC<ShareDropdownProps> = ({
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
-          isShared 
-            ? 'text-blue-500 hover:text-blue-600 bg-blue-50 hover:bg-blue-100' 
+          isShared
+            ? 'text-blue-500 hover:text-blue-600 bg-blue-50 hover:bg-blue-100'
             : 'text-gray-600 hover:text-blue-500 hover:bg-gray-100'
         }`}
       >
@@ -87,15 +86,11 @@ const ShareDropdown: React.FC<ShareDropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div className={`absolute bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 w-48 sm:min-w-[180px] ${
-          dropdownPosition === 'top' 
-            ? 'bottom-full mb-2' 
-            : 'top-full mt-2'
-        } ${
-          horizontalPosition === 'right'
-            ? 'right-0'
-            : '-left-4'
-        }`}>
+        <div
+          className={`absolute bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 w-48 sm:min-w-[180px] ${
+            dropdownPosition === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
+          } ${horizontalPosition === 'right' ? 'right-0' : '-left-4'}`}
+        >
           {!isShared ? (
             <>
               <button

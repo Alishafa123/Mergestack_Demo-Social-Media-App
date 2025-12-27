@@ -13,17 +13,17 @@ const PostOptionsDropdown: React.FC<PostOptionsDropdownProps> = ({ onDelete, onE
   const handleToggle = () => {
     setIsOpen(!isOpen);
   };
-  
+
   const handleDelete = () => {
     setIsOpen(false);
     onDelete();
   };
-  
+
   const handleEdit = () => {
     setIsOpen(false);
     onEdit?.();
   };
-  
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -61,7 +61,7 @@ const PostOptionsDropdown: React.FC<PostOptionsDropdownProps> = ({ onDelete, onE
               <span className="text-base">Edit</span>
             </button>
           )}
-          
+
           <button
             onClick={handleDelete}
             className="w-full px-4 py-3 text-left hover:bg-red-50 flex items-center space-x-3 text-red-600 transition-colors"

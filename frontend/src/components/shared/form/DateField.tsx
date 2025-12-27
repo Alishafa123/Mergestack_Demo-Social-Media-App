@@ -9,14 +9,7 @@ interface DateFieldProps {
   className?: string;
 }
 
-export default function DateField({
-  name,
-  label,
-  register,
-  errors,
-  validation,
-  className = ''
-}: DateFieldProps) {
+export default function DateField({ name, label, register, errors, validation, className = '' }: DateFieldProps) {
   const error = errors[name];
 
   return (
@@ -32,9 +25,7 @@ export default function DateField({
           error ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-gray-50 focus:bg-white'
         }`}
       />
-      {error && (
-        <p className="mt-1 text-sm text-red-600">{error.message as string}</p>
-      )}
+      {error && <p className="mt-1 text-sm text-red-600">{error.message as string}</p>}
     </div>
   );
 }

@@ -40,7 +40,7 @@ export default function Dashboard() {
   const renderTabButton = (tab: TabConfig) => {
     const Icon = tab.icon;
     const isActive = activeTab === tab.id;
-    
+
     return (
       <Button
         key={tab.id}
@@ -49,9 +49,7 @@ export default function Dashboard() {
         leftIcon={<Icon size={20} />}
         onClick={() => setActiveTab(tab.id)}
         className={`flex-1 ${
-          isActive
-            ? 'text-blue-600 border-blue-600 bg-blue-50 hover:bg-blue-100'
-            : 'border-transparent'
+          isActive ? 'text-blue-600 border-blue-600 bg-blue-50 hover:bg-blue-100' : 'border-transparent'
         }`}
         aria-pressed={isActive}
         role="tab"
@@ -63,11 +61,8 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar 
-        onStatsClick={handleStatsClick}
-        onLatestClick={handleLatestClick}
-      />
-      
+      <Navbar onStatsClick={handleStatsClick} onLatestClick={handleLatestClick} />
+
       <div className="w-full px-2 sm:px-4 py-6">
         <div className="max-w-[3000px] mx-auto">
           <div className="flex items-start gap-6 lg:gap-12">
@@ -80,10 +75,8 @@ export default function Dashboard() {
             <div className="flex-1 min-w-0">
               <CreatePostPrompt />
 
-             <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-                <div className="flex border-b border-gray-200">
-                  {tabs.map(renderTabButton)}
-                </div>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                <div className="flex border-b border-gray-200">{tabs.map(renderTabButton)}</div>
               </div>
 
               {activeTab === 'home' ? (
@@ -106,14 +99,8 @@ export default function Dashboard() {
       </div>
 
       {/* Modals */}
-      <StatsModal 
-        isOpen={showStatsModal} 
-        onClose={() => setShowStatsModal(false)} 
-      />
-      <LatestModal 
-        isOpen={showLatestModal} 
-        onClose={() => setShowLatestModal(false)} 
-      />
+      <StatsModal isOpen={showStatsModal} onClose={() => setShowStatsModal(false)} />
+      <LatestModal isOpen={showLatestModal} onClose={() => setShowLatestModal(false)} />
     </div>
   );
 }

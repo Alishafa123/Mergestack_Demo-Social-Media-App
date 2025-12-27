@@ -27,23 +27,13 @@ interface EditPostModalProps {
   };
 }
 
-const EditPostModal: React.FC<EditPostModalProps> = ({
-  isOpen,
-  onClose,
-  onSave,
-  isLoading = false,
-  post
-}) => {
+const EditPostModal: React.FC<EditPostModalProps> = ({ isOpen, onClose, onSave, isLoading = false, post }) => {
   const [content, setContent] = useState('');
 
-  const {
-    first_name,
-    last_name,
-    profile_url
-  } = userProfileController.useState([
+  const { first_name, last_name, profile_url } = userProfileController.useState([
     'first_name',
     'last_name',
-    'profile_url'
+    'profile_url',
   ]);
 
   useEffect(() => {
@@ -54,7 +44,7 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
 
   const handleSave = () => {
     const trimmedContent = content.trim();
-    
+
     if (!trimmedContent) {
       showToast.error('Post content cannot be empty');
       return;
@@ -85,9 +75,7 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
     return 'Save Changes';
   };
 
-  const displayName = first_name && last_name
-    ? `${first_name} ${last_name}`
-    : post?.user.name || 'User';
+  const displayName = first_name && last_name ? `${first_name} ${last_name}` : post?.user.name || 'User';
 
   if (!isOpen || !post) return null;
 
@@ -135,21 +123,14 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
 
           {/* Character counter */}
           <div className="flex justify-end mt-4">
-            <div className="text-sm text-gray-500">
-              {content.length}/2000 characters
-            </div>
+            <div className="text-sm text-gray-500">{content.length}/2000 characters</div>
           </div>
         </div>
 
         {/* Footer */}
         <div className="border-t border-gray-200 p-6">
           <div className="flex items-center justify-end space-x-3">
-            <Button
-              variant="secondary"
-              onClick={handleClose}
-              disabled={isLoading}
-              className="px-6 py-2"
-            >
+            <Button variant="secondary" onClick={handleClose} disabled={isLoading} className="px-6 py-2">
               Cancel
             </Button>
             <Button

@@ -7,28 +7,24 @@ interface PostImageUploadProps {
   disabled?: boolean;
 }
 
-export default function PostImageUpload({ 
-  onImagesChange, 
-  maxImages = 10, 
-  disabled = false 
-}: PostImageUploadProps) {
+export default function PostImageUpload({ onImagesChange, maxImages = 10, disabled = false }: PostImageUploadProps) {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    
+
     if (files.length === 0) return;
 
     // Validate file types
-    const validFiles = files.filter(file => file.type.startsWith('image/'));
+    const validFiles = files.filter((file) => file.type.startsWith('image/'));
     if (validFiles.length !== files.length) {
       alert('Please select only image files');
       return;
     }
     // Check file sizes (5MB limit per file)
-    const oversizedFiles = validFiles.filter(file => file.size > 5 * 1024 * 1024);
+    const oversizedFiles = validFiles.filter((file) => file.size > 5 * 1024 * 1024);
     if (oversizedFiles.length > 0) {
       alert('Some files are larger than 5MB. Please choose smaller files.');
       return;
@@ -36,10 +32,10 @@ export default function PostImageUpload({
     // Combine with existing images, respect max limit
     const newImages = [...selectedImages, ...validFiles].slice(0, maxImages);
     // Create preview URLs
-    const newPreviewUrls = newImages.map(file => URL.createObjectURL(file));
+    const newPreviewUrls = newImages.map((file) => URL.createObjectURL(file));
     // Clean up old URLs
-    previewUrls.forEach(url => URL.revokeObjectURL(url));
-    
+    previewUrls.forEach((url) => URL.revokeObjectURL(url));
+
     setSelectedImages(newImages);
     setPreviewUrls(newPreviewUrls);
     onImagesChange(newImages);
@@ -48,10 +44,10 @@ export default function PostImageUpload({
   const removeImage = (index: number) => {
     const newImages = selectedImages.filter((_, i) => i !== index);
     const newPreviewUrls = previewUrls.filter((_, i) => i !== index);
-    
+
     // Clean up removed URL
     URL.revokeObjectURL(previewUrls[index]);
-    
+
     setSelectedImages(newImages);
     setPreviewUrls(newPreviewUrls);
     onImagesChange(newImages);
@@ -95,7 +91,7 @@ export default function PostImageUpload({
               )}
             </div>
           ))}
-          
+
           {/* Add more button */}
           {selectedImages.length < maxImages && !disabled && (
             <button

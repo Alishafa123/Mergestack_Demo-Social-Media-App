@@ -1,6 +1,6 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model } from 'sequelize';
 
-import sequelize from "@config/database.js";
+import sequelize from '@config/database.js';
 
 class PostImage extends Model {
   declare id: string;
@@ -23,10 +23,10 @@ PostImage.init(
       allowNull: false,
       references: {
         model: 'posts',
-        key: 'id'
+        key: 'id',
       },
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     },
     image_url: {
       type: DataTypes.STRING,
@@ -36,21 +36,21 @@ PostImage.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
-    }
+    },
   },
   {
     sequelize,
-    modelName: "postImage",
-    tableName: "post_images",
+    modelName: 'postImage',
+    tableName: 'post_images',
     indexes: [
       {
-        fields: ['post_id']
+        fields: ['post_id'],
       },
       {
-        fields: ['post_id', 'image_order']
-      }
-    ]
-  }
+        fields: ['post_id', 'image_order'],
+      },
+    ],
+  },
 );
 
 export default PostImage;

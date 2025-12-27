@@ -1,6 +1,6 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model } from 'sequelize';
 
-import sequelize from "@config/database.js";
+import sequelize from '@config/database.js';
 
 class Profile extends Model {}
 
@@ -17,10 +17,10 @@ Profile.init(
       unique: true,
       references: {
         model: 'users',
-        key: 'id'
+        key: 'id',
       },
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     },
     first_name: {
       type: DataTypes.STRING,
@@ -57,18 +57,18 @@ Profile.init(
     country: {
       type: DataTypes.STRING,
       allowNull: true,
-    }
+    },
   },
   {
     sequelize,
-    modelName: "profile",
-    tableName: "profiles",
+    modelName: 'profile',
+    tableName: 'profiles',
     indexes: [
       {
-        fields: ['user_id']
-      }
-    ]
-  }
+        fields: ['user_id'],
+      },
+    ],
+  },
 );
 
 export default Profile;

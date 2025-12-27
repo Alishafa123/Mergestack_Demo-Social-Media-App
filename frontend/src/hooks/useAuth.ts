@@ -6,7 +6,12 @@ import { userController } from '@jotai/user.atom';
 import { showToast } from '@components/shared/toast';
 import { userProfileController } from '@jotai/userprofile.atom';
 import { loginUser, signupUser, forgotPassword, resetPassword } from '@api/auth.api';
-import type { LoginFormData, SignupFormData, ForgotPasswordFormData, ResetPasswordFormData } from '@schemas/authSchemas';
+import type {
+  LoginFormData,
+  SignupFormData,
+  ForgotPasswordFormData,
+  ResetPasswordFormData,
+} from '@schemas/authSchemas';
 
 interface User {
   id: string;
@@ -39,7 +44,6 @@ interface AuthResponse {
   message?: string;
 }
 
-
 export const useLogin = () => {
   const navigate = useNavigate();
 
@@ -64,13 +68,14 @@ export const useLogin = () => {
           data.profile.bio || '',
           data.profile.profile_url || '',
           data.profile.city || '',
-          data.profile.country || ''
+          data.profile.country || '',
         );
       }
     },
     onError: (error: any) => {
       console.error('Login failed:', error);
-      const errorMessage = error?.response?.data?.message || 'Login failed. Please check your credentials and try again.';
+      const errorMessage =
+        error?.response?.data?.message || 'Login failed. Please check your credentials and try again.';
       showToast.error(errorMessage);
     },
   });
@@ -84,7 +89,6 @@ export const useSignup = () => {
       const message = data.message || 'Account created successfully! Please check your email to verify your account.';
       showToast.success(message, { autoClose: 8000 });
       navigate('/login');
-
     },
     onError: (error: any) => {
       const errorMessage = error?.response?.data?.message || 'Signup failed. Please try again.';
@@ -112,7 +116,7 @@ export const useLogout = () => {
 };
 
 export const useForgotPassword = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   return useMutation<{ success: boolean; message: string }, Error, ForgotPasswordFormData>({
     mutationFn: forgotPassword,

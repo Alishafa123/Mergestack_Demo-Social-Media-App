@@ -15,7 +15,7 @@ export default function PostTextArea({
   placeholder = "What's on your mind?",
   maxLength = 2000,
   disabled = false,
-  autoFocus = false
+  autoFocus = false,
 }: PostTextAreaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -26,7 +26,7 @@ export default function PostTextArea({
       onChange(newValue);
     }
   };
-  
+
   const remainingChars = maxLength - value.length;
   const isNearLimit = remainingChars <= 100;
   // Auto-resize textarea
@@ -40,9 +40,11 @@ export default function PostTextArea({
 
   return (
     <div className="space-y-2">
-      <div className={`relative border rounded-lg transition-colors ${
-        isFocused ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-300'
-      } ${disabled ? 'bg-gray-50' : 'bg-white'}`}>
+      <div
+        className={`relative border rounded-lg transition-colors ${
+          isFocused ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-300'
+        } ${disabled ? 'bg-gray-50' : 'bg-white'}`}
+      >
         <textarea
           ref={textareaRef}
           value={value}
@@ -56,13 +58,13 @@ export default function PostTextArea({
           style={{ fontSize: '16px', lineHeight: '1.5' }}
         />
       </div>
-      
+
       {/* Character count */}
       <div className="flex justify-between items-center text-sm">
         <div></div>
-        <div className={`${
-          isNearLimit ? 'text-orange-500' : 'text-gray-400'
-        } ${remainingChars < 0 ? 'text-red-500' : ''}`}>
+        <div
+          className={`${isNearLimit ? 'text-orange-500' : 'text-gray-400'} ${remainingChars < 0 ? 'text-red-500' : ''}`}
+        >
           {remainingChars} characters remaining
         </div>
       </div>

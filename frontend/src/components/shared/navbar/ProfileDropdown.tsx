@@ -1,8 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { BarChart3, Clock } from 'lucide-react';
-import { userProfileController } from '@jotai/userprofile.atom'
+import { userProfileController } from '@jotai/userprofile.atom';
 import { useLogout } from '@hooks/useAuth';
 import Avatar from '@components/shared/ui/Avatar';
 
@@ -16,20 +15,25 @@ export default function ProfileDropdown({ onStatsClick, onLatestClick }: Profile
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const logoutMutation = useLogout();
-  const { id, first_name, last_name, profile_url } = userProfileController.useState(['id', 'first_name', 'last_name', 'profile_url'])
-  
+  const { id, first_name, last_name, profile_url } = userProfileController.useState([
+    'id',
+    'first_name',
+    'last_name',
+    'profile_url',
+  ]);
+
   const handleProfileClick = () => {
     navigate('/profile');
     setIsOpen(false);
   };
-  
+
   const handleTimelineClick = () => {
     if (id) {
       navigate(`/user/${id}`);
       setIsOpen(false);
     }
   };
-  
+
   const handleLogout = () => {
     logoutMutation.mutate();
     setIsOpen(false);
@@ -44,11 +48,11 @@ export default function ProfileDropdown({ onStatsClick, onLatestClick }: Profile
     onLatestClick?.();
     setIsOpen(false);
   };
-  
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-  
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -88,12 +92,7 @@ export default function ProfileDropdown({ onStatsClick, onLatestClick }: Profile
               onClick={handleProfileClick}
               className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center"
             >
-              <svg
-                className="mr-3 h-4 w-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="mr-3 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -108,12 +107,7 @@ export default function ProfileDropdown({ onStatsClick, onLatestClick }: Profile
               onClick={handleTimelineClick}
               className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center"
             >
-              <svg
-                className="mr-3 h-4 w-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="mr-3 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -149,12 +143,7 @@ export default function ProfileDropdown({ onStatsClick, onLatestClick }: Profile
               disabled={logoutMutation.isPending}
               className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg
-                className="mr-3 h-4 w-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="mr-3 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

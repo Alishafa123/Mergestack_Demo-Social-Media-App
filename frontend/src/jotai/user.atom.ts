@@ -9,19 +9,15 @@ export interface User extends StateObject {
 const initialState: User = {
   id: '',
   name: '',
-  email: ''
+  email: '',
 };
 
-
-
-
 export class UserController extends StateController<User> {
- constructor() {
+  constructor() {
     super('user', initialState);
-    
   }
 
-  login(id:string ,name: string, email: string) {
+  login(id: string, name: string, email: string) {
     this.updateState({
       id,
       name,

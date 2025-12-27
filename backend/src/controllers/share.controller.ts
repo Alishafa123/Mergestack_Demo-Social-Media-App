@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
-import * as shareService from "@services/share.service.js";
+import * as shareService from '@services/share.service.js';
 
 export const sharePost = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -11,14 +11,14 @@ export const sharePost = async (req: Request, res: Response, next: NextFunction)
     if (!postId) {
       return res.status(400).json({
         success: false,
-        message: "Post ID is required"
+        message: 'Post ID is required',
       });
     }
 
     if (sharedContent && sharedContent.length > 500) {
       return res.status(400).json({
         success: false,
-        message: "Share message cannot exceed 500 characters"
+        message: 'Share message cannot exceed 500 characters',
       });
     }
 
@@ -26,8 +26,8 @@ export const sharePost = async (req: Request, res: Response, next: NextFunction)
 
     res.status(201).json({
       success: true,
-      message: "Post shared successfully",
-      share
+      message: 'Post shared successfully',
+      share,
     });
   } catch (error: any) {
     next(error);
@@ -42,7 +42,7 @@ export const unsharePost = async (req: Request, res: Response, next: NextFunctio
     if (!postId) {
       return res.status(400).json({
         success: false,
-        message: "Post ID is required"
+        message: 'Post ID is required',
       });
     }
 
@@ -50,7 +50,7 @@ export const unsharePost = async (req: Request, res: Response, next: NextFunctio
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);
@@ -66,7 +66,7 @@ export const getPostShares = async (req: Request, res: Response, next: NextFunct
     if (!postId) {
       return res.status(400).json({
         success: false,
-        message: "Post ID is required"
+        message: 'Post ID is required',
       });
     }
 
@@ -74,7 +74,7 @@ export const getPostShares = async (req: Request, res: Response, next: NextFunct
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);
@@ -90,7 +90,7 @@ export const getUserShares = async (req: Request, res: Response, next: NextFunct
     if (!userId) {
       return res.status(400).json({
         success: false,
-        message: "User ID is required"
+        message: 'User ID is required',
       });
     }
 
@@ -98,7 +98,7 @@ export const getUserShares = async (req: Request, res: Response, next: NextFunct
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);
@@ -115,7 +115,7 @@ export const getUserTimeline = async (req: Request, res: Response, next: NextFun
     if (!userId) {
       return res.status(400).json({
         success: false,
-        message: "User ID is required"
+        message: 'User ID is required',
       });
     }
 
@@ -123,7 +123,7 @@ export const getUserTimeline = async (req: Request, res: Response, next: NextFun
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);

@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { PhotoCamera,} from '@mui/icons-material';
+import { PhotoCamera } from '@mui/icons-material';
 import { Box, Avatar, CircularProgress, Typography } from '@mui/material';
 
 interface ProfileImageUploadProps {
@@ -13,7 +13,7 @@ export default function ProfileImageUpload({
   currentImageUrl,
   onFileSelect,
   disabled = false,
-  error
+  error,
 }: ProfileImageUploadProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null);
   const [isValidating, setIsValidating] = useState(false);
@@ -39,11 +39,10 @@ export default function ProfileImageUpload({
 
     const objectUrl = URL.createObjectURL(file);
     setPreviewUrl(objectUrl);
-    
+
     onFileSelect(file);
     setIsValidating(false);
   };
-
 
   const handleAvatarClick = () => {
     if (!disabled) {
@@ -61,7 +60,7 @@ export default function ProfileImageUpload({
         style={{ display: 'none' }}
         disabled={disabled}
       />
-      
+
       <Box sx={{ position: 'relative' }}>
         <Avatar
           src={previewUrl || undefined}
@@ -79,7 +78,7 @@ export default function ProfileImageUpload({
         >
           {!previewUrl && <PhotoCamera sx={{ fontSize: 40, color: 'grey.500' }} />}
         </Avatar>
-        
+
         {isValidating && (
           <Box
             sx={{
@@ -99,13 +98,14 @@ export default function ProfileImageUpload({
           </Box>
         )}
       </Box>
-      
+
       <Typography variant="caption" color="text.secondary" textAlign="center">
-        Click to upload image<br />
+        Click to upload image
+        <br />
         Supported: JPG, PNG, GIF (max 5MB)
       </Typography>
-      
-            {error && (
+
+      {error && (
         <Typography variant="caption" color="error" textAlign="center">
           {error}
         </Typography>

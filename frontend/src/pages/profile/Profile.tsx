@@ -1,18 +1,24 @@
-import { useState } from "react";
-import { Edit, Eye } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useState } from 'react';
+import { Edit, Eye } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { showToast } from "@components/shared/toast";
-import { useUpdateProfile } from "@hooks/useProfile";
-import Navbar from "@components/shared/navbar/Navbar";
-import Button from "@components/shared/buttons/Button";
-import { profileSchema } from "@schemas/profileSchemas";
-import type { ProfileFormData } from "@schemas/profileSchemas";
-import { userProfileController } from "@jotai/userprofile.atom";
-import { formatLocalDate } from "@utils/dateUtils";
-import Avatar from "@components/shared/ui/Avatar";
+import Avatar from '@components/shared/ui/Avatar';
+import Input from '@components/shared/form/Input';
+import { formatLocalDate } from '@utils/dateUtils';
+import { showToast } from '@components/shared/toast';
+import { useUpdateProfile } from '@hooks/useProfile';
+import Navbar from '@components/shared/navbar/Navbar';
+import Button from '@components/shared/buttons/Button';
+import { profileSchema } from '@schemas/profileSchemas';
+import DateField from '@components/shared/form/DateField';
+import SelectField from '@components/shared/form/SelectField';
+import type { ProfileFormData } from '@schemas/profileSchemas';
+import { userProfileController } from '@jotai/userprofile.atom';
+import TextAreaField from '@components/shared/form/TextAreaField';
+import ProfileImageUpload from '@components/shared/form/ProfileImageUpload';
+import BackgroundDesign from '@components/shared/backgrounds/BackgroundDesign';
 
 const genderOptions = [
   { value: 'male', label: 'Male' },
@@ -23,13 +29,20 @@ export default function Profile() {
   const [searchParams, setSearchParams] = useSearchParams();
   const mode = searchParams.get('mode') || 'view'; // Default to view mode
   const isEditMode = mode === 'edit';
-  
-  const {first_name, last_name, phone, date_of_birth, gender, bio, profile_url, city, country} = userProfileController.useState([
-    'first_name', 'last_name', 'phone', 'date_of_birth', 
-    'gender', 'bio', 'profile_url', 'city', 'country'
-  ]);
-  
-  
+
+  const { first_name, last_name, phone, date_of_birth, gender, bio, profile_url, city, country } =
+    userProfileController.useState([
+      'first_name',
+      'last_name',
+      'phone',
+      'date_of_birth',
+      'gender',
+      'bio',
+      'profile_url',
+      'city',
+      'country',
+    ]);
+
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const updateProfileMutation = useUpdateProfile();
@@ -45,25 +58,21 @@ export default function Profile() {
       last_name: last_name || '',
       phone: phone || '',
       date_of_birth: date_of_birth || '',
-      gender: (gender as 'male' | 'female' )|| '',
+      gender: (gender as 'male' | 'female') || '',
       bio: bio || '',
       city: city || '',
       country: country || '',
-    }
+    },
   });
 
-  const displayName = first_name && last_name 
-    ? `${first_name} ${last_name}` 
-    : 'User';
+  const displayName = first_name && last_name ? `${first_name} ${last_name}` : 'User';
 
-  const location = city && country 
-    ? `${city}, ${country}` 
-    : city || country || null;
+  const location = city && country ? `${city}, ${country}` : city || country || null;
 
   const onSubmit = (data: ProfileFormData) => {
     const submitData = {
       ...data,
-      ...(selectedFile && { profileImage: selectedFile })
+      ...(selectedFile && { profileImage: selectedFile }),
     };
 
     updateProfileMutation.mutate(submitData, {
@@ -76,7 +85,7 @@ export default function Profile() {
       onError: (error: any) => {
         const errorMessage = error?.response?.data?.message || 'Failed to update profile. Please try again.';
         showToast.error(errorMessage);
-      }
+      },
     });
   };
 
@@ -87,7 +96,7 @@ export default function Profile() {
   const handleModeToggle = () => {
     const newMode = isEditMode ? 'view' : 'edit';
     setSearchParams({ mode: newMode });
-    
+
     // Clear selected file when switching modes
     if (newMode === 'view') {
       setSelectedFile(null);
@@ -105,21 +114,13 @@ export default function Profile() {
     <div className="space-y-6">
       {/* Profile Image Display */}
       <div className="flex justify-center mb-6">
-        <Avatar
-          src={profile_url}
-          name={displayName}
-          size="2xl"
-          showBorder={true}
-          borderColor="border-white"
-        />
+        <Avatar src={profile_url} name={displayName} size="2xl" showBorder={true} borderColor="border-white" />
       </div>
 
       {/* Name */}
       <div className="text-center mb-6">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">{displayName}</h2>
-        {bio && (
-          <p className="text-lg text-gray-600 leading-relaxed">{bio}</p>
-        )}
+        {bio && <p className="text-lg text-gray-600 leading-relaxed">{bio}</p>}
       </div>
 
       {/* Profile Information */}
@@ -155,13 +156,7 @@ export default function Profile() {
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 pt-6">
-        <Button
-          variant="secondary"
-          type="button"
-          onClick={handleBackToDashboard}
-          fullWidth
-          size="lg"
-        >
+        <Button variant="secondary" type="button" onClick={handleBackToDashboard} fullWidth size="lg">
           Back to Dashboard
         </Button>
 
@@ -216,12 +211,7 @@ export default function Profile() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <DateField
-          name="date_of_birth"
-          label="Date of Birth"
-          register={register}
-          errors={errors}
-        />
+        <DateField name="date_of_birth" label="Date of Birth" register={register} errors={errors} />
 
         <SelectField
           name="gender"
@@ -244,21 +234,9 @@ export default function Profile() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Input
-          name="city"
-          label="City"
-          placeholder="Enter your city"
-          register={register}
-          errors={errors}
-        />
+        <Input name="city" label="City" placeholder="Enter your city" register={register} errors={errors} />
 
-        <Input
-          name="country"
-          label="Country"
-          placeholder="Enter your country"
-          register={register}
-          errors={errors}
-        />
+        <Input name="country" label="Country" placeholder="Enter your country" register={register} errors={errors} />
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
@@ -290,7 +268,7 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
-      
+
       <div className="flex-1 bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <BackgroundDesign />
 
@@ -298,15 +276,13 @@ export default function Profile() {
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
-              <h1 className="text-2xl font-bold text-gray-900">
-                {isEditMode ? 'Edit Profile' : 'My Profile'}
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900">{isEditMode ? 'Edit Profile' : 'My Profile'}</h1>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
-                <span className={`px-3 py-1 rounded-full ${
-                  isEditMode 
-                    ? 'bg-blue-100 text-blue-700' 
-                    : 'bg-green-100 text-green-700'
-                }`}>
+                <span
+                  className={`px-3 py-1 rounded-full ${
+                    isEditMode ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
+                  }`}
+                >
                   {isEditMode ? 'Edit Mode' : 'View Mode'}
                 </span>
               </div>

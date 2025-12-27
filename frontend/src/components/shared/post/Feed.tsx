@@ -16,7 +16,7 @@ import {
   useToggleLike,
   useToggleShare,
   useDeletePost,
-  useUpdatePost
+  useUpdatePost,
 } from '@hooks/usePost';
 
 type FeedType = 'general' | 'trending' | 'followers';
@@ -54,15 +54,7 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
     }
   };
 
-  const {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError,
-  } = getActiveQuery();
+  const { data, error, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } = getActiveQuery();
 
   // Feed configuration based on type
   const getFeedConfig = (type: FeedType) => {
@@ -71,13 +63,13 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
         return {
           emptyState: {
             icon: <TrendingUp className="w-12 h-12 text-gray-400" />,
-            title: "No trending posts yet",
-            description: "Be the first to create a trending post!",
-            actionLabel: "Create Post",
-            actionPath: "/create-post",
+            title: 'No trending posts yet',
+            description: 'Be the first to create a trending post!',
+            actionLabel: 'Create Post',
+            actionPath: '/create-post',
             showAction: true,
           },
-          errorTitle: "Failed to load trending posts",
+          errorTitle: 'Failed to load trending posts',
           endMessage: "You've reached the end of trending posts! 🎉",
           showLoadMoreButton: true,
         };
@@ -85,11 +77,11 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
         return {
           emptyState: {
             icon: <Users size={48} className="mx-auto mb-4 text-gray-400" />,
-            title: "No posts from followers",
-            description: "Follow some users to see their posts in your feed!",
+            title: 'No posts from followers',
+            description: 'Follow some users to see their posts in your feed!',
             showAction: false,
           },
-          errorTitle: "Failed to load posts",
+          errorTitle: 'Failed to load posts',
           endMessage: "You've reached the end of your followers' posts!",
           showLoadMoreButton: false,
         };
@@ -97,13 +89,13 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
       default:
         return {
           emptyState: {
-            title: "No posts yet",
-            description: userId ? "This user hasn't posted anything yet." : "Be the first to share something!",
-            actionLabel: "Create Your First Post",
-            actionPath: "/create-post",
+            title: 'No posts yet',
+            description: userId ? "This user hasn't posted anything yet." : 'Be the first to share something!',
+            actionLabel: 'Create Your First Post',
+            actionPath: '/create-post',
             showAction: !userId,
           },
-          errorTitle: "Failed to load posts",
+          errorTitle: 'Failed to load posts',
           endMessage: "You've reached the end of the feed! 🎉",
           showLoadMoreButton: true,
         };
@@ -122,12 +114,12 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
       onError: () => {
         setDeletingPostId(null);
         // Toast is handled in the hook
-      }
+      },
     });
   };
 
   const handleEdit = (postId: string) => {
-    const post = allPosts.find(p => p.id === postId);
+    const post = allPosts.find((p) => p.id === postId);
     setSelectedPost(post);
     setEditModalOpen(true);
   };
@@ -146,8 +138,8 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
             console.error('Failed to update post:', error);
             const errorMessage = error?.response?.data?.message || 'Failed to update post. Please try again.';
             showToast.error(errorMessage);
-          }
-        }
+          },
+        },
       );
     }
   };
@@ -160,12 +152,12 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
     if (isCurrentlyShared) {
       toggleShareMutation.mutate({
         postId,
-        isCurrentlyShared: true
+        isCurrentlyShared: true,
       });
     } else {
       toggleShareMutation.mutate({
         postId,
-        isCurrentlyShared: false
+        isCurrentlyShared: false,
       });
     }
   };
@@ -175,7 +167,7 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
       toggleShareMutation.mutate({
         postId: selectedPost.id,
         sharedContent: message,
-        isCurrentlyShared: false
+        isCurrentlyShared: false,
       });
       setShareModalOpen(false);
       setSelectedPost(null);
@@ -183,7 +175,7 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
   };
 
   const handleShareWithComment = (postId: string) => {
-    const post = allPosts.find(p => p.id === postId);
+    const post = allPosts.find((p) => p.id === postId);
     setSelectedPost(post);
     setShareModalOpen(true);
   };
@@ -191,14 +183,13 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
   const handleDeleteShare = (postId: string) => {
     toggleShareMutation.mutate({
       postId,
-      isCurrentlyShared: true
+      isCurrentlyShared: true,
     });
   };
 
   const handleScroll = useCallback(() => {
     if (
-      window.innerHeight + document.documentElement.scrollTop >=
-      document.documentElement.offsetHeight - 1000 &&
+      window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 1000 &&
       hasNextPage &&
       !isFetchingNextPage
     ) {
@@ -225,14 +216,11 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
 
   if (isError || error) {
     return (
-      <ErrorState
-        title={config.errorTitle}
-        message={error instanceof Error ? error.message : 'Something went wrong'}
-      />
+      <ErrorState title={config.errorTitle} message={error instanceof Error ? error.message : 'Something went wrong'} />
     );
   }
 
-  const allPosts = data?.pages.flatMap(page => page.posts) || [];
+  const allPosts = data?.pages.flatMap((page) => page.posts) || [];
 
   if (allPosts.length === 0) {
     return (
@@ -296,9 +284,7 @@ const Feed: React.FC<FeedProps> = ({ feedType, userId }) => {
 
       {!hasNextPage && allPosts.length > 0 && (
         <div className="text-center py-6">
-          <p className="text-gray-500 text-sm">
-            {config.endMessage}
-          </p>
+          <p className="text-gray-500 text-sm">{config.endMessage}</p>
         </div>
       )}
 

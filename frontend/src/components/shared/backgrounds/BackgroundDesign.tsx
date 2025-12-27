@@ -4,7 +4,7 @@ interface BackgroundDesignProps {
   className?: string;
 }
 
-const BackgroundDesign: React.FC<BackgroundDesignProps> = ({ className = "" }) => {
+const BackgroundDesign: React.FC<BackgroundDesignProps> = ({ className = '' }) => {
   return (
     <div className={`absolute inset-0 overflow-hidden ${className}`}>
       <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full opacity-50"></div>

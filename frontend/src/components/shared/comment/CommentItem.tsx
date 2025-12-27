@@ -15,26 +15,22 @@ interface CommentItemProps {
   isReply?: boolean;
 }
 
-const CommentItem: React.FC<CommentItemProps> = ({ 
-  comment, 
-  postId, 
-  onReply, 
-  isReply = false 
-}) => {
+const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, onReply, isReply = false }) => {
   const [showActions, setShowActions] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  
+
   const { id } = userProfileController.useState(['id']);
   const deleteCommentMutation = useDeleteComment();
   const updateCommentMutation = useUpdateComment();
 
   const isOwner = id === comment.user_id || id === comment.user?.id;
 
-  const displayName = comment.user.profile?.first_name && comment.user.profile?.last_name
-    ? `${comment.user.profile.first_name} ${comment.user.profile.last_name}`
-    : comment.user.name;
+  const displayName =
+    comment.user.profile?.first_name && comment.user.profile?.last_name
+      ? `${comment.user.profile.first_name} ${comment.user.profile.last_name}`
+      : comment.user.name;
 
   const formatDate = (dateString: string) => {
     return formatRelativeTime(dateString);
@@ -46,8 +42,8 @@ const CommentItem: React.FC<CommentItemProps> = ({
       {
         onSuccess: () => {
           setIsEditing(false);
-        }
-      }
+        },
+      },
     );
   };
 
@@ -59,7 +55,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
       onError: () => {
         // Keep modal open on error so user can try again
         // Toast notification is handled in the hook
-      }
+      },
     });
   };
 
@@ -80,28 +76,19 @@ const CommentItem: React.FC<CommentItemProps> = ({
     <div className={`${isReply ? 'ml-8 mt-3' : 'mt-4'}`}>
       <div className="flex space-x-3">
         <div className="flex-shrink-0">
-          <Avatar
-            src={comment.user.profile?.profile_url}
-            name={displayName}
-            size="sm"
-          />
+          <Avatar src={comment.user.profile?.profile_url} name={displayName} size="sm" />
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="bg-gray-100 rounded-2xl px-4 py-2 relative">
             <div className="flex items-center justify-between mb-1">
-              <span className="font-semibold text-sm text-gray-900">
-                {displayName}
-              </span>
+              <span className="font-semibold text-sm text-gray-900">{displayName}</span>
               {isOwner && (
                 <div className="relative">
-                  <button
-                    onClick={() => setShowActions(!showActions)}
-                    className="p-1 hover:bg-gray-200 rounded-full"
-                  >
+                  <button onClick={() => setShowActions(!showActions)} className="p-1 hover:bg-gray-200 rounded-full">
                     <MoreHorizontal size={14} className="text-gray-500" />
                   </button>
-                  
+
                   {showActions && (
                     <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-10 min-w-[120px]">
                       <button
@@ -137,17 +124,13 @@ const CommentItem: React.FC<CommentItemProps> = ({
                 isLoading={updateCommentMutation.isPending}
               />
             ) : (
-              <p className="text-gray-900 text-sm whitespace-pre-wrap">
-                {comment.content}
-              </p>
+              <p className="text-gray-900 text-sm whitespace-pre-wrap">{comment.content}</p>
             )}
           </div>
 
           <div className="flex items-center space-x-4 mt-1 ml-2">
-            <span className="text-xs text-gray-500">
-              {formatDate(comment.createdAt)}
-            </span>
-            
+            <span className="text-xs text-gray-500">{formatDate(comment.createdAt)}</span>
+
             {!isReply && (
               <button
                 onClick={handleReply}
@@ -175,12 +158,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
           {comment.replies && comment.replies.length > 0 && (
             <div className="mt-2">
               {comment.replies.map((reply) => (
-                <CommentItem
-                  key={reply.id}
-                  comment={reply}
-                  postId={postId}
-                  isReply={true}
-                />
+                <CommentItem key={reply.id} comment={reply} postId={postId} isReply={true} />
               ))}
             </div>
           )}

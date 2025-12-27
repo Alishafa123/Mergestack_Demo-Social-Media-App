@@ -11,18 +11,8 @@ interface CommentListProps {
   limit?: number;
 }
 
-const CommentList: React.FC<CommentListProps> = ({ 
-  postId, 
-  limit = 10 
-}) => {
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    error
-  } = useInfiniteComments(postId, limit);
+const CommentList: React.FC<CommentListProps> = ({ postId, limit = 10 }) => {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error } = useInfiniteComments(postId, limit);
 
   if (isLoading) {
     return (
@@ -40,7 +30,7 @@ const CommentList: React.FC<CommentListProps> = ({
     );
   }
 
-  const comments = data?.pages.flatMap(page => page.comments) || [];
+  const comments = data?.pages.flatMap((page) => page.comments) || [];
 
   if (comments.length === 0) {
     return (
@@ -53,13 +43,9 @@ const CommentList: React.FC<CommentListProps> = ({
   return (
     <div className="space-y-1">
       {comments.map((comment: Comment) => (
-        <CommentItem
-          key={comment.id}
-          comment={comment}
-          postId={postId}
-        />
+        <CommentItem key={comment.id} comment={comment} postId={postId} />
       ))}
-      
+
       {hasNextPage && (
         <div className="flex justify-center pt-4">
           <Button

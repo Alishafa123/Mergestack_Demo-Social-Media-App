@@ -29,16 +29,11 @@ export default function Navbar({ onStatsClick, onLatestClick }: NavbarProps = {}
           </div>
 
           <div className="flex-1 min-w-0 mx-1 sm:mx-2 md:flex-initial md:w-96 lg:w-[500px] xl:w-[600px] md:mx-8">
-            <SearchBar 
-              placeholder="Search..."
-            />
+            <SearchBar placeholder="Search..." />
           </div>
 
           <div className="flex-shrink-0">
-            <ProfileDropdown 
-              onStatsClick={onStatsClick}
-              onLatestClick={onLatestClick}
-            />
+            <ProfileDropdown onStatsClick={onStatsClick} onLatestClick={onLatestClick} />
           </div>
         </div>
       </div>

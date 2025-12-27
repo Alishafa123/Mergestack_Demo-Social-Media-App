@@ -26,16 +26,16 @@ const CommentForm: React.FC<CommentFormProps> = ({
   onSubmit,
   onSuccess,
   onCancel,
-  isLoading = false
+  isLoading = false,
 }) => {
   const [content, setContent] = useState(initialValue);
   const [error, setError] = useState<string>('');
-  
+
   const createCommentMutation = useCreateComment();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate content
     const validation = await validateComment(content);
     if (!validation.isValid) {
@@ -60,10 +60,10 @@ const CommentForm: React.FC<CommentFormProps> = ({
         postId,
         data: {
           content,
-          parentCommentId
-        }
+          parentCommentId,
+        },
       });
-      
+
       setContent('');
       onSuccess?.();
     } catch (error) {
@@ -91,11 +91,9 @@ const CommentForm: React.FC<CommentFormProps> = ({
             rows={2}
             disabled={isSubmitting}
           />
-          {error && (
-            <p className="text-red-500 text-sm mt-1">{error}</p>
-          )}
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
-        
+
         <div className="flex flex-col space-y-2">
           <Button
             type="submit"
@@ -106,15 +104,9 @@ const CommentForm: React.FC<CommentFormProps> = ({
             <Send size={14} />
             <span>{submitText}</span>
           </Button>
-          
+
           {onCancel && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={handleCancel}
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="ghost" size="sm" onClick={handleCancel} disabled={isSubmitting}>
               Cancel
             </Button>
           )}

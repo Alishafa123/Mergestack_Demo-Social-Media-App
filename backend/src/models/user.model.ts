@@ -1,6 +1,6 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model } from 'sequelize';
 
-import sequelize from "@config/database.js";
+import sequelize from '@config/database.js';
 
 class User extends Model {}
 
@@ -20,13 +20,13 @@ User.init(
     name: {
       type: DataTypes.STRING,
       allowNull: true,
-    }
+    },
   },
   {
     sequelize,
-    modelName: "user",
-    tableName: "users",
-  }
+    modelName: 'user',
+    tableName: 'users',
+  },
 );
 
 export default User;

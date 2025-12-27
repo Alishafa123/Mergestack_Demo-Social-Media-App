@@ -10,15 +10,15 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-export default function SearchBar({ onSearch, placeholder = "Search..." }: SearchBarProps) {
-  const navigate=useNavigate();
+export default function SearchBar({ onSearch, placeholder = 'Search...' }: SearchBarProps) {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
-  
+
   const { data: searchResults, isLoading } = useSearchUsers(debouncedQuery, 1, 8);
-  
+
   // Debounce search query
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -67,17 +67,15 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
   return (
     <div className="w-full max-w-2xl" ref={searchRef}>
       <form onSubmit={handleSubmit} className="relative">
-        <div className={`relative transition-all duration-200 rounded-full ${
-          isFocused 
-            ? 'transform scale-105 shadow-lg' 
-            : 'shadow-sm hover:shadow-md'
-        }`}>
+        <div
+          className={`relative transition-all duration-200 rounded-full ${
+            isFocused ? 'transform scale-105 shadow-lg' : 'shadow-sm hover:shadow-md'
+          }`}
+        >
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <Search 
-              size={22} 
-              className={`transition-colors duration-200 ${
-                isFocused ? 'text-blue-500' : 'text-gray-400'
-              }`} 
+            <Search
+              size={22}
+              className={`transition-colors duration-200 ${isFocused ? 'text-blue-500' : 'text-gray-400'}`}
             />
           </div>
 
@@ -89,9 +87,7 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
             onBlur={handleBlur}
             placeholder={placeholder}
             className={`block w-full pl-12 pr-12 py-4 text-base bg-gray-50 border-0 rounded-full leading-5 placeholder-gray-500 focus:outline-none focus:bg-white focus:placeholder-gray-400 transition-all duration-200 ${
-              isFocused 
-                ? 'ring-2 ring-blue-500 bg-white' 
-                : 'hover:bg-gray-100'
+              isFocused ? 'ring-2 ring-blue-500 bg-white' : 'hover:bg-gray-100'
             }`}
           />
         </div>
@@ -104,7 +100,7 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
                 <span>Search results for "{searchQuery}"</span>
               </div>
             </div>
-            
+
             <div className="max-h-80 overflow-y-auto">
               <SearchResults
                 users={searchResults?.users || []}
@@ -113,7 +109,7 @@ export default function SearchBar({ onSearch, placeholder = "Search..." }: Searc
                 onUserClick={handleUserClick}
               />
             </div>
-            
+
             {searchResults && searchResults.users.length > 0 && (
               <div className="px-4 py-3 border-t border-gray-100 bg-gray-50">
                 <p className="text-xs text-gray-500 text-center">

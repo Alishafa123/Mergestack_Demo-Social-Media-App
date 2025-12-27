@@ -1,4 +1,4 @@
-import api from "@services/axios";
+import api from '@services/axios';
 
 export interface Comment {
   id: string;

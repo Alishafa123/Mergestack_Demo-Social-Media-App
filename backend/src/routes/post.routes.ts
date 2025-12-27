@@ -1,8 +1,8 @@
-import { Router } from "express";
+import { Router } from 'express';
 
-import * as postController from "@controllers/post.controller.js";
-import { uploadMultiple } from "@middleware/upload.middleware.js";
-import { authenticateSupabaseToken } from "@middleware/supabase-auth.middleware.js";
+import * as postController from '@controllers/post.controller.js';
+import { uploadMultiple } from '@middleware/upload.middleware.js';
+import { authenticateSupabaseToken } from '@middleware/supabase-auth.middleware.js';
 
 const router = Router();
 
@@ -10,16 +10,16 @@ const router = Router();
 router.use(authenticateSupabaseToken);
 
 // Post CRUD operations
-router.post("/", uploadMultiple, postController.createPost);
-router.get("/", postController.getPosts);
-router.get("/trending", postController.getTrendingPosts);
-router.get("/followers", postController.getFollowersFeed);
-router.get("/top/me", postController.getUserTopPosts);
-router.get("/:postId", postController.getPost);
-router.put("/:postId", postController.updatePost);
-router.delete("/:postId", postController.deletePost);
+router.post('/', uploadMultiple, postController.createPost);
+router.get('/', postController.getPosts);
+router.get('/trending', postController.getTrendingPosts);
+router.get('/followers', postController.getFollowersFeed);
+router.get('/top/me', postController.getUserTopPosts);
+router.get('/:postId', postController.getPost);
+router.put('/:postId', postController.updatePost);
+router.delete('/:postId', postController.deletePost);
 
 // Post interactions
-router.post("/:postId/like", postController.toggleLike);
+router.post('/:postId/like', postController.toggleLike);
 
 export default router;

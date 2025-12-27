@@ -1,11 +1,10 @@
-import axios from "axios";
+import axios from 'axios';
 
-import { AuthUtils } from "@utils/auth";
+import { AuthUtils } from '@utils/auth';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
-
 
 api.interceptors.request.use((config) => {
   const token = AuthUtils.getToken();
@@ -30,10 +29,7 @@ api.interceptors.response.use(
 
       if (refreshToken) {
         try {
-          const { data } = await axios.post(
-            `${import.meta.env.VITE_API_URL}/auth/refresh`,
-            { refreshToken }
-          );
+          const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/auth/refresh`, { refreshToken });
 
           AuthUtils.setTokens(data.token, data.refreshToken, data.expiresAt);
           originalRequest.headers.Authorization = `Bearer ${data.token}`;
@@ -49,7 +45,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

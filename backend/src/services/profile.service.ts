@@ -1,22 +1,24 @@
-import { Op } from "sequelize";
+import { Op } from 'sequelize';
 
-import  sequelize  from "@config/database.js";
-import type { CustomError, UserModel } from "@/types/index";
-import { StorageService } from "@services/storage.service.js";
-import { User, Profile, Post, UserFollow } from "@models/index.js";
+import sequelize from '@config/database.js';
+import type { CustomError, UserModel } from '@/types/index';
+import { StorageService } from '@services/storage.service.js';
+import { User, Profile, Post, UserFollow } from '@models/index.js';
 
 export const getProfile = async (userId: string): Promise<UserModel> => {
   try {
-    const user = await User.findOne({
+    const user = (await User.findOne({
       where: { id: userId },
-      include: [{
-        model: Profile,
-        as: 'profile'
-      }]
-    }) as UserModel | null;
+      include: [
+        {
+          model: Profile,
+          as: 'profile',
+        },
+      ],
+    })) as UserModel | null;
 
     if (!user) {
-      const err = new Error("User not found") as CustomError;
+      const err = new Error('User not found') as CustomError;
       err.status = 404;
       throw err;
     }
@@ -29,16 +31,18 @@ export const getProfile = async (userId: string): Promise<UserModel> => {
 
 export const updateProfile = async (userId: string, profileData: any): Promise<UserModel> => {
   try {
-    const user = await User.findOne({
+    const user = (await User.findOne({
       where: { id: userId },
-      include: [{
-        model: Profile,
-        as: 'profile'
-      }]
-    }) as UserModel | null;
+      include: [
+        {
+          model: Profile,
+          as: 'profile',
+        },
+      ],
+    })) as UserModel | null;
 
     if (!user) {
-      const err = new Error("User not found") as CustomError;
+      const err = new Error('User not found') as CustomError;
       err.status = 404;
       throw err;
     }
@@ -48,13 +52,13 @@ export const updateProfile = async (userId: string, profileData: any): Promise<U
     }
 
     const [updatedRowsCount] = await Profile.update(profileData, {
-      where: { user_id: userId }
+      where: { user_id: userId },
     });
 
     if (updatedRowsCount === 0) {
       await Profile.create({
         user_id: userId,
-        ...profileData
+        ...profileData,
       });
     }
 
@@ -66,21 +70,21 @@ export const updateProfile = async (userId: string, profileData: any): Promise<U
 
 export const deleteProfile = async (userId: string): Promise<{ message: string }> => {
   try {
-    const user = await User.findOne({
-      where: { id: userId }
-    }) as UserModel | null;
+    const user = (await User.findOne({
+      where: { id: userId },
+    })) as UserModel | null;
 
     if (!user) {
-      const err = new Error("User not found") as CustomError;
+      const err = new Error('User not found') as CustomError;
       err.status = 404;
       throw err;
     }
 
     await User.destroy({
-      where: { id: userId }
+      where: { id: userId },
     });
 
-    return { message: "Profile deleted successfully" };
+    return { message: 'Profile deleted successfully' };
   } catch (error) {
     throw error;
   }
@@ -89,27 +93,27 @@ export const deleteProfile = async (userId: string): Promise<{ message: string }
 export const getUserStats = async (userId: string) => {
   try {
     const user = await User.findByPk(userId);
-    
+
     if (!user) {
-      const err = new Error("User not found") as CustomError;
+      const err = new Error('User not found') as CustomError;
       err.status = 404;
       throw err;
     }
 
-    const postStats = await Post.findOne({
+    const postStats = (await Post.findOne({
       where: { user_id: userId },
       attributes: [
         [sequelize.fn('SUM', sequelize.col('likes_count')), 'totalLikes'],
         [sequelize.fn('SUM', sequelize.col('comments_count')), 'totalComments'],
         [sequelize.fn('SUM', sequelize.col('shares_count')), 'totalShares'],
-        [sequelize.fn('COUNT', sequelize.col('id')), 'totalPosts']
+        [sequelize.fn('COUNT', sequelize.col('id')), 'totalPosts'],
       ],
-      raw: true
-    }) as any;
+      raw: true,
+    })) as any;
 
     const [followersCount, followingCount] = await Promise.all([
       UserFollow.count({ where: { following_id: userId } }),
-      UserFollow.count({ where: { follower_id: userId } })
+      UserFollow.count({ where: { follower_id: userId } }),
     ]);
 
     return {
@@ -118,7 +122,7 @@ export const getUserStats = async (userId: string) => {
       totalShares: parseInt(postStats?.totalShares) || 0,
       totalPosts: parseInt(postStats?.totalPosts) || 0,
       followersCount,
-      followingCount
+      followingCount,
     };
   } catch (error: any) {
     console.error('Error getting user stats:', error);
@@ -130,41 +134,37 @@ export const searchUsersByName = async (
   query: string,
   page: number = 1,
   limit: number = 10,
-  currentUserId?: string
-): Promise<{ users: UserModel[], total: number, hasMore: boolean }> => {
+  currentUserId?: string,
+): Promise<{ users: UserModel[]; total: number; hasMore: boolean }> => {
   try {
     const offset = (page - 1) * limit;
-    
+
     const { count, rows } = await User.findAndCountAll({
-      include: [{
-        model: Profile,
-        as: 'profile',
-        where: {
-          [Op.or]: [
-            { first_name: { [Op.iLike]: `%${query}%` } },
-            { last_name: { [Op.iLike]: `%${query}%` } }
-          ]
+      include: [
+        {
+          model: Profile,
+          as: 'profile',
+          where: {
+            [Op.or]: [{ first_name: { [Op.iLike]: `%${query}%` } }, { last_name: { [Op.iLike]: `%${query}%` } }],
+          },
+          required: true,
         },
-        required: true 
-      }],
-      where: {
-        ...(currentUserId && { id: { [Op.ne]: currentUserId } })
-      },
-      order: [
-        ['createdAt', 'DESC']
       ],
+      where: {
+        ...(currentUserId && { id: { [Op.ne]: currentUserId } }),
+      },
+      order: [['createdAt', 'DESC']],
       limit,
       offset,
-      distinct: true
+      distinct: true,
     });
 
     return {
-      users: rows.map(user => user.toJSON() as UserModel),
+      users: rows.map((user) => user.toJSON() as UserModel),
       total: count,
-      hasMore: offset + limit < count
+      hasMore: offset + limit < count,
     };
   } catch (error) {
     throw error;
   }
 };
-

@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
-import * as commentService from "@services/comment.service.js";
+import * as commentService from '@services/comment.service.js';
 
 export const createComment = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -11,35 +11,30 @@ export const createComment = async (req: Request, res: Response, next: NextFunct
     if (!postId) {
       return res.status(400).json({
         success: false,
-        message: "Post ID is required"
+        message: 'Post ID is required',
       });
     }
 
     if (!content || content.trim().length === 0) {
       return res.status(400).json({
         success: false,
-        message: "Comment content is required"
+        message: 'Comment content is required',
       });
     }
 
     if (content.length > 1000) {
       return res.status(400).json({
         success: false,
-        message: "Comment content cannot exceed 1000 characters"
+        message: 'Comment content cannot exceed 1000 characters',
       });
     }
 
-    const comment = await commentService.createComment(
-      postId,
-      userId,
-      content.trim(),
-      parentCommentId
-    );
+    const comment = await commentService.createComment(postId, userId, content.trim(), parentCommentId);
 
     res.status(201).json({
       success: true,
-      message: parentCommentId ? "Reply added successfully" : "Comment added successfully",
-      comment
+      message: parentCommentId ? 'Reply added successfully' : 'Comment added successfully',
+      comment,
     });
   } catch (error: any) {
     next(error);
@@ -55,7 +50,7 @@ export const getPostComments = async (req: Request, res: Response, next: NextFun
     if (!postId) {
       return res.status(400).json({
         success: false,
-        message: "Post ID is required"
+        message: 'Post ID is required',
       });
     }
 
@@ -63,7 +58,7 @@ export const getPostComments = async (req: Request, res: Response, next: NextFun
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);
@@ -79,21 +74,21 @@ export const updateComment = async (req: Request, res: Response, next: NextFunct
     if (!commentId) {
       return res.status(400).json({
         success: false,
-        message: "Comment ID is required"
+        message: 'Comment ID is required',
       });
     }
 
     if (!content || content.trim().length === 0) {
       return res.status(400).json({
         success: false,
-        message: "Comment content is required"
+        message: 'Comment content is required',
       });
     }
 
     if (content.length > 1000) {
       return res.status(400).json({
         success: false,
-        message: "Comment content cannot exceed 1000 characters"
+        message: 'Comment content cannot exceed 1000 characters',
       });
     }
 
@@ -101,8 +96,8 @@ export const updateComment = async (req: Request, res: Response, next: NextFunct
 
     res.json({
       success: true,
-      message: "Comment updated successfully",
-      comment
+      message: 'Comment updated successfully',
+      comment,
     });
   } catch (error: any) {
     next(error);
@@ -117,7 +112,7 @@ export const deleteComment = async (req: Request, res: Response, next: NextFunct
     if (!commentId) {
       return res.status(400).json({
         success: false,
-        message: "Comment ID is required"
+        message: 'Comment ID is required',
       });
     }
 
@@ -125,7 +120,7 @@ export const deleteComment = async (req: Request, res: Response, next: NextFunct
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);

@@ -1,10 +1,7 @@
 import * as yup from 'yup';
 
 export const createPostSchema = yup.object({
-  content: yup
-    .string()
-    .max(2000, 'Post content must be less than 2000 characters')
-    .optional(),
+  content: yup.string().max(2000, 'Post content must be less than 2000 characters').optional(),
 });
 
 export type CreatePostFormData = yup.InferType<typeof createPostSchema>;
@@ -40,6 +37,6 @@ export const validatePost = (content: string, images: File[]) => {
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 };

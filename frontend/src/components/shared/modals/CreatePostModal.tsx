@@ -18,21 +18,16 @@ interface CreatePostModalProps {
 const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) => {
   const [content, setContent] = useState('');
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  const {
-    id,
-    first_name,
-    last_name,
-    profile_url
-  } = userProfileController.useState([
+  const { id, first_name, last_name, profile_url } = userProfileController.useState([
     'id',
     'first_name',
     'last_name',
-    'profile_url'
+    'profile_url',
   ]);
 
   const createPostMutation = useCreatePost();
   const handleSubmit = async () => {
-  const validation = validatePost(content, selectedImages);
+    const validation = validatePost(content, selectedImages);
 
     if (!validation.isValid) {
       showToast.error(validation.errors[0]);
@@ -55,8 +50,8 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
         onError: (error: any) => {
           const errorMessage = error?.response?.data?.message || 'Failed to create post. Please try again.';
           showToast.error(errorMessage);
-        }
-      }
+        },
+      },
     );
   };
 
@@ -79,9 +74,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
     return 'Post';
   };
 
-  const displayName = first_name && last_name
-    ? `${first_name} ${last_name}`
-    : 'User';
+  const displayName = first_name && last_name ? `${first_name} ${last_name}` : 'User';
 
   if (!isOpen) return null;
 
@@ -130,9 +123,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
           </div>
 
           <div className="flex justify-end mt-4">
-            <div className="text-sm text-gray-500">
-              {content.length}/2000 characters remaining
-            </div>
+            <div className="text-sm text-gray-500">{content.length}/2000 characters remaining</div>
           </div>
         </div>
 

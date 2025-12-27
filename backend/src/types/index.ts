@@ -1,4 +1,3 @@
-
 export interface CustomError extends Error {
   status?: number;
 }
@@ -166,7 +165,6 @@ export interface UserFollowModel {
   follower?: UserModel;
   followingUser?: UserModel;
 }
-
 
 export interface ApiResponse<T = any> {
   success: boolean;

@@ -1,15 +1,15 @@
-import { Router } from "express";
+import { Router } from 'express';
 
-import * as commentController from "@controllers/comment.controller.js";
-import { authenticateSupabaseToken } from "@middleware/supabase-auth.middleware.js";
+import * as commentController from '@controllers/comment.controller.js';
+import { authenticateSupabaseToken } from '@middleware/supabase-auth.middleware.js';
 
 const router = Router();
 
 router.use(authenticateSupabaseToken);
 
-router.post("/posts/:postId/comments", commentController.createComment);
-router.get("/posts/:postId/comments", commentController.getPostComments);
-router.put("/comments/:commentId", commentController.updateComment);
-router.delete("/comments/:commentId", commentController.deleteComment);
+router.post('/posts/:postId/comments', commentController.createComment);
+router.get('/posts/:postId/comments', commentController.getPostComments);
+router.put('/comments/:commentId', commentController.updateComment);
+router.delete('/comments/:commentId', commentController.deleteComment);
 
 export default router;

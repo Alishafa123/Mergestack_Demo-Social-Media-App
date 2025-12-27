@@ -3,23 +3,22 @@ import { Request, Response, NextFunction } from 'express';
 import { supabase } from '@config/supabase.js';
 import type { CustomError } from '@/types/index';
 
-export const authenticateSupabaseToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const authenticateSupabaseToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       const err = new Error('No token provided') as CustomError;
       err.status = 401;
       throw err;
     }
 
-    const token = authHeader.substring(7); 
+    const token = authHeader.substring(7);
 
-    const { data: { user }, error } = await supabase.auth.getUser(token);
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(token);
 
     if (error || !user) {
       const err = new Error('Invalid or expired token') as CustomError;
@@ -27,11 +26,10 @@ export const authenticateSupabaseToken = async (
       throw err;
     }
 
-   
     req.user = {
       id: user.id,
       email: user.email!,
-      name: user.user_metadata?.name || user.email!.split('@')[0]
+      name: user.user_metadata?.name || user.email!.split('@')[0],
     };
 
     next();

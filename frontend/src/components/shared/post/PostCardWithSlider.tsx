@@ -11,8 +11,6 @@ import CommentSection from '@components/shared/comment/CommentSection';
 import SharedPostHeader from '@components/shared/post/SharedPostHeader';
 import PostOptionsDropdown from '@components/shared/post/PostOptionsDropdown';
 import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
-import { userProfileController } from '@jotai/userprofile.atom';
-import type { Post } from '@api/post.api';
 import { formatRelativeTime } from '@utils/dateUtils';
 
 interface PostCardWithSliderProps {
@@ -43,13 +41,13 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
   isShared = false,
   showComments = false,
   isDeleting = false,
-  isDeletingShare = false
+  isDeletingShare = false,
 }) => {
   const [commentsExpanded, setCommentsExpanded] = useState(showComments);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [wasDeleting, setWasDeleting] = useState(false);
   const { id: currentUserId } = userProfileController.useState(['id']);
-  
+
   // Handle modal closing when deletion completes
   useEffect(() => {
     if (wasDeleting && !isDeleting) {
@@ -61,10 +59,11 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
       setWasDeleting(true);
     }
   }, [isDeleting, wasDeleting]);
-  
-  const displayName = post.user.profile?.first_name && post.user.profile?.last_name
-    ? `${post.user.profile.first_name} ${post.user.profile.last_name}`
-    : post.user.name;
+
+  const displayName =
+    post.user.profile?.first_name && post.user.profile?.last_name
+      ? `${post.user.profile.first_name} ${post.user.profile.last_name}`
+      : post.user.name;
 
   const formatDate = (dateString: string) => {
     return formatRelativeTime(dateString);
@@ -96,8 +95,10 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
 
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 relative mb-8">
-      {post.type === 'shared' && <SharedPostHeader post={post} onDeleteShare={handleDeleteShare} isDeleting={isDeletingShare} />}
-      
+      {post.type === 'shared' && (
+        <SharedPostHeader post={post} onDeleteShare={handleDeleteShare} isDeleting={isDeletingShare} />
+      )}
+
       <div className="p-6 pb-4">
         <div className="flex items-center justify-between">
           <UserHeader
@@ -107,12 +108,9 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
             subtitle={formatDate(post.createdAt)}
             size="md"
           />
-          
+
           {currentUserId === post.user.id && (
-            <PostOptionsDropdown
-              onDelete={handleDelete}
-              onEdit={onEdit ? handleEdit : undefined}
-            />
+            <PostOptionsDropdown onDelete={handleDelete} onEdit={onEdit ? handleEdit : undefined} />
           )}
         </div>
       </div>
@@ -133,15 +131,21 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
         <div className="flex items-center justify-between text-base text-gray-600">
           <div className="flex items-center space-x-6">
             {post.likes_count > 0 && (
-              <span className="font-medium">{post.likes_count} {post.likes_count === 1 ? 'like' : 'likes'}</span>
+              <span className="font-medium">
+                {post.likes_count} {post.likes_count === 1 ? 'like' : 'likes'}
+              </span>
             )}
           </div>
           <div className="flex items-center space-x-6">
             {post.comments_count > 0 && (
-              <span className="font-medium">{post.comments_count} {post.comments_count === 1 ? 'comment' : 'comments'}</span>
+              <span className="font-medium">
+                {post.comments_count} {post.comments_count === 1 ? 'comment' : 'comments'}
+              </span>
             )}
             {post.shares_count > 0 && (
-              <span className="font-medium">{post.shares_count} {post.shares_count === 1 ? 'share' : 'shares'}</span>
+              <span className="font-medium">
+                {post.shares_count} {post.shares_count === 1 ? 'share' : 'shares'}
+              </span>
             )}
           </div>
         </div>
@@ -158,11 +162,9 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
               isLiked ? 'text-red-500 hover:text-red-600' : 'text-gray-600 hover:text-red-500'
             }`}
           >
-            <Heart 
-              size={22} 
-              className={`transition-all duration-200 ${
-                isLiked ? 'fill-current scale-110' : 'hover:scale-105'
-              }`} 
+            <Heart
+              size={22}
+              className={`transition-all duration-200 ${isLiked ? 'fill-current scale-110' : 'hover:scale-105'}`}
             />
             <span className="font-medium">{isLiked ? 'Liked' : 'Like'}</span>
           </Button>
@@ -187,13 +189,7 @@ const PostCardWithSlider: React.FC<PostCardWithSliderProps> = ({
         </div>
       </div>
 
-      {commentsExpanded && (
-        <CommentSection
-          postId={post.id}
-          commentsCount={post.comments_count}
-          isExpanded={false}
-        />
-      )}
+      {commentsExpanded && <CommentSection postId={post.id} commentsCount={post.comments_count} isExpanded={false} />}
 
       <DeleteConfirmModal
         isOpen={showDeleteModal}

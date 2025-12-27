@@ -27,12 +27,12 @@ export default function SelectField({
   placeholder = 'Select an option',
   validation,
   className = '',
-  defaultValue = ''
+  defaultValue = '',
 }: SelectFieldProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(defaultValue);
   const [selectedLabel, setSelectedLabel] = useState(() => {
-    const option = options.find(opt => opt.value === defaultValue);
+    const option = options.find((opt) => opt.value === defaultValue);
     return option ? option.label : placeholder;
   });
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -42,7 +42,7 @@ export default function SelectField({
 
   useEffect(() => {
     setSelectedValue(defaultValue);
-    const option = options.find(opt => opt.value === defaultValue);
+    const option = options.find((opt) => opt.value === defaultValue);
     setSelectedLabel(option ? option.label : placeholder);
   }, [defaultValue, options, placeholder]);
 
@@ -76,15 +76,10 @@ export default function SelectField({
       <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-2">
         {label}
       </label>
-      
+
       <div className="relative" ref={dropdownRef}>
-        <input
-          ref={ref}
-          type="hidden"
-          value={selectedValue}
-          {...registerProps}
-        />
-        
+        <input ref={ref} type="hidden" value={selectedValue} {...registerProps} />
+
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
@@ -92,9 +87,7 @@ export default function SelectField({
             error ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-gray-50 focus:bg-white'
           }`}
         >
-          <span className={selectedValue ? 'text-gray-900' : 'text-gray-500'}>
-            {selectedLabel}
-          </span>
+          <span className={selectedValue ? 'text-gray-900' : 'text-gray-500'}>{selectedLabel}</span>
           <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
             <svg
               className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
@@ -118,7 +111,7 @@ export default function SelectField({
             >
               {placeholder}
             </button>
-            
+
             {options.map((option) => (
               <button
                 key={option.value}
@@ -136,10 +129,8 @@ export default function SelectField({
           </div>
         )}
       </div>
-      
-      {error && (
-        <p className="mt-1 text-sm text-red-600">{error.message as string}</p>
-      )}
+
+      {error && <p className="mt-1 text-sm text-red-600">{error.message as string}</p>}
     </div>
   );
 }
