@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
-import * as postService from "@services/post.service.js";
-import { StorageService } from "@services/storage.service.js";
+import * as postService from '@services/post.service.js';
+import { StorageService } from '@services/storage.service.js';
 
 export const createPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -12,7 +12,7 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
     if (!content && (!files || files.length === 0)) {
       return res.status(400).json({
         success: false,
-        message: "Post must have either content or images"
+        message: 'Post must have either content or images',
       });
     }
 
@@ -25,8 +25,8 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
       } catch (uploadError) {
         return res.status(400).json({
           success: false,
-          message: "Failed to upload post images",
-          error: uploadError instanceof Error ? uploadError.message : "Unknown upload error"
+          message: 'Failed to upload post images',
+          error: uploadError instanceof Error ? uploadError.message : 'Unknown upload error',
         });
       }
     }
@@ -35,8 +35,8 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
 
     res.status(201).json({
       success: true,
-      message: "Post created successfully",
-      post: completePost
+      message: 'Post created successfully',
+      post: completePost,
     });
   } catch (error: any) {
     next(error);
@@ -54,7 +54,7 @@ export const getPosts = async (req: Request, res: Response, next: NextFunction) 
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);
@@ -68,7 +68,7 @@ export const getPost = async (req: Request, res: Response, next: NextFunction) =
     if (!postId) {
       return res.status(400).json({
         success: false,
-        message: "Post ID is required"
+        message: 'Post ID is required',
       });
     }
 
@@ -76,7 +76,7 @@ export const getPost = async (req: Request, res: Response, next: NextFunction) =
 
     res.json({
       success: true,
-      post
+      post,
     });
   } catch (error: any) {
     next(error);
@@ -92,14 +92,14 @@ export const updatePost = async (req: Request, res: Response, next: NextFunction
     if (!postId) {
       return res.status(400).json({
         success: false,
-        message: "Post ID is required"
+        message: 'Post ID is required',
       });
     }
 
     if (!content) {
       return res.status(400).json({
         success: false,
-        message: "Content is required"
+        message: 'Content is required',
       });
     }
 
@@ -107,8 +107,8 @@ export const updatePost = async (req: Request, res: Response, next: NextFunction
 
     res.json({
       success: true,
-      message: "Post updated successfully",
-      post
+      message: 'Post updated successfully',
+      post,
     });
   } catch (error: any) {
     next(error);
@@ -123,7 +123,7 @@ export const deletePost = async (req: Request, res: Response, next: NextFunction
     if (!postId) {
       return res.status(400).json({
         success: false,
-        message: "Post ID is required"
+        message: 'Post ID is required',
       });
     }
 
@@ -131,7 +131,7 @@ export const deletePost = async (req: Request, res: Response, next: NextFunction
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);
@@ -146,7 +146,7 @@ export const toggleLike = async (req: Request, res: Response, next: NextFunction
     if (!postId) {
       return res.status(400).json({
         success: false,
-        message: "Post ID is required"
+        message: 'Post ID is required',
       });
     }
 
@@ -154,8 +154,8 @@ export const toggleLike = async (req: Request, res: Response, next: NextFunction
 
     res.json({
       success: true,
-      message: result.liked ? "Post liked" : "Post unliked",
-      ...result
+      message: result.liked ? 'Post liked' : 'Post unliked',
+      ...result,
     });
   } catch (error: any) {
     next(error);
@@ -172,7 +172,7 @@ export const getTrendingPosts = async (req: Request, res: Response, next: NextFu
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);
@@ -181,13 +181,13 @@ export const getTrendingPosts = async (req: Request, res: Response, next: NextFu
 
 export const getUserTopPosts = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user!.id; 
+    const userId = req.user!.id;
 
     const result = await postService.getUserTopPosts(userId);
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);
@@ -204,7 +204,7 @@ export const getFollowersFeed = async (req: Request, res: Response, next: NextFu
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);

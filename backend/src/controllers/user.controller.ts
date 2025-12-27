@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
-import * as userService from "@services/user.service.js";
+import * as userService from '@services/user.service.js';
 
 export const followUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -10,7 +10,7 @@ export const followUser = async (req: Request, res: Response, next: NextFunction
     if (!followingId) {
       return res.status(400).json({
         success: false,
-        message: "User ID is required"
+        message: 'User ID is required',
       });
     }
 
@@ -18,7 +18,7 @@ export const followUser = async (req: Request, res: Response, next: NextFunction
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);
@@ -33,7 +33,7 @@ export const unfollowUser = async (req: Request, res: Response, next: NextFuncti
     if (!followingId) {
       return res.status(400).json({
         success: false,
-        message: "User ID is required"
+        message: 'User ID is required',
       });
     }
 
@@ -41,7 +41,7 @@ export const unfollowUser = async (req: Request, res: Response, next: NextFuncti
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);
@@ -57,7 +57,7 @@ export const getFollowers = async (req: Request, res: Response, next: NextFuncti
     if (!userId) {
       return res.status(400).json({
         success: false,
-        message: "User ID is required"
+        message: 'User ID is required',
       });
     }
 
@@ -65,7 +65,7 @@ export const getFollowers = async (req: Request, res: Response, next: NextFuncti
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);
@@ -81,7 +81,7 @@ export const getFollowing = async (req: Request, res: Response, next: NextFuncti
     if (!userId) {
       return res.status(400).json({
         success: false,
-        message: "User ID is required"
+        message: 'User ID is required',
       });
     }
 
@@ -89,7 +89,7 @@ export const getFollowing = async (req: Request, res: Response, next: NextFuncti
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);
@@ -104,7 +104,7 @@ export const checkFollowStatus = async (req: Request, res: Response, next: NextF
     if (!followingId) {
       return res.status(400).json({
         success: false,
-        message: "User ID is required"
+        message: 'User ID is required',
       });
     }
 
@@ -112,7 +112,7 @@ export const checkFollowStatus = async (req: Request, res: Response, next: NextF
 
     res.json({
       success: true,
-      isFollowing
+      isFollowing,
     });
   } catch (error: any) {
     next(error);
@@ -126,7 +126,7 @@ export const getFollowStats = async (req: Request, res: Response, next: NextFunc
     if (!userId) {
       return res.status(400).json({
         success: false,
-        message: "User ID is required"
+        message: 'User ID is required',
       });
     }
 
@@ -134,7 +134,7 @@ export const getFollowStats = async (req: Request, res: Response, next: NextFunc
 
     res.json({
       success: true,
-      stats
+      stats,
     });
   } catch (error: any) {
     next(error);
@@ -151,7 +151,7 @@ export const getUsersToFollow = async (req: Request, res: Response, next: NextFu
 
     res.json({
       success: true,
-      ...result
+      ...result,
     });
   } catch (error: any) {
     next(error);

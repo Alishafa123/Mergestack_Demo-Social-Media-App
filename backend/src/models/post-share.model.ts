@@ -1,7 +1,7 @@
-import { DataTypes, Model, Optional } from "sequelize";
+import { DataTypes, Model, Optional } from 'sequelize';
 
-import  sequelize  from "@config/database.js";
-import type { PostShareModel } from "@/types/index";
+import sequelize from '@config/database.js';
+import type { PostShareModel } from '@/types/index';
 
 interface PostShareCreationAttributes extends Optional<PostShareModel, 'id' | 'createdAt' | 'updatedAt'> {}
 
@@ -29,16 +29,16 @@ PostShare.init(
       allowNull: false,
       references: {
         model: 'posts',
-        key: 'id'
-      }
+        key: 'id',
+      },
     },
     user_id: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: 'users',
-        key: 'id'
-      }
+        key: 'id',
+      },
     },
     shared_content: {
       type: DataTypes.TEXT,
@@ -59,26 +59,26 @@ PostShare.init(
   },
   {
     sequelize,
-    modelName: "PostShare",
-    tableName: "post_shares",
+    modelName: 'PostShare',
+    tableName: 'post_shares',
     timestamps: true,
     indexes: [
       {
         unique: true,
         fields: ['post_id', 'user_id'],
-        name: 'unique_post_user_share'
+        name: 'unique_post_user_share',
       },
       {
-        fields: ['post_id']
+        fields: ['post_id'],
       },
       {
-        fields: ['user_id']
+        fields: ['user_id'],
       },
       {
-        fields: ['created_at']
-      }
-    ]
-  }
+        fields: ['created_at'],
+      },
+    ],
+  },
 );
 
 export default PostShare;

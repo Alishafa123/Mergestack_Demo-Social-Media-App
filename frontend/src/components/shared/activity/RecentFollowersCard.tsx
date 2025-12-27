@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users,Loader2 } from 'lucide-react';
+import { Users, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { useGetRecentFollowers } from '@hooks/useUser';
@@ -25,20 +25,22 @@ const RecentFollowersCard: React.FC = () => {
   };
 
   // Transform API data to component format
-  const recentFollowers: RecentFollower[] = data?.followers?.map(item => {
-    const follower = item.follower;
-    const displayName = follower.profile?.first_name && follower.profile?.last_name
-      ? `${follower.profile.first_name} ${follower.profile.last_name}`
-      : follower.name;
+  const recentFollowers: RecentFollower[] =
+    data?.followers?.map((item) => {
+      const follower = item.follower;
+      const displayName =
+        follower.profile?.first_name && follower.profile?.last_name
+          ? `${follower.profile.first_name} ${follower.profile.last_name}`
+          : follower.name;
 
-    return {
-      id: follower.id,
-      name: displayName,
-      profileUrl: follower.profile?.profile_url,
-      followedAt: formatFollowedAt(item.createdAt),
-      bio: follower.profile?.bio
-    };
-  }) || [];
+      return {
+        id: follower.id,
+        name: displayName,
+        profileUrl: follower.profile?.profile_url,
+        followedAt: formatFollowedAt(item.createdAt),
+        bio: follower.profile?.bio,
+      };
+    }) || [];
 
   const handleFollowerClick = (followerId: string) => {
     navigate(`/user/${followerId}`);
@@ -83,28 +85,18 @@ const RecentFollowersCard: React.FC = () => {
               className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors group"
             >
               <div className="flex-shrink-0">
-                <Avatar
-                  src={follower.profileUrl}
-                  name={follower.name}
-                  size="lg"
-                />
+                <Avatar src={follower.profileUrl} name={follower.name} size="lg" />
               </div>
-              
+
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-base text-gray-900 truncate group-hover:text-blue-600 transition-colors">
                   {follower.name}
                 </p>
-                {follower.bio && (
-                  <p className="text-base text-gray-500 truncate mt-1">
-                    {follower.bio}
-                  </p>
-                )}
+                {follower.bio && <p className="text-base text-gray-500 truncate mt-1">{follower.bio}</p>}
               </div>
-              
+
               <div className="flex-shrink-0 flex flex-col items-end">
-                <span className="text-sm text-gray-500 mb-1">
-                  {follower.followedAt}
-                </span>
+                <span className="text-sm text-gray-500 mb-1">{follower.followedAt}</span>
               </div>
             </div>
           ))

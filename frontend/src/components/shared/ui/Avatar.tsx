@@ -19,7 +19,7 @@ const Avatar: React.FC<AvatarProps> = ({
   className = '',
   onClick,
   showBorder = false,
-  borderColor = 'border-white'
+  borderColor = 'border-white',
 }) => {
   const sizeClasses = {
     xs: 'w-6 h-6 text-xs',
@@ -27,25 +27,25 @@ const Avatar: React.FC<AvatarProps> = ({
     md: 'w-12 h-12 text-base',
     lg: 'w-14 h-14 text-lg',
     xl: 'w-24 h-24 text-2xl',
-    '2xl': 'w-32 h-32 text-4xl'
+    '2xl': 'w-32 h-32 text-4xl',
   };
 
   const borderClasses = showBorder ? `border-4 ${borderColor} shadow-lg` : '';
   const cursorClass = onClick ? 'cursor-pointer' : '';
-  
+
   const getInitials = (name: string): string => {
     if (!name) return 'U';
-    
+
     const words = name.trim().split(' ');
     if (words.length === 1) {
       return words[0].charAt(0).toUpperCase();
     }
-    
+
     return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
   };
 
   return (
-    <div 
+    <div
       className={`
         ${sizeClasses[size]} 
         bg-gradient-to-r from-blue-500 to-purple-500 
@@ -69,9 +69,9 @@ const Avatar: React.FC<AvatarProps> = ({
           }}
         />
       ) : null}
-      
+
       {/* Initials fallback - always rendered but hidden when image loads */}
-      <span 
+      <span
         className={`
           text-white font-semibold 
           ${sizeClasses[size].split(' ')[2]} 

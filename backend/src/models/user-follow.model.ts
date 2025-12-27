@@ -1,11 +1,11 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model } from 'sequelize';
 
-import sequelize from "@config/database.js";
+import sequelize from '@config/database.js';
 
 class UserFollow extends Model {
   declare id: string;
-  declare follower_id: string; 
-  declare following_id: string; 
+  declare follower_id: string;
+  declare following_id: string;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -22,39 +22,39 @@ UserFollow.init(
       allowNull: false,
       references: {
         model: 'users',
-        key: 'id'
+        key: 'id',
       },
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     },
     following_id: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: 'users',
-        key: 'id'
+        key: 'id',
       },
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
-    }
+      onUpdate: 'CASCADE',
+    },
   },
   {
     sequelize,
-    modelName: "userFollow",
-    tableName: "user_follows",
+    modelName: 'userFollow',
+    tableName: 'user_follows',
     indexes: [
       {
-        fields: ['follower_id']
+        fields: ['follower_id'],
       },
       {
-        fields: ['following_id']
+        fields: ['following_id'],
       },
       {
         unique: true,
-        fields: ['follower_id', 'following_id'] 
-      }
-    ]
-  }
+        fields: ['follower_id', 'following_id'],
+      },
+    ],
+  },
 );
 
 export default UserFollow;

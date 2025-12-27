@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { 
-  followUser, 
-  unfollowUser, 
-  getFollowStatus, 
+import {
+  followUser,
+  unfollowUser,
+  getFollowStatus,
   getFollowStats,
   getFollowers,
   getFollowing,
-  getUserSuggestions
+  getUserSuggestions,
 } from '@api/user.api';
 
 export const USER_QUERY_KEY = ['user'];
@@ -25,9 +25,9 @@ export const useFollowUser = () => {
     onSuccess: (data, userId) => {
       queryClient.setQueryData([...FOLLOW_STATUS_QUERY_KEY, userId], {
         success: true,
-        isFollowing: data.isFollowing
+        isFollowing: data.isFollowing,
       });
-      
+
       queryClient.invalidateQueries({ queryKey: [...FOLLOW_STATS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: [...FOLLOWERS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: [...RECENT_FOLLOWERS_QUERY_KEY, userId] });
@@ -48,9 +48,9 @@ export const useUnfollowUser = () => {
       // Update follow status cache
       queryClient.setQueryData([...FOLLOW_STATUS_QUERY_KEY, userId], {
         success: true,
-        isFollowing: data.isFollowing
+        isFollowing: data.isFollowing,
       });
-      
+
       queryClient.invalidateQueries({ queryKey: [...FOLLOW_STATS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: [...FOLLOWERS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: [...RECENT_FOLLOWERS_QUERY_KEY, userId] });
@@ -67,7 +67,7 @@ export const useGetFollowStatus = (userId: string) => {
     queryKey: [...FOLLOW_STATUS_QUERY_KEY, userId],
     queryFn: () => getFollowStatus(userId),
     enabled: !!userId,
-    staleTime: 2 * 60 * 1000, 
+    staleTime: 2 * 60 * 1000,
   });
 };
 
@@ -76,10 +76,9 @@ export const useGetFollowStats = (userId: string) => {
     queryKey: [...FOLLOW_STATS_QUERY_KEY, userId],
     queryFn: () => getFollowStats(userId),
     enabled: !!userId,
-    staleTime: 2 * 60 * 1000, 
+    staleTime: 2 * 60 * 1000,
   });
 };
-
 
 export const useGetFollowers = (userId: string, page: number = 1, limit: number = 10) => {
   return useQuery({
@@ -112,7 +111,7 @@ export const useGetRecentFollowers = (userId: string) => {
     queryKey: [...RECENT_FOLLOWERS_QUERY_KEY, userId],
     queryFn: () => getFollowers(userId, 1, 3),
     enabled: !!userId,
-    staleTime: 2 * 60 * 1000, 
+    staleTime: 2 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
 };

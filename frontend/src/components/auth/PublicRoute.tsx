@@ -9,10 +9,7 @@ interface PublicRouteProps {
   redirectTo?: string;
 }
 
-const PublicRoute: React.FC<PublicRouteProps> = ({ 
-  children, 
-  redirectTo = '/dashboard' 
-}) => {
+const PublicRoute: React.FC<PublicRouteProps> = ({ children, redirectTo = '/dashboard' }) => {
   const { id } = userController.useState(['id']);
 
   const isAuthenticated = id || AuthUtils.isAuthenticated();

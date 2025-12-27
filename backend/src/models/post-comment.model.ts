@@ -1,6 +1,6 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model } from 'sequelize';
 
-import sequelize from "@config/database.js";
+import sequelize from '@config/database.js';
 
 class PostComment extends Model {
   declare id: string;
@@ -24,55 +24,55 @@ PostComment.init(
       allowNull: false,
       references: {
         model: 'posts',
-        key: 'id'
+        key: 'id',
       },
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     },
     user_id: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: 'users',
-        key: 'id'
+        key: 'id',
       },
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     },
     parent_comment_id: {
       type: DataTypes.UUID,
       allowNull: true,
       references: {
         model: 'post_comments',
-        key: 'id'
+        key: 'id',
       },
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     },
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
-    }
+    },
   },
   {
     sequelize,
-    modelName: "postComment",
-    tableName: "post_comments",
+    modelName: 'postComment',
+    tableName: 'post_comments',
     indexes: [
       {
-        fields: ['post_id']
+        fields: ['post_id'],
       },
       {
-        fields: ['user_id']
+        fields: ['user_id'],
       },
       {
-        fields: ['parent_comment_id']
+        fields: ['parent_comment_id'],
       },
       {
-        fields: ['post_id', 'parent_comment_id']
-      }
-    ]
-  }
+        fields: ['post_id', 'parent_comment_id'],
+      },
+    ],
+  },
 );
 
 export default PostComment;

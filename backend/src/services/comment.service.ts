@@ -1,18 +1,18 @@
-import { Op } from "sequelize";
+import { Op } from 'sequelize';
 
-import type { CustomError, PostCommentModel } from "@/types/index";
-import { Post, PostComment, User, Profile } from "@models/index.js";
+import type { CustomError, PostCommentModel } from '@/types/index';
+import { Post, PostComment, User, Profile } from '@models/index.js';
 
 export const createComment = async (
   postId: string,
   userId: string,
   content: string,
-  parentCommentId?: string
+  parentCommentId?: string,
 ): Promise<PostCommentModel> => {
   try {
     const post = await Post.findByPk(postId);
     if (!post) {
-      const err = new Error("Post not found") as CustomError;
+      const err = new Error('Post not found') as CustomError;
       err.status = 404;
       throw err;
     }
@@ -21,7 +21,7 @@ export const createComment = async (
     if (parentCommentId) {
       const parentComment = await PostComment.findByPk(parentCommentId);
       if (!parentComment) {
-        const err = new Error("Parent comment not found") as CustomError;
+        const err = new Error('Parent comment not found') as CustomError;
         err.status = 404;
         throw err;
       }
@@ -51,16 +51,18 @@ export const getComment = async (commentId: string): Promise<PostCommentModel> =
         {
           model: User,
           as: 'user',
-          include: [{
-            model: Profile,
-            as: 'profile'
-          }]
-        }
-      ]
+          include: [
+            {
+              model: Profile,
+              as: 'profile',
+            },
+          ],
+        },
+      ],
     });
 
     if (!comment) {
-      const err = new Error("Comment not found") as CustomError;
+      const err = new Error('Comment not found') as CustomError;
       err.status = 404;
       throw err;
     }
@@ -74,24 +76,26 @@ export const getComment = async (commentId: string): Promise<PostCommentModel> =
 export const getPostComments = async (
   postId: string,
   page: number = 1,
-  limit: number = 20
-): Promise<{ comments: PostCommentModel[], total: number, hasMore: boolean }> => {
+  limit: number = 20,
+): Promise<{ comments: PostCommentModel[]; total: number; hasMore: boolean }> => {
   try {
     const offset = (page - 1) * limit;
 
     const { count, rows } = await PostComment.findAndCountAll({
-      where: { 
+      where: {
         post_id: postId,
-        parent_comment_id: null 
+        parent_comment_id: null,
       },
       include: [
         {
           model: User,
           as: 'user',
-          include: [{
-            model: Profile,
-            as: 'profile'
-          }]
+          include: [
+            {
+              model: Profile,
+              as: 'profile',
+            },
+          ],
         },
         {
           model: PostComment,
@@ -100,50 +104,45 @@ export const getPostComments = async (
             {
               model: User,
               as: 'user',
-              include: [{
-                model: Profile,
-                as: 'profile'
-              }]
-            }
+              include: [
+                {
+                  model: Profile,
+                  as: 'profile',
+                },
+              ],
+            },
           ],
-          order: [['createdAt', 'ASC']] 
-        }
+          order: [['createdAt', 'ASC']],
+        },
       ],
-      order: [['createdAt', 'DESC']], 
+      order: [['createdAt', 'DESC']],
       limit,
       offset,
     });
 
     return {
-      comments: rows.map(row => row.toJSON() as PostCommentModel),
+      comments: rows.map((row) => row.toJSON() as PostCommentModel),
       total: count,
-      hasMore: offset + limit < count
+      hasMore: offset + limit < count,
     };
   } catch (error) {
     throw error;
   }
 };
 
-export const updateComment = async (
-  commentId: string,
-  userId: string,
-  content: string
-): Promise<PostCommentModel> => {
+export const updateComment = async (commentId: string, userId: string, content: string): Promise<PostCommentModel> => {
   try {
     const comment = await PostComment.findOne({
-      where: { id: commentId, user_id: userId }
+      where: { id: commentId, user_id: userId },
     });
 
     if (!comment) {
-      const err = new Error("Comment not found or unauthorized") as CustomError;
+      const err = new Error('Comment not found or unauthorized') as CustomError;
       err.status = 404;
       throw err;
     }
 
-    await PostComment.update(
-      { content },
-      { where: { id: commentId, user_id: userId } }
-    );
+    await PostComment.update({ content }, { where: { id: commentId, user_id: userId } });
 
     return await getComment(commentId);
   } catch (error) {
@@ -151,17 +150,14 @@ export const updateComment = async (
   }
 };
 
-export const deleteComment = async (
-  commentId: string,
-  userId: string
-): Promise<{ message: string }> => {
+export const deleteComment = async (commentId: string, userId: string): Promise<{ message: string }> => {
   try {
     const comment = await PostComment.findOne({
-      where: { id: commentId, user_id: userId }
+      where: { id: commentId, user_id: userId },
     });
 
     if (!comment) {
-      const err = new Error("Comment not found or unauthorized") as CustomError;
+      const err = new Error('Comment not found or unauthorized') as CustomError;
       err.status = 404;
       throw err;
     }
@@ -171,25 +167,22 @@ export const deleteComment = async (
     // Count how many comments will be deleted (including replies)
     const commentsToDelete = await PostComment.count({
       where: {
-        [Op.or]: [
-          { id: commentId },
-          { parent_comment_id: commentId }
-        ]
-      }
+        [Op.or]: [{ id: commentId }, { parent_comment_id: commentId }],
+      },
     });
 
     // Delete the comment (cascade will handle replies)
     await PostComment.destroy({
-      where: { id: commentId, user_id: userId }
+      where: { id: commentId, user_id: userId },
     });
 
     // Update comments count on the post
-    await Post.decrement('comments_count', { 
+    await Post.decrement('comments_count', {
       by: commentsToDelete,
-      where: { id: postId } 
+      where: { id: postId },
     });
 
-    return { message: "Comment deleted successfully" };
+    return { message: 'Comment deleted successfully' };
   } catch (error) {
     throw error;
   }

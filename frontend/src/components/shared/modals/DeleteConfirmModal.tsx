@@ -17,8 +17,8 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
   onClose,
   onConfirm,
   isLoading = false,
-  title = "Delete Post",
-  message = "Are you sure you want to delete this post? This action cannot be undone."
+  title = 'Delete Post',
+  message = 'Are you sure you want to delete this post? This action cannot be undone.',
 }) => {
   if (!isOpen) return null;
 
@@ -44,19 +44,12 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
 
         {/* Content */}
         <div className="p-6">
-          <p className="text-gray-600 text-base leading-relaxed">
-            {message}
-          </p>
+          <p className="text-gray-600 text-base leading-relaxed">{message}</p>
         </div>
 
         {/* Actions */}
         <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
-          <Button
-            variant="secondary"
-            onClick={onClose}
-            disabled={isLoading}
-            className="px-6 py-2"
-          >
+          <Button variant="secondary" onClick={onClose} disabled={isLoading} className="px-6 py-2">
             Cancel
           </Button>
           <Button

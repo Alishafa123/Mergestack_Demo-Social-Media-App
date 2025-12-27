@@ -2,7 +2,19 @@ import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tansta
 
 import { USER_STATS_QUERY_KEY } from '@hooks/useProfile';
 import type { CreatePostData, PostsResponse } from '@api/post.api';
-import { createPost, getPosts, getPost, updatePost, deletePost, toggleLike, sharePost, unsharePost, getTrendingPosts, getUserTopPosts, getFollowersFeed } from '@api/post.api';
+import {
+  createPost,
+  getPosts,
+  getPost,
+  updatePost,
+  deletePost,
+  toggleLike,
+  sharePost,
+  unsharePost,
+  getTrendingPosts,
+  getUserTopPosts,
+  getFollowersFeed,
+} from '@api/post.api';
 import { showToast } from '@components/shared/toast';
 
 export const POST_QUERY_KEY = ['posts'];
@@ -41,7 +53,7 @@ export const useInfinitePosts = (limit: number = 10, userId?: string) => {
     getNextPageParam: (lastPage: PostsResponse, allPages) => {
       return lastPage.hasMore ? allPages.length + 1 : undefined;
     },
-    staleTime: 5 * 60 * 1000, 
+    staleTime: 5 * 60 * 1000,
     initialPageParam: 1,
   });
 };
@@ -58,8 +70,7 @@ export const useUpdatePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ postId, content }: { postId: string; content: string }) => 
-      updatePost(postId, content),
+    mutationFn: ({ postId, content }: { postId: string; content: string }) => updatePost(postId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: POST_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
@@ -125,14 +136,12 @@ export const useToggleLike = () => {
                 return {
                   ...post,
                   isLiked: !post.isLiked,
-                  likes_count: post.isLiked 
-                    ? Math.max(0, post.likes_count - 1)
-                    : post.likes_count + 1
+                  likes_count: post.isLiked ? Math.max(0, post.likes_count - 1) : post.likes_count + 1,
                 };
               }
               return post;
-            })
-          }))
+            }),
+          })),
         };
       };
 
@@ -168,14 +177,14 @@ export const useToggleLike = () => {
       queryClient.invalidateQueries({ queryKey: [...TRENDING_QUERY_KEY, 'infinite'] });
       queryClient.invalidateQueries({ queryKey: [...FOLLOWERS_FEED_QUERY_KEY, 'infinite'] });
       queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
-      
+
       if (postOwnerId) {
         const queryKey = [...USER_STATS_QUERY_KEY, postOwnerId];
         queryClient.invalidateQueries({ queryKey });
       } else {
         console.log('  ❌ postOwnerId is missing - cannot invalidate user stats');
       }
-      
+
       queryClient.invalidateQueries({ queryKey: USER_STATS_QUERY_KEY });
     },
   });
@@ -185,9 +194,13 @@ export const useToggleShare = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ postId, sharedContent, isCurrentlyShared }: { 
-      postId: string; 
-      sharedContent?: string; 
+    mutationFn: ({
+      postId,
+      sharedContent,
+      isCurrentlyShared,
+    }: {
+      postId: string;
+      sharedContent?: string;
       isCurrentlyShared: boolean;
     }) => {
       return isCurrentlyShared ? unsharePost(postId) : sharePost(postId, sharedContent);
@@ -216,14 +229,12 @@ export const useToggleShare = () => {
                 return {
                   ...post,
                   isShared: !isCurrentlyShared,
-                  shares_count: isCurrentlyShared 
-                    ? Math.max(0, post.shares_count - 1)
-                    : post.shares_count + 1
+                  shares_count: isCurrentlyShared ? Math.max(0, post.shares_count - 1) : post.shares_count + 1,
                 };
               }
               return post;
-            })
-          }))
+            }),
+          })),
         };
       };
 
@@ -261,12 +272,10 @@ export const useToggleShare = () => {
       queryClient.invalidateQueries({ queryKey: [...TRENDING_QUERY_KEY, 'infinite'] });
       queryClient.invalidateQueries({ queryKey: [...FOLLOWERS_FEED_QUERY_KEY, 'infinite'] });
       queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
-      
+
       // Show success toast only if no error
       if (!error) {
-        const message = variables.isCurrentlyShared 
-          ? 'Post unshared successfully! 📤' 
-          : 'Post shared successfully! 📢';
+        const message = variables.isCurrentlyShared ? 'Post unshared successfully! 📤' : 'Post shared successfully! 📢';
         showToast.success(message);
       }
     },

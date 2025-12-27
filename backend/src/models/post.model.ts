@@ -1,6 +1,6 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model } from 'sequelize';
 
-import sequelize from "@config/database.js";
+import sequelize from '@config/database.js';
 
 class Post extends Model {
   declare id: string;
@@ -25,10 +25,10 @@ Post.init(
       allowNull: false,
       references: {
         model: 'users',
-        key: 'id'
+        key: 'id',
       },
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     },
     content: {
       type: DataTypes.TEXT,
@@ -48,21 +48,21 @@ Post.init(
       type: DataTypes.INTEGER,
       defaultValue: 0,
       allowNull: false,
-    }
+    },
   },
   {
     sequelize,
-    modelName: "post",
-    tableName: "posts",
+    modelName: 'post',
+    tableName: 'posts',
     indexes: [
       {
-        fields: ['user_id']
+        fields: ['user_id'],
       },
       {
-        fields: ['created_at']
-      }
-    ]
-  }
+        fields: ['created_at'],
+      },
+    ],
+  },
 );
 
 export default Post;

@@ -13,6 +13,6 @@ if (!supabaseUrl || !supabaseServiceRoleKey) {
 export const supabase = createClient(supabaseUrl, supabaseServiceRoleKey, {
   auth: {
     autoRefreshToken: false,
-    persistSession: false
-  }
+    persistSession: false,
+  },
 });

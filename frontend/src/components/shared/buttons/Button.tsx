@@ -3,59 +3,50 @@ import { cn } from '@utils/cn';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
+  'inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
   {
     variants: {
       variant: {
-        primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-sm",
-        secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500 border border-gray-300",
-        outline: "border border-blue-600 text-blue-600 hover:bg-blue-50 focus:ring-blue-500",
-        ghost: "text-gray-700 hover:bg-gray-100 focus:ring-gray-500",
-        tab: "text-gray-600 hover:text-gray-900 hover:bg-gray-50 border-b-2 border-transparent rounded-none transition-all duration-200 focus:ring-0 focus:ring-offset-0 focus:outline-none",
-        danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm",
-        success: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-sm",
-        warning: "bg-yellow-500 text-white hover:bg-yellow-600 focus:ring-yellow-500 shadow-sm",
+        primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-sm',
+        secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500 border border-gray-300',
+        outline: 'border border-blue-600 text-blue-600 hover:bg-blue-50 focus:ring-blue-500',
+        ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
+        tab: 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 border-b-2 border-transparent rounded-none transition-all duration-200 focus:ring-0 focus:ring-offset-0 focus:outline-none',
+        danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm',
+        success: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-sm',
+        warning: 'bg-yellow-500 text-white hover:bg-yellow-600 focus:ring-yellow-500 shadow-sm',
       },
       size: {
-        sm: "h-8 px-3 text-sm",
-        md: "h-10 px-4 text-sm",
-        lg: "h-12 px-6 text-base",
-        xl: "h-14 px-8 text-lg",
+        sm: 'h-8 px-3 text-sm',
+        md: 'h-10 px-4 text-sm',
+        lg: 'h-12 px-6 text-base',
+        xl: 'h-14 px-8 text-lg',
       },
       fullWidth: {
-        true: "w-full",
-        false: "w-auto",
+        true: 'w-full',
+        false: 'w-auto',
       },
     },
     defaultVariants: {
-      variant: "primary",
-      size: "md",
+      variant: 'primary',
+      size: 'md',
       fullWidth: false,
     },
-  }
+  },
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   loading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ 
-    className, 
-    variant, 
-    size, 
-    fullWidth, 
-    loading = false, 
-    leftIcon, 
-    rightIcon, 
-    children, 
-    disabled,
-    ...props 
-  }, ref) => {
+  (
+    { className, variant, size, fullWidth, loading = false, leftIcon, rightIcon, children, disabled, ...props },
+    ref,
+  ) => {
     return (
       <button
         className={cn(buttonVariants({ variant, size, fullWidth, className }))}
@@ -70,14 +61,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             fill="none"
             viewBox="0 0 24 24"
           >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path
               className="opacity-75"
               fill="currentColor"
@@ -90,9 +74,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {!loading && rightIcon && <span className="ml-2">{rightIcon}</span>}
       </button>
     );
-  }
+  },
 );
 
-Button.displayName = "Button";
+Button.displayName = 'Button';
 
 export default Button;

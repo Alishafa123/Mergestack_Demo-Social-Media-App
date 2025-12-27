@@ -12,23 +12,19 @@ interface PostImageSliderProps {
   className?: string;
 }
 
-const PostImageSlider: React.FC<PostImageSliderProps> = ({ images, className = "" }) => {
+const PostImageSlider: React.FC<PostImageSliderProps> = ({ images, className = '' }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  
+
   if (!images || images.length === 0) return null;
 
   const sortedImages = [...images].sort((a, b) => a.image_order - b.image_order);
 
   const goToPrevious = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex === 0 ? sortedImages.length - 1 : prevIndex - 1
-    );
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? sortedImages.length - 1 : prevIndex - 1));
   };
 
   const goToNext = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex === sortedImages.length - 1 ? 0 : prevIndex + 1
-    );
+    setCurrentIndex((prevIndex) => (prevIndex === sortedImages.length - 1 ? 0 : prevIndex + 1));
   };
 
   const goToSlide = (index: number) => {
@@ -38,11 +34,7 @@ const PostImageSlider: React.FC<PostImageSliderProps> = ({ images, className = "
   if (sortedImages.length === 1) {
     return (
       <div className={`relative ${className}`}>
-        <img
-          src={sortedImages[0].image_url}
-          alt="Post image"
-          className="w-full h-96 object-cover rounded-lg"
-        />
+        <img src={sortedImages[0].image_url} alt="Post image" className="w-full h-96 object-cover rounded-lg" />
       </div>
     );
   }
@@ -50,17 +42,13 @@ const PostImageSlider: React.FC<PostImageSliderProps> = ({ images, className = "
   return (
     <div className={`relative ${className}`}>
       <div className="relative overflow-hidden rounded-lg">
-        <div 
+        <div
           className="flex transition-transform duration-300 ease-in-out"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
           {sortedImages.map((image, index) => (
             <div key={image.id} className="w-full flex-shrink-0">
-              <img
-                src={image.image_url}
-                alt={`Post image ${index + 1}`}
-                className="w-full h-96 object-cover"
-              />
+              <img src={image.image_url} alt={`Post image ${index + 1}`} className="w-full h-96 object-cover" />
             </div>
           ))}
         </div>
@@ -116,11 +104,7 @@ const PostImageSlider: React.FC<PostImageSliderProps> = ({ images, className = "
                 index === currentIndex ? 'border-blue-600' : 'border-gray-200'
               }`}
             >
-              <img
-                src={image.image_url}
-                alt={`Thumbnail ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
+              <img src={image.image_url} alt={`Thumbnail ${index + 1}`} className="w-full h-full object-cover" />
             </button>
           ))}
         </div>

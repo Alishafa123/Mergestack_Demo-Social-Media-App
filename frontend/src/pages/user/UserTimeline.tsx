@@ -29,15 +29,12 @@ const UserTimeline: React.FC = () => {
 
             <div className="flex-1 min-w-0">
               <div className="space-y-6">
-                {isOwnProfile && (
-                  <CreatePostPrompt />
-                )}
+                {isOwnProfile && <CreatePostPrompt />}
 
                 <Feed feedType="general" userId={profileUserId} />
               </div>
             </div>
-            <div className='hidden lg:block w-[25%] flex-shrink-0'></div>
-
+            <div className="hidden lg:block w-[25%] flex-shrink-0"></div>
           </div>
         </div>
       </div>

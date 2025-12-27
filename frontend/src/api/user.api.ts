@@ -1,4 +1,4 @@
-import api from "@services/axios";
+import api from '@services/axios';
 
 export interface FollowResponse {
   success: boolean;
@@ -78,12 +78,20 @@ export const getFollowStats = async (userId: string): Promise<FollowStatsRespons
   return res.data;
 };
 
-export const getFollowers = async (userId: string, page: number = 1, limit: number = 10): Promise<FollowersResponse> => {
+export const getFollowers = async (
+  userId: string,
+  page: number = 1,
+  limit: number = 10,
+): Promise<FollowersResponse> => {
   const res = await api.get(`/users/${userId}/followers?page=${page}&limit=${limit}`);
   return res.data;
 };
 
-export const getFollowing = async (userId: string, page: number = 1, limit: number = 10): Promise<FollowingResponse> => {
+export const getFollowing = async (
+  userId: string,
+  page: number = 1,
+  limit: number = 10,
+): Promise<FollowingResponse> => {
   const res = await api.get(`/users/${userId}/following?page=${page}&limit=${limit}`);
   return res.data;
 };

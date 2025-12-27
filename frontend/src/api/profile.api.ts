@@ -1,5 +1,5 @@
-import api from "@services/axios";
-import type { ProfileFormData } from "@schemas/profileSchemas";
+import api from '@services/axios';
+import type { ProfileFormData } from '@schemas/profileSchemas';
 
 export interface SearchUser {
   id: string;
@@ -33,7 +33,7 @@ export interface SearchUsersResponse {
 }
 
 export const getProfile = async () => {
-  const res = await api.get("/profile/me");
+  const res = await api.get('/profile/me');
   return res.data;
 };
 
@@ -44,16 +44,22 @@ export const getProfileById = async (userId: string) => {
 
 export const updateProfile = async (data: ProfileFormData & { profileImage?: File }) => {
   const formData = new FormData();
-  
+
   Object.entries(data).forEach(([key, value]) => {
     if (key === 'profileImage' && value instanceof File) {
       formData.append('profileImage', value);
-    } else if (value !== undefined && value !== null && value !== '' && key !== 'profileImage' && key !== 'profile_url') {
+    } else if (
+      value !== undefined &&
+      value !== null &&
+      value !== '' &&
+      key !== 'profileImage' &&
+      key !== 'profile_url'
+    ) {
       formData.append(key, String(value));
     }
   });
 
-  const res = await api.put("/profile/me", formData, {
+  const res = await api.put('/profile/me', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -62,7 +68,7 @@ export const updateProfile = async (data: ProfileFormData & { profileImage?: Fil
 };
 
 export const deleteProfile = async () => {
-  const res = await api.delete("/profile/me");
+  const res = await api.delete('/profile/me');
   return res.data;
 };
 
@@ -81,7 +87,7 @@ export interface UserStatsResponse {
 }
 
 export const getUserStats = async (): Promise<UserStatsResponse> => {
-  const res = await api.get("/profile/stats/me");
+  const res = await api.get('/profile/stats/me');
   return res.data;
 };
 

@@ -18,7 +18,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
   onShare,
   isLoading = false,
   postContent,
-  authorName
+  authorName,
 }) => {
   const [message, setMessage] = useState('');
 
@@ -51,23 +51,13 @@ const ShareModal: React.FC<ShareModalProps> = ({
         <div className="p-6">
           {(postContent || authorName) && (
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6">
-              {authorName && (
-                <p className="font-semibold text-base text-gray-700 mb-2">
-                  {authorName}
-                </p>
-              )}
-              {postContent && (
-                <p className="text-base text-gray-600 line-clamp-4 leading-relaxed">
-                  {postContent}
-                </p>
-              )}
+              {authorName && <p className="font-semibold text-base text-gray-700 mb-2">{authorName}</p>}
+              {postContent && <p className="text-base text-gray-600 line-clamp-4 leading-relaxed">{postContent}</p>}
             </div>
           )}
 
           <div className="mb-6">
-            <label className="block text-base font-medium text-gray-700 mb-3">
-              Add a message (optional)
-            </label>
+            <label className="block text-base font-medium text-gray-700 mb-3">Add a message (optional)</label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -77,19 +67,12 @@ const ShareModal: React.FC<ShareModalProps> = ({
               maxLength={500}
               disabled={isLoading}
             />
-            <p className="text-sm text-gray-500 mt-2">
-              {message.length}/500 characters
-            </p>
+            <p className="text-sm text-gray-500 mt-2">{message.length}/500 characters</p>
           </div>
         </div>
 
         <div className="flex items-center justify-end space-x-4 p-6 border-t border-gray-200 bg-gray-50">
-          <Button
-            variant="secondary"
-            size="md"
-            onClick={handleClose}
-            disabled={isLoading}
-          >
+          <Button variant="secondary" size="md" onClick={handleClose} disabled={isLoading}>
             Cancel
           </Button>
           <Button

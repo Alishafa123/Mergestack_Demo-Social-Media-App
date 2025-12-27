@@ -26,14 +26,15 @@ const TopPostsCard: React.FC = () => {
     return formatRelativeTime(dateString);
   };
 
-  const topPosts: TopPost[] = data?.posts?.map(post => ({
-    ...post,
-    createdAt: formatCreatedAt(post.createdAt)
-  })) || [];
+  const topPosts: TopPost[] =
+    data?.posts?.map((post) => ({
+      ...post,
+      createdAt: formatCreatedAt(post.createdAt),
+    })) || [];
 
   const handleviewpost = () => {
-    navigate(`/user/${currentUserId}`)
-  }
+    navigate(`/user/${currentUserId}`);
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
@@ -67,13 +68,7 @@ const TopPostsCard: React.FC = () => {
             </div>
           </div>
         ) : (
-          topPosts.map((post, index) => (
-            <TopPostItem
-              key={post.id}
-              post={post}
-              rank={index + 1}
-            />
-          ))
+          topPosts.map((post, index) => <TopPostItem key={post.id} post={post} rank={index + 1} />)
         )}
       </div>
 

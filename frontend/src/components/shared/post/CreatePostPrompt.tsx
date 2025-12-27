@@ -10,13 +10,13 @@ interface CreatePostPromptProps {
 }
 
 const CreatePostPrompt: React.FC<CreatePostPromptProps> = ({
-  userInitial = "U",
+  userInitial = 'U',
   profileUrl,
-  placeholder = "What's on your mind?"
+  placeholder = "What's on your mind?",
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const {profile_url} = userProfileController.useState(['profile_url']);
-  
+  const { profile_url } = userProfileController.useState(['profile_url']);
+
   const displayProfileUrl = profileUrl || profile_url;
 
   const handleOpenModal = () => {
@@ -33,11 +33,7 @@ const CreatePostPrompt: React.FC<CreatePostPromptProps> = ({
         <div className="flex items-center space-x-4">
           <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center overflow-hidden">
             {displayProfileUrl ? (
-              <img 
-                src={displayProfileUrl} 
-                alt="Profile" 
-                className="w-full h-full object-cover rounded-full"
-              />
+              <img src={displayProfileUrl} alt="Profile" className="w-full h-full object-cover rounded-full" />
             ) : (
               <span className="text-white font-semibold text-lg">{userInitial}</span>
             )}
@@ -51,10 +47,7 @@ const CreatePostPrompt: React.FC<CreatePostPromptProps> = ({
         </div>
       </div>
 
-      <CreatePostModal 
-        isOpen={isModalOpen} 
-        onClose={handleCloseModal} 
-      />
+      <CreatePostModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </>
   );
 };

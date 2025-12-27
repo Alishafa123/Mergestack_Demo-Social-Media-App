@@ -11,13 +11,7 @@ interface SearchResultsProps {
   onUserClick: (userId: string) => void;
 }
 
-const SearchResults: React.FC<SearchResultsProps> = ({
-  users,
-  isLoading,
-  query,
-  onUserClick
-}) => {
-  
+const SearchResults: React.FC<SearchResultsProps> = ({ users, isLoading, query, onUserClick }) => {
   const handleProfileClick = (userId: string) => {
     onUserClick(userId);
   };
@@ -58,7 +52,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         <mark key={index} className="bg-yellow-200 text-yellow-800 px-1 rounded">
           {part}
         </mark>
-      ) : part
+      ) : (
+        part
+      ),
     );
   };
 
@@ -74,19 +70,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
           >
             <div className="flex-shrink-0">
-              <Avatar
-                src={user.profile?.profile_url}
-                name={displayName}
-                size="md"
-              />
+              <Avatar src={user.profile?.profile_url} name={displayName} size="md" />
             </div>
 
             {/* User Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-2">
-                <p className="font-semibold text-gray-900 truncate">
-                  {highlightQuery(displayName, query)}
-                </p>
+                <p className="font-semibold text-gray-900 truncate">{highlightQuery(displayName, query)}</p>
                 {user.profile?.city && (
                   <div className="flex items-center text-gray-500 text-sm">
                     <MapPin size={12} className="mr-1" />
@@ -95,19 +85,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                 )}
               </div>
 
-              {user.profile?.bio && (
-                <p className="text-gray-600 text-sm truncate mt-1">
-                  {user.profile.bio}
-                </p>
-              )}
+              {user.profile?.bio && <p className="text-gray-600 text-sm truncate mt-1">{user.profile.bio}</p>}
 
-              <p className="text-gray-400 text-xs mt-1">
-                @{user.email.split('@')[0]}
-              </p>
+              <p className="text-gray-400 text-xs mt-1">@{user.email.split('@')[0]}</p>
             </div>
 
             <div className="flex-shrink-0">
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   handleProfileClick(user.id);

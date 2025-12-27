@@ -1,4 +1,4 @@
-import api from "@services/axios";
+import api from '@services/axios';
 
 export interface CreatePostData {
   content?: string;
@@ -15,7 +15,7 @@ export interface Post {
   createdAt: string;
   updatedAt: string;
   isLiked?: boolean;
-  isShared?: boolean; 
+  isShared?: boolean;
   type?: 'original' | 'shared';
   timeline_date?: string;
   shared_by?: {
@@ -81,18 +81,18 @@ export interface PostsResponse {
 
 export const createPost = async (data: CreatePostData) => {
   const formData = new FormData();
-  
+
   if (data.content) {
     formData.append('content', data.content);
   }
-  
+
   if (data.images && data.images.length > 0) {
-    data.images.forEach(image => {
+    data.images.forEach((image) => {
       formData.append('images', image);
     });
   }
 
-  const res = await api.post("/posts", formData, {
+  const res = await api.post('/posts', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -105,7 +105,7 @@ export const getPosts = async (page: number = 1, limit: number = 10, userId?: st
     page: page.toString(),
     limit: limit.toString(),
   });
-  
+
   if (userId) {
     params.append('userId', userId);
   }
@@ -169,7 +169,7 @@ export interface TopPostsResponse {
 }
 
 export const getUserTopPosts = async () => {
-  const res = await api.get("/posts/top/me");
+  const res = await api.get('/posts/top/me');
   return res.data as TopPostsResponse;
 };
 

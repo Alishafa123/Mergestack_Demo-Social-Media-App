@@ -17,7 +17,7 @@ const LatestModal: React.FC<LatestModalProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4 overflow-y-auto"
       onClick={handleBackdropClick}
     >
@@ -28,14 +28,9 @@ const LatestModal: React.FC<LatestModalProps> = ({ isOpen, onClose }) => {
             <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
               <Clock size={20} className="text-green-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900">
-              Activity
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900">Activity</h3>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-          >
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <X size={20} className="text-gray-500" />
           </button>
         </div>

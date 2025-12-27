@@ -1,6 +1,6 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model } from 'sequelize';
 
-import sequelize from "@config/database.js";
+import sequelize from '@config/database.js';
 
 class PostLike extends Model {
   declare id: string;
@@ -22,39 +22,39 @@ PostLike.init(
       allowNull: false,
       references: {
         model: 'posts',
-        key: 'id'
+        key: 'id',
       },
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     },
     user_id: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: 'users',
-        key: 'id'
+        key: 'id',
       },
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
-    }
+      onUpdate: 'CASCADE',
+    },
   },
   {
     sequelize,
-    modelName: "postLike",
-    tableName: "post_likes",
+    modelName: 'postLike',
+    tableName: 'post_likes',
     indexes: [
       {
-        fields: ['post_id']
+        fields: ['post_id'],
       },
       {
-        fields: ['user_id']
+        fields: ['user_id'],
       },
       {
         unique: true,
-        fields: ['post_id', 'user_id'] // Prevent duplicate likes
-      }
-    ]
-  }
+        fields: ['post_id', 'user_id'], // Prevent duplicate likes
+      },
+    ],
+  },
 );
 
 export default PostLike;

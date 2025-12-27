@@ -12,12 +12,7 @@ interface CommentSectionProps {
   onToggle?: () => void;
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({
-  postId,
-  commentsCount,
-  isExpanded = false,
-  onToggle
-}) => {
+const CommentSection: React.FC<CommentSectionProps> = ({ postId, commentsCount, isExpanded = false, onToggle }) => {
   const [showComments, setShowComments] = useState(isExpanded);
 
   const handleToggle = () => {
@@ -41,21 +36,14 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             <span>
               {showComments ? 'Hide' : 'View'} {commentsCount} {commentsCount === 1 ? 'comment' : 'comments'}
             </span>
-            {showComments ? (
-              <ChevronUp size={16} />
-            ) : (
-              <ChevronDown size={16} />
-            )}
+            {showComments ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </Button>
         </div>
       )}
 
       {/* Comment Form */}
       <div className="px-4 py-3">
-        <CommentForm
-          postId={postId}
-          placeholder="Write a comment..."
-        />
+        <CommentForm postId={postId} placeholder="Write a comment..." />
       </div>
 
       {/* Comments List */}
