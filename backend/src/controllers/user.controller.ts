@@ -123,25 +123,3 @@ export const checkFollowStatus = async (req: Request, res: Response, next: NextF
     next(error);
   }
 };
-
-export const getFollowStats = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.params.userId;
-
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: USER_ERRORS.USER_ID_REQUIRED,
-      });
-    }
-
-    const stats = await userService.getFollowStats(userId);
-
-    res.json({
-      success: true,
-      stats,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};

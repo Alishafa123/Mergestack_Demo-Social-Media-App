@@ -3,7 +3,6 @@ import {
   followUser,
   unfollowUser,
   getFollowStatus,
-  getFollowStats,
   getFollowers,
   getFollowing,
 } from '@api/user.api';
@@ -12,7 +11,6 @@ import { USER_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
 
 export const USER_QUERY_KEY = ['user'];
 export const FOLLOW_STATUS_QUERY_KEY = ['followStatus'];
-export const FOLLOW_STATS_QUERY_KEY = ['followStats'];
 export const FOLLOWERS_QUERY_KEY = ['followers'];
 export const FOLLOWING_QUERY_KEY = ['following'];
 export const RECENT_FOLLOWERS_QUERY_KEY = ['recentFollowers'];
@@ -28,7 +26,6 @@ export const useFollowUser = () => {
         isFollowing: data.isFollowing,
       });
 
-      queryClient.invalidateQueries({ queryKey: [...FOLLOW_STATS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: [...FOLLOWERS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: [...RECENT_FOLLOWERS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: ['userStats', userId] });
@@ -54,7 +51,6 @@ export const useUnfollowUser = () => {
         isFollowing: data.isFollowing,
       });
 
-      queryClient.invalidateQueries({ queryKey: [...FOLLOW_STATS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: [...FOLLOWERS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: [...RECENT_FOLLOWERS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: ['userStats', userId] });
@@ -72,15 +68,6 @@ export const useGetFollowStatus = (userId: string) => {
   return useQuery({
     queryKey: [...FOLLOW_STATUS_QUERY_KEY, userId],
     queryFn: () => getFollowStatus(userId),
-    enabled: !!userId,
-    staleTime: 2 * 60 * 1000,
-  });
-};
-
-export const useGetFollowStats = (userId: string) => {
-  return useQuery({
-    queryKey: [...FOLLOW_STATS_QUERY_KEY, userId],
-    queryFn: () => getFollowStats(userId),
     enabled: !!userId,
     staleTime: 2 * 60 * 1000,
   });

@@ -17,7 +17,5 @@ router.get('/stats/:userId', profileController.getStats);
 // Profile GET routes  
 router.get('/me', profileController.getProfileData);
 router.get('/:userId', profileController.getProfileData);
-router.put('/:userId', uploadSingle, profileController.updateProfile);
-router.delete('/:userId', profileController.deleteProfile);
 
 export default router;

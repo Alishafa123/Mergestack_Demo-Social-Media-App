@@ -155,16 +155,3 @@ export const isFollowing = async (followerId: string, followingId: string): Prom
     throw error;
   }
 };
-
-export const getFollowStats = async (userId: string): Promise<{ followersCount: number; followingCount: number }> => {
-  try {
-    const [followersCount, followingCount] = await Promise.all([
-      UserFollow.count({ where: { following_id: userId } }),
-      UserFollow.count({ where: { follower_id: userId } }),
-    ]);
-
-    return { followersCount, followingCount };
-  } catch (error) {
-    throw error;
-  }
-};

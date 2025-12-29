@@ -11,14 +11,6 @@ export interface FollowStatusResponse {
   isFollowing: boolean;
 }
 
-export interface FollowStatsResponse {
-  success: boolean;
-  stats: {
-    followersCount: number;
-    followingCount: number;
-  };
-}
-
 export interface UserProfile {
   id: string;
   name: string;
@@ -65,11 +57,6 @@ export const unfollowUser = async (userId: string): Promise<FollowResponse> => {
 
 export const getFollowStatus = async (userId: string): Promise<FollowStatusResponse> => {
   const res = await api.get(`/users/${userId}/follow-status`);
-  return res.data;
-};
-
-export const getFollowStats = async (userId: string): Promise<FollowStatsResponse> => {
-  const res = await api.get(`/users/${userId}/follow-stats`);
   return res.data;
 };
 
