@@ -4,6 +4,7 @@ import * as postService from '@services/post.service.js';
 import { StorageService } from '@services/storage.service.js';
 import type { AuthenticatedRequest } from '@/types/express.js';
 import { POST_ERRORS, SUCCESS_MESSAGES, GENERIC_ERRORS } from '@constants/errors.js';
+import { uploadPostImages } from '@services/storage.service.js';
 
 export const createPost = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
@@ -23,7 +24,7 @@ export const createPost = async (req: AuthenticatedRequest, res: Response, next:
     // Upload images if any
     if (files && files.length > 0) {
       try {
-        imageUrls = await StorageService.uploadPostImages(userId, 'temp', files);
+        imageUrls = await uploadPostImages(userId, 'temp', files);
       } catch (uploadError) {
         return res.status(400).json({
           success: false,
