@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { StorageService } from '@services/storage.service.js';
 import * as profileService from '@services/profile.service.js';
+import { uploadProfileImage } from '@services/storage.service.js';
 
 export const getMyProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -34,7 +34,7 @@ export const updateMyProfile = async (req: Request, res: Response, next: NextFun
 
     if (req.file) {
       try {
-        const imageUrl = await StorageService.uploadProfileImage(userId, req.file);
+        const imageUrl = await uploadProfileImage(userId, req.file);
         profileData.profile_url = imageUrl;
       } catch (uploadError) {
         return res.status(400).json({
@@ -125,7 +125,7 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
     // Handle profile image upload if file is present
     if (req.file) {
       try {
-        const imageUrl = await StorageService.uploadProfileImage(userId, req.file);
+        const imageUrl = await uploadProfileImage(userId, req.file);
         profileData.profile_url = imageUrl;
       } catch (uploadError) {
         return res.status(400).json({
