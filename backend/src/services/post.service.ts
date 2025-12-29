@@ -3,6 +3,7 @@ import { Op } from 'sequelize';
 import type { CustomError, PostModel } from '@/types/index';
 import { StorageService } from '@services/storage.service.js';
 import { Post, PostImage, PostLike, PostShare, User, Profile, UserFollow } from '@models/index.js';
+import { POST_ERRORS, SUCCESS_MESSAGES } from '@constants/errors.js';
 
 // Helper function to build common post includes
 const buildPostIncludes = (currentUserId?: string) => {
@@ -200,7 +201,7 @@ export const getPost = async (postId: string): Promise<PostModel> => {
     });
 
     if (!post) {
-      const err = new Error('Post not found') as CustomError;
+      const err = new Error(POST_ERRORS.POST_NOT_FOUND) as CustomError;
       err.status = 404;
       throw err;
     }
@@ -237,7 +238,7 @@ export const updatePost = async (postId: string, userId: string, content: string
     });
 
     if (!post) {
-      const err = new Error('Post not found or unauthorized') as CustomError;
+      const err = new Error(POST_ERRORS.POST_NOT_FOUND_OR_UNAUTHORIZED) as CustomError;
       err.status = 404;
       throw err;
     }
@@ -263,7 +264,7 @@ export const deletePost = async (postId: string, userId: string): Promise<{ mess
     });
 
     if (!post) {
-      const err = new Error('Post not found or unauthorized') as CustomError;
+      const err = new Error(POST_ERRORS.POST_NOT_FOUND_OR_UNAUTHORIZED) as CustomError;
       err.status = 404;
       throw err;
     }
@@ -279,7 +280,7 @@ export const deletePost = async (postId: string, userId: string): Promise<{ mess
       where: { id: postId, user_id: userId },
     });
 
-    return { message: 'Post deleted successfully' };
+    return { message: SUCCESS_MESSAGES.POST_DELETED };
   } catch (error) {
     throw error;
   }
@@ -290,7 +291,7 @@ export const toggleLike = async (postId: string, userId: string): Promise<{ like
     const post = await Post.findByPk(postId);
 
     if (!post) {
-      const err = new Error('Post not found') as CustomError;
+      const err = new Error(POST_ERRORS.POST_NOT_FOUND) as CustomError;
       err.status = 404;
       throw err;
     }

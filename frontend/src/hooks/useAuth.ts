@@ -6,6 +6,8 @@ import { userController } from '@jotai/user.atom';
 import { showToast } from '@components/shared/toast';
 import { userProfileController } from '@jotai/userprofile.atom';
 import { loginUser, signupUser, forgotPassword, resetPassword } from '@api/auth.api';
+import { AUTH_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
+
 import type {
   LoginFormData,
   SignupFormData,
@@ -53,7 +55,7 @@ export const useLogin = () => {
       if (data.token && data.refreshToken && data.expiresAt) {
         AuthUtils.setTokens(data.token, data.refreshToken, data.expiresAt);
         userController.login(data.user.id, data.user.name, data.user.email);
-        showToast.success(`Welcome back, ${data.user.name}!`);
+        showToast.success(`${SUCCESS_MESSAGES.LOGIN_SUCCESS}, ${data.user.name}!`);
         navigate('/dashboard');
       }
 
@@ -74,8 +76,7 @@ export const useLogin = () => {
     },
     onError: (error: any) => {
       console.error('Login failed:', error);
-      const errorMessage =
-        error?.response?.data?.message || 'Login failed. Please check your credentials and try again.';
+      const errorMessage = error?.response?.data?.message || AUTH_ERRORS.LOGIN_FAILED;
       showToast.error(errorMessage);
     },
   });
@@ -86,12 +87,12 @@ export const useSignup = () => {
   return useMutation<AuthResponse, Error, SignupFormData>({
     mutationFn: signupUser,
     onSuccess: (data) => {
-      const message = data.message || 'Account created successfully! Please check your email to verify your account.';
+      const message = data.message || SUCCESS_MESSAGES.SIGNUP_SUCCESS;
       showToast.success(message, { autoClose: 8000 });
       navigate('/login');
     },
     onError: (error: any) => {
-      const errorMessage = error?.response?.data?.message || 'Signup failed. Please try again.';
+      const errorMessage = error?.response?.data?.message || AUTH_ERRORS.SIGNUP_FAILED;
       showToast.error(errorMessage);
     },
   });
@@ -106,11 +107,11 @@ export const useLogout = () => {
     onSuccess: () => {
       console.log('Logged out successfully');
       AuthUtils.clearAuth();
-      showToast.info('You have been logged out successfully');
+      showToast.info(SUCCESS_MESSAGES.LOGOUT_SUCCESS);
       navigate('/login');
     },
     onError: () => {
-      showToast.error('Failed to logout. Please try again.');
+      showToast.error(AUTH_ERRORS.LOGOUT_FAILED);
     },
   });
 };
@@ -121,12 +122,12 @@ export const useForgotPassword = () => {
   return useMutation<{ success: boolean; message: string }, Error, ForgotPasswordFormData>({
     mutationFn: forgotPassword,
     onSuccess: (data) => {
-      const message = data.message || 'Password reset email sent successfully! Please check your inbox.';
+      const message = data.message || SUCCESS_MESSAGES.PASSWORD_RESET_EMAIL_SENT;
       showToast.success(message, { autoClose: 8000 });
       navigate('/login');
     },
     onError: (error: any) => {
-      const errorMessage = error?.response?.data?.message || 'Failed to send password reset email. Please try again.';
+      const errorMessage = error?.response?.data?.message || AUTH_ERRORS.PASSWORD_RESET_FAILED;
       showToast.error(errorMessage);
     },
   });
@@ -138,12 +139,12 @@ export const useResetPassword = () => {
   return useMutation<{ success: boolean; message: string }, Error, ResetPasswordFormData & { token: string }>({
     mutationFn: resetPassword,
     onSuccess: (data) => {
-      const message = data.message || 'Password reset successfully! You can now login with your new password.';
+      const message = data.message || SUCCESS_MESSAGES.PASSWORD_RESET_SUCCESS;
       showToast.success(message, { autoClose: 8000 });
       navigate('/login');
     },
     onError: (error: any) => {
-      const errorMessage = error?.response?.data?.message || 'Failed to reset password. Please try again.';
+      const errorMessage = error?.response?.data?.message || AUTH_ERRORS.PASSWORD_RESET_INVALID;
       showToast.error(errorMessage);
     },
   });

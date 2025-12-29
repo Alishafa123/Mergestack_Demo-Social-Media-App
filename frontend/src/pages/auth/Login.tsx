@@ -11,6 +11,7 @@ import Button from '@components/shared/buttons/Button';
 import AuthIcon from '@components/shared/Icons/AuthIcon';
 import type { LoginFormData } from '@schemas/authSchemas';
 import { BackgroundDesign } from '@components/shared/backgrounds';
+import { LOADING_MESSAGES } from '@constants/errors';
 
 export default function Login() {
   const {
@@ -24,7 +25,7 @@ export default function Login() {
   const location = useLocation();
   const loginMutation = useLogin();
   const onSubmit = (data: LoginFormData) => loginMutation.mutate(data);
-  const getButtonText = () => (loginMutation.isPending ? 'Signing in...' : 'Sign in');
+  const getButtonText = () => (loginMutation.isPending ? LOADING_MESSAGES.SIGNING_IN : 'Sign in');
 
   useEffect(() => {
     if (location.state?.message) {

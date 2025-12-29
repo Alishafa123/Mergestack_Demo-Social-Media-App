@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 
 import { StorageService } from '@services/storage.service.js';
 import * as profileService from '@services/profile.service.js';
+import { USER_ERRORS, PROFILE_ERRORS, SUCCESS_MESSAGES, GENERIC_ERRORS } from '@constants/errors.js';
 
 export const getMyProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -39,8 +40,8 @@ export const updateMyProfile = async (req: Request, res: Response, next: NextFun
       } catch (uploadError) {
         return res.status(400).json({
           success: false,
-          message: 'Failed to upload profile image',
-          error: uploadError instanceof Error ? uploadError.message : 'Unknown upload error',
+          message: PROFILE_ERRORS.PROFILE_IMAGE_UPLOAD_FAILED,
+          error: uploadError instanceof Error ? uploadError.message : GENERIC_ERRORS.UNKNOWN_UPLOAD_ERROR,
         });
       }
     }
@@ -49,7 +50,7 @@ export const updateMyProfile = async (req: Request, res: Response, next: NextFun
 
     res.json({
       success: true,
-      message: 'Profile updated successfully',
+      message: SUCCESS_MESSAGES.PROFILE_UPDATED,
       user: {
         id: user.id,
         email: user.email,
@@ -84,7 +85,7 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
     if (!userId) {
       return res.status(400).json({
         success: false,
-        message: 'User ID is required',
+        message: USER_ERRORS.USER_ID_REQUIRED,
       });
     }
 
@@ -111,7 +112,7 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
     if (!userId) {
       return res.status(400).json({
         success: false,
-        message: 'User ID is required',
+        message: USER_ERRORS.USER_ID_REQUIRED,
       });
     }
 
@@ -130,8 +131,8 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
       } catch (uploadError) {
         return res.status(400).json({
           success: false,
-          message: 'Failed to upload profile image',
-          error: uploadError instanceof Error ? uploadError.message : 'Unknown upload error',
+          message: PROFILE_ERRORS.PROFILE_IMAGE_UPLOAD_FAILED,
+          error: uploadError instanceof Error ? uploadError.message : GENERIC_ERRORS.UNKNOWN_UPLOAD_ERROR,
         });
       }
     }
@@ -140,7 +141,7 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
 
     res.json({
       success: true,
-      message: 'Profile updated successfully',
+      message: SUCCESS_MESSAGES.PROFILE_UPDATED,
       user: {
         id: user.id,
         email: user.email,
@@ -160,7 +161,7 @@ export const deleteProfile = async (req: Request, res: Response, next: NextFunct
     if (!userId) {
       return res.status(400).json({
         success: false,
-        message: 'User ID is required',
+        message: USER_ERRORS.USER_ID_REQUIRED,
       });
     }
 
@@ -197,7 +198,7 @@ export const getPublicUserStats = async (req: Request, res: Response, next: Next
     if (!userId) {
       return res.status(400).json({
         success: false,
-        message: 'User ID is required',
+        message: USER_ERRORS.USER_ID_REQUIRED,
       });
     }
 
@@ -222,14 +223,14 @@ export const searchUsers = async (req: Request, res: Response, next: NextFunctio
     if (!query || typeof query !== 'string') {
       return res.status(400).json({
         success: false,
-        message: 'Search query is required',
+        message: PROFILE_ERRORS.SEARCH_QUERY_REQUIRED,
       });
     }
 
     if (query.length < 2) {
       return res.status(400).json({
         success: false,
-        message: 'Search query must be at least 2 characters',
+        message: PROFILE_ERRORS.SEARCH_QUERY_TOO_SHORT,
       });
     }
 

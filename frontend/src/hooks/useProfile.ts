@@ -10,6 +10,8 @@ import {
   getUserStats,
   getUserStatsById,
 } from '@api/profile.api';
+import { showToast } from '@components/shared/toast';
+import { PROFILE_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
 
 export const PROFILE_QUERY_KEY = ['profile'];
 export const USER_STATS_QUERY_KEY = ['userStats'];
@@ -53,9 +55,12 @@ export const useUpdateProfile = () => {
         userData.city,
         userData.country,
       );
+      showToast.success(SUCCESS_MESSAGES.PROFILE_UPDATED);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Profile update failed:', error);
+      const errorMessage = error?.response?.data?.message || PROFILE_ERRORS.UPDATE_FAILED;
+      showToast.error(errorMessage);
     },
   });
 };
@@ -67,9 +72,12 @@ export const useDeleteProfile = () => {
     mutationFn: deleteProfile,
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: PROFILE_QUERY_KEY });
+      showToast.success(SUCCESS_MESSAGES.PROFILE_DELETED);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Profile deletion failed:', error);
+      const errorMessage = error?.response?.data?.message || PROFILE_ERRORS.DELETE_FAILED;
+      showToast.error(errorMessage);
     },
   });
 };

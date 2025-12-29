@@ -21,6 +21,7 @@
     "paths": {
       "@/*": ["*"],
       "@config/*": ["config/*"],
+      "@constants/*": ["constants/*"],
       "@controllers/*": ["controllers/*"],
       "@middleware/*": ["middleware/*"],
       "@models/*": ["models/*"],

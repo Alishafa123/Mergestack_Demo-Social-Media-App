@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 
 import type { CustomError } from '@/types/index';
 import { User, Profile, UserFollow } from '@models/index.js';
+import { USER_ERRORS, SUCCESS_MESSAGES } from '@constants/errors.js';
 
 export const followUser = async (
   followerId: string,
@@ -9,14 +10,14 @@ export const followUser = async (
 ): Promise<{ message: string; isFollowing: boolean }> => {
   try {
     if (followerId === followingId) {
-      const err = new Error('Cannot follow yourself') as CustomError;
+      const err = new Error(USER_ERRORS.CANNOT_FOLLOW_YOURSELF) as CustomError;
       err.status = 400;
       throw err;
     }
 
     const targetUser = await User.findByPk(followingId);
     if (!targetUser) {
-      const err = new Error('User not found') as CustomError;
+      const err = new Error(USER_ERRORS.USER_NOT_FOUND) as CustomError;
       err.status = 404;
       throw err;
     }
@@ -26,7 +27,7 @@ export const followUser = async (
     });
 
     if (existingFollow) {
-      const err = new Error('Already following this user') as CustomError;
+      const err = new Error(USER_ERRORS.ALREADY_FOLLOWING) as CustomError;
       err.status = 400;
       throw err;
     }
@@ -36,7 +37,7 @@ export const followUser = async (
       following_id: followingId,
     });
 
-    return { message: 'User followed successfully', isFollowing: true };
+    return { message: SUCCESS_MESSAGES.USER_FOLLOWED, isFollowing: true };
   } catch (error) {
     throw error;
   }
@@ -52,14 +53,14 @@ export const unfollowUser = async (
     });
 
     if (!followRelation) {
-      const err = new Error('Not following this user') as CustomError;
+      const err = new Error(USER_ERRORS.NOT_FOLLOWING) as CustomError;
       err.status = 400;
       throw err;
     }
 
     await followRelation.destroy();
 
-    return { message: 'User unfollowed successfully', isFollowing: false };
+    return { message: SUCCESS_MESSAGES.USER_UNFOLLOWED, isFollowing: false };
   } catch (error) {
     throw error;
   }

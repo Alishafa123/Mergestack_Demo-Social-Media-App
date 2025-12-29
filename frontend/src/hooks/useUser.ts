@@ -8,6 +8,8 @@ import {
   getFollowing,
   getUserSuggestions,
 } from '@api/user.api';
+import { showToast } from '@components/shared/toast';
+import { USER_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
 
 export const USER_QUERY_KEY = ['user'];
 export const FOLLOW_STATUS_QUERY_KEY = ['followStatus'];
@@ -32,9 +34,12 @@ export const useFollowUser = () => {
       queryClient.invalidateQueries({ queryKey: [...FOLLOWERS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: [...RECENT_FOLLOWERS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: ['userStats', userId] });
+      showToast.success(SUCCESS_MESSAGES.USER_FOLLOWED);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Follow user failed:', error);
+      const errorMessage = error?.response?.data?.message || USER_ERRORS.FOLLOW_FAILED;
+      showToast.error(errorMessage);
     },
   });
 };
@@ -55,9 +60,12 @@ export const useUnfollowUser = () => {
       queryClient.invalidateQueries({ queryKey: [...FOLLOWERS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: [...RECENT_FOLLOWERS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: ['userStats', userId] });
+      showToast.success(SUCCESS_MESSAGES.USER_UNFOLLOWED);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Unfollow user failed:', error);
+      const errorMessage = error?.response?.data?.message || USER_ERRORS.UNFOLLOW_FAILED;
+      showToast.error(errorMessage);
     },
   });
 };

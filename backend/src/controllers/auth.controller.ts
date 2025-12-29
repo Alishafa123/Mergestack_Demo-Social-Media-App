@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 
 import * as authService from '@services/auth.service.js';
 import type { LoginCredentials, SignupCredentials } from '@/types/index';
+import { AUTH_ERRORS, GENERIC_ERRORS } from '@constants/errors.js';
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -64,7 +65,7 @@ export const handleWebhook = async (req: Request, res: Response, next: NextFunct
       return res.json({ success: true });
     }
 
-    return res.json({ success: true, message: 'Event not handled' });
+    return res.json({ success: true, message: GENERIC_ERRORS.EVENT_NOT_HANDLED });
   } catch (err) {
     console.error('Webhook error:', err);
     next(err);
@@ -93,7 +94,7 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
     const accessToken = req.headers.authorization?.replace('Bearer ', '');
 
     if (!accessToken) {
-      const err = new Error('Authorization token is required') as any;
+      const err = new Error(AUTH_ERRORS.AUTHORIZATION_TOKEN_REQUIRED) as any;
       err.status = 401;
       throw err;
     }
