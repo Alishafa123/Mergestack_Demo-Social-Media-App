@@ -2,7 +2,7 @@ import { Op } from 'sequelize';
 
 import sequelize from '@config/database.js';
 import type { CustomError, UserModel } from '@/types/index';
-import { StorageService } from '@services/storage.service.js';
+import { deleteProfileImage } from '@services/storage.service.js';
 import { User, Profile, Post, UserFollow } from '@models/index.js';
 
 export const getProfile = async (userId: string): Promise<UserModel> => {
@@ -48,7 +48,7 @@ export const updateProfile = async (userId: string, profileData: any): Promise<U
     }
 
     if (profileData.profile_url && user.profile?.profile_url) {
-      await StorageService.deleteProfileImage(user.profile.profile_url);
+      await deleteProfileImage(user.profile.profile_url);
     }
 
     const [updatedRowsCount] = await Profile.update(profileData, {

@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 
 import type { CustomError, PostModel } from '@/types/index';
-import { StorageService } from '@services/storage.service.js';
+import { deletePostImages } from '@services/storage.service.js';
 import { Post, PostImage, PostLike, PostShare, User, Profile, UserFollow } from '@models/index.js';
 
 // Helper function to build common post includes
@@ -272,7 +272,7 @@ export const deletePost = async (postId: string, userId: string): Promise<{ mess
 
     if (postData.images && postData.images.length > 0) {
       const imageUrls = postData.images.map((img) => img.image_url);
-      await StorageService.deletePostImages(imageUrls);
+      await deletePostImages(imageUrls);
     }
 
     await Post.destroy({

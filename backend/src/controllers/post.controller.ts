@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 import * as postService from '@services/post.service.js';
-import { StorageService } from '@services/storage.service.js';
+import { uploadPostImages } from '@services/storage.service.js';
 
 export const createPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -21,7 +21,7 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
     // Upload images if any
     if (files && files.length > 0) {
       try {
-        imageUrls = await StorageService.uploadPostImages(userId, 'temp', files);
+        imageUrls = await uploadPostImages(userId, 'temp', files);
       } catch (uploadError) {
         return res.status(400).json({
           success: false,
