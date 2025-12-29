@@ -105,45 +105,6 @@ export const getFollowers = async (
   }
 };
 
-export const getFollowing = async (
-  userId: string,
-  page: number = 1,
-  limit: number = 10,
-): Promise<{ following: any[]; total: number; hasMore: boolean }> => {
-  try {
-    const offset = (page - 1) * limit;
-
-    const { count, rows } = await UserFollow.findAndCountAll({
-      where: { follower_id: userId },
-      include: [
-        {
-          model: User,
-          as: 'followingUser',
-          attributes: ['id', 'name', 'email'],
-          include: [
-            {
-              model: Profile,
-              as: 'profile',
-              attributes: ['first_name', 'last_name', 'profile_url', 'bio'],
-            },
-          ],
-        },
-      ],
-      limit,
-      offset,
-      order: [['createdAt', 'DESC']],
-    });
-
-    return {
-      following: rows.map((row) => row.toJSON()),
-      total: count,
-      hasMore: offset + limit < count,
-    };
-  } catch (error) {
-    throw error;
-  }
-};
-
 export const isFollowing = async (followerId: string, followingId: string): Promise<boolean> => {
   try {
     const followRelation = await UserFollow.findOne({

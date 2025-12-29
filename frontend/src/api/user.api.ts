@@ -33,18 +33,6 @@ export interface FollowersResponse {
   hasMore: boolean;
 }
 
-export interface FollowingResponse {
-  success: boolean;
-  following: Array<{
-    followingUser: UserProfile;
-    createdAt: string;
-  }>;
-  total: number;
-  hasMore: boolean;
-}
-
-
-
 export const followUser = async (userId: string): Promise<FollowResponse> => {
   const res = await api.post(`/users/${userId}/follow`);
   return res.data;
@@ -66,15 +54,6 @@ export const getFollowers = async (
   limit: number = 10,
 ): Promise<FollowersResponse> => {
   const res = await api.get(`/users/${userId}/followers?page=${page}&limit=${limit}`);
-  return res.data;
-};
-
-export const getFollowing = async (
-  userId: string,
-  page: number = 1,
-  limit: number = 10,
-): Promise<FollowingResponse> => {
-  const res = await api.get(`/users/${userId}/following?page=${page}&limit=${limit}`);
   return res.data;
 };
 

@@ -15,7 +15,6 @@ router.get('/', postController.getPosts);
 router.get('/trending', postController.getTrendingPosts);
 router.get('/followers', postController.getFollowersFeed);
 router.get('/top/me', postController.getUserTopPosts);
-router.get('/users/:userId/timeline', postController.getUserTimeline);
 router.get('/:postId', postController.getPost);
 router.put('/:postId', postController.updatePost);
 router.delete('/:postId', postController.deletePost);

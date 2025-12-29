@@ -76,30 +76,6 @@ export const getFollowers = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-export const getFollowing = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.params.userId;
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
-
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: USER_ERRORS.USER_ID_REQUIRED,
-      });
-    }
-
-    const result = await userService.getFollowing(userId, page, limit);
-
-    res.json({
-      success: true,
-      ...result,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
 export const checkFollowStatus = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authReq = req as AuthenticatedRequest;

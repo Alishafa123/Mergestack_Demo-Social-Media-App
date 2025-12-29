@@ -220,29 +220,3 @@ export const getFollowersFeed = async (req: Request, res: Response, next: NextFu
     next(error);
   }
 };
-
-export const getUserTimeline = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { userId } = req.params;
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
-    const authReq = req as AuthenticatedRequest;
-    const currentUserId = authReq.user.id;
-
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: POST_ERRORS.POST_ID_REQUIRED, 
-      });
-    }
-
-    const result = await postService.getPosts(page, limit, userId, currentUserId);
-
-    res.json({
-      success: true,
-      ...result,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
