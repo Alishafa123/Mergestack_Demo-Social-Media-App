@@ -4,9 +4,12 @@ import { StorageService } from '@services/storage.service.js';
 import * as profileService from '@services/profile.service.js';
 import { USER_ERRORS, PROFILE_ERRORS, SUCCESS_MESSAGES, GENERIC_ERRORS } from '@constants/errors.js';
 
-export const getMyProfile = async (req: Request, res: Response, next: NextFunction) => {
+export const getProfileData = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user!.id;
+    // If userId is provided in params and it's not "me", get profile for that user
+    // Otherwise, get profile for the authenticated user
+    const paramUserId = req.params.userId;
+    const userId = (!paramUserId || paramUserId === 'me') ? req.user!.id : paramUserId;
 
     const user = await profileService.getProfile(userId);
 
@@ -72,33 +75,6 @@ export const deleteMyProfile = async (req: Request, res: Response, next: NextFun
     res.json({
       success: true,
       ...result,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const getProfile = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.params.userId;
-
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: USER_ERRORS.USER_ID_REQUIRED,
-      });
-    }
-
-    const user = await profileService.getProfile(userId);
-
-    res.json({
-      success: true,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        profile: user.profile,
-      },
     });
   } catch (error: any) {
     next(error);
@@ -176,22 +152,7 @@ export const deleteProfile = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-export const getUserStats = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.user!.id;
-
-    const stats = await profileService.getUserStats(userId);
-
-    res.json({
-      success: true,
-      stats,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const getPublicUserStats = async (req: Request, res: Response, next: NextFunction) => {
+export const getStats = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.params.userId;
 

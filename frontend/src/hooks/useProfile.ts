@@ -7,7 +7,6 @@ import {
   getProfileById,
   updateProfile,
   deleteProfile,
-  getUserStats,
   getUserStatsById,
 } from '@api/profile.api';
 import { showToast } from '@components/shared/toast';
@@ -82,22 +81,17 @@ export const useDeleteProfile = () => {
   });
 };
 
-export const useGetUserStats = (options?: { enabled?: boolean }) => {
+export const useGetUserStats = (userId?: string, options?: { enabled?: boolean }) => {
+  const { id } = userProfileController.useState(['id']);
+  
+  // Use passed userId if provided, otherwise use current user's id from userController
+  const targetUserId = userId || id;
+  
   return useQuery({
-    queryKey: USER_STATS_QUERY_KEY,
-    queryFn: getUserStats,
+    queryKey: userId ? [...USER_STATS_QUERY_KEY, userId] : USER_STATS_QUERY_KEY,
+    queryFn: () => getUserStatsById(targetUserId!),
     staleTime: 2 * 60 * 1000,
     refetchOnWindowFocus: false,
-    enabled: options?.enabled ?? true,
-  });
-};
-
-export const useGetUserStatsById = (userId: string) => {
-  return useQuery({
-    queryKey: [...USER_STATS_QUERY_KEY, userId],
-    queryFn: () => getUserStatsById(userId),
-    enabled: !!userId,
-    staleTime: 2 * 60 * 1000,
-    refetchOnWindowFocus: false,
+    enabled: (options?.enabled ?? true) && !!targetUserId,
   });
 };

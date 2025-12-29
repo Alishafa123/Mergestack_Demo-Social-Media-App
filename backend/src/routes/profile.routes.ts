@@ -11,16 +11,16 @@ router.use(authenticateSupabaseToken);
 // Search route must come before parameterized routes
 router.get('/users/search', profileController.searchUsers);
 
-router.get('/me', profileController.getMyProfile);
-
 router.put('/me', uploadSingle, profileController.updateMyProfile);
 
 router.delete('/me', profileController.deleteMyProfile);
 
-router.get('/stats/me', profileController.getUserStats);
-router.get('/stats/:userId', profileController.getPublicUserStats);
+// Stats route - single route for all cases
+router.get('/stats/:userId', profileController.getStats);
 
-router.get('/:userId', profileController.getProfile);
+// Profile GET routes  
+router.get('/me', profileController.getProfileData);
+router.get('/:userId', profileController.getProfileData);
 router.put('/:userId', uploadSingle, profileController.updateProfile);
 router.delete('/:userId', profileController.deleteProfile);
 

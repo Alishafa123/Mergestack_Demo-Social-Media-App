@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useGetUserStats, useGetUserStatsById } from '@hooks/useProfile';
+import { useGetUserStats } from '@hooks/useProfile';
 import { Heart, MessageCircle, Share2, Edit, Loader2, UserPlus, Users } from 'lucide-react';
 
 interface UserStatsProps {
@@ -10,21 +10,10 @@ interface UserStatsProps {
 
 const UserStats: React.FC<UserStatsProps> = ({ userId, isViewingOtherUser }) => {
   const {
-    data: otherUserStats,
-    isLoading: otherStatsLoading,
-    error: otherStatsError,
-  } = useGetUserStatsById(userId || '');
-  const {
-    data: currentUserStats,
-    isLoading: currentStatsLoading,
-    error: currentStatsError,
-  } = useGetUserStats({
-    enabled: !isViewingOtherUser,
-  });
-
-  const statsData = isViewingOtherUser ? otherUserStats : currentUserStats;
-  const statsLoading = isViewingOtherUser ? otherStatsLoading : currentStatsLoading;
-  const statsError = isViewingOtherUser ? otherStatsError : currentStatsError;
+    data: statsData,
+    isLoading: statsLoading,
+    error: statsError,
+  } = useGetUserStats(isViewingOtherUser ? userId : undefined);
 
   const stats = {
     likes: statsData?.stats?.totalLikes || 0,

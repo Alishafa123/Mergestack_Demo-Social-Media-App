@@ -86,12 +86,7 @@ export interface UserStatsResponse {
   stats: UserStats;
 }
 
-export const getUserStats = async (): Promise<UserStatsResponse> => {
-  const res = await api.get('/profile/stats/me');
-  return res.data;
-};
-
-export const getUserStatsById = async (userId: string): Promise<UserStatsResponse> => {
+export const getUserStatsById = async (userId: string ): Promise<UserStatsResponse> => {
   const res = await api.get(`/profile/stats/${userId}`);
   return res.data;
 };
