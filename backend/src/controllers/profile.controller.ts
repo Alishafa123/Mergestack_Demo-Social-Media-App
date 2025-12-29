@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 import { StorageService } from '@services/storage.service.js';
+import type { AuthenticatedRequest } from '@/types/express.js';
 import * as profileService from '@services/profile.service.js';
 import { USER_ERRORS, PROFILE_ERRORS, SUCCESS_MESSAGES, GENERIC_ERRORS } from '@constants/errors.js';
 
@@ -9,7 +10,8 @@ export const getProfileData = async (req: Request, res: Response, next: NextFunc
     // If userId is provided in params and it's not "me", get profile for that user
     // Otherwise, get profile for the authenticated user
     const paramUserId = req.params.userId;
-    const userId = (!paramUserId || paramUserId === 'me') ? req.user!.id : paramUserId;
+    const authReq = req as AuthenticatedRequest;
+    const userId = (!paramUserId || paramUserId === 'me') ? authReq.user.id : paramUserId;
 
     const user = await profileService.getProfile(userId);
 
@@ -29,7 +31,8 @@ export const getProfileData = async (req: Request, res: Response, next: NextFunc
 
 export const updateMyProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user!.id;
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user.id;
     let profileData = { ...req.body };
 
     if (!req.file) {
@@ -68,7 +71,8 @@ export const updateMyProfile = async (req: Request, res: Response, next: NextFun
 
 export const deleteMyProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user!.id;
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user.id;
 
     const result = await profileService.deleteProfile(userId);
 
@@ -179,7 +183,8 @@ export const searchUsers = async (req: Request, res: Response, next: NextFunctio
     const { q: query } = req.query;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
-    const currentUserId = req.user?.id;
+    const authReq = req as AuthenticatedRequest;
+    const currentUserId = authReq.user.id;
 
     if (!query || typeof query !== 'string') {
       return res.status(400).json({

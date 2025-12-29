@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 
 import { supabase } from '@config/supabase.js';
-import type { CustomError } from '@/types/index';
+import type { CustomError } from '@/types/index.js';
+import type { AuthenticatedUser } from '@/types/express.js';
 
 export const authenticateSupabaseToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -30,7 +31,7 @@ export const authenticateSupabaseToken = async (req: Request, res: Response, nex
       id: user.id,
       email: user.email!,
       name: user.user_metadata?.name || user.email!.split('@')[0],
-    };
+    } as AuthenticatedUser;
 
     next();
   } catch (error) {
