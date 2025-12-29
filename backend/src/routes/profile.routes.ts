@@ -8,6 +8,7 @@ const router = Router();
 
 router.use(authenticateSupabaseToken);
 
+router.get('/', profileController.getProfileData);
 router.get('/users/search', profileController.searchUsers);
 
 router.put('/me', uploadSingle, profileController.updateMyProfile);
@@ -15,7 +16,5 @@ router.delete('/me', profileController.deleteMyProfile);
 router.get('/stats/:userId', profileController.getStats);
 
 // Profile GET routes  
-router.get('/me', profileController.getProfileData);
-router.get('/:userId', profileController.getProfileData);
 
 export default router;

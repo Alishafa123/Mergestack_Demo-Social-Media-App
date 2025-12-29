@@ -5,13 +5,12 @@ import type { AuthenticatedRequest } from '@/types/express.js';
 import * as profileService from '@services/profile.service.js';
 import { USER_ERRORS, PROFILE_ERRORS, SUCCESS_MESSAGES, GENERIC_ERRORS } from '@constants/errors.js';
 
-export const getProfileData = async (req: Request, res: Response, next: NextFunction) => {
+export const getProfileData = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     // If userId is provided in params and it's not "me", get profile for that user
     // Otherwise, get profile for the authenticated user
-    const paramUserId = req.params.userId;
-    const authReq = req as AuthenticatedRequest;
-    const userId = (!paramUserId || paramUserId === 'me') ? authReq.user.id : paramUserId;
+    const paramUserId = req.query?.userId as string | undefined;
+    const userId = paramUserId ?  paramUserId : req.user.id 
 
     const user = await profileService.getProfile(userId);
 
@@ -29,10 +28,9 @@ export const getProfileData = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-export const updateMyProfile = async (req: Request, res: Response, next: NextFunction) => {
+export const updateMyProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const authReq = req as AuthenticatedRequest;
-    const userId = authReq.user.id;
+    const userId = req.user.id;
     let profileData = { ...req.body };
 
     if (!req.file) {
@@ -69,10 +67,9 @@ export const updateMyProfile = async (req: Request, res: Response, next: NextFun
   }
 };
 
-export const deleteMyProfile = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteMyProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const authReq = req as AuthenticatedRequest;
-    const userId = authReq.user.id;
+    const userId = req.user.id;
 
     const result = await profileService.deleteProfile(userId);
 
@@ -107,13 +104,12 @@ export const getStats = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
-export const searchUsers = async (req: Request, res: Response, next: NextFunction) => {
+export const searchUsers = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const { q: query } = req.query;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
-    const authReq = req as AuthenticatedRequest;
-    const currentUserId = authReq.user.id;
+    const currentUserId = req.user.id;
 
     if (!query || typeof query !== 'string') {
       return res.status(400).json({

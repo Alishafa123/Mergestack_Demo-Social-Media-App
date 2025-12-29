@@ -5,10 +5,9 @@ import { StorageService } from '@services/storage.service.js';
 import type { AuthenticatedRequest } from '@/types/express.js';
 import { POST_ERRORS, SUCCESS_MESSAGES, GENERIC_ERRORS } from '@constants/errors.js';
 
-export const createPost = async (req: Request, res: Response, next: NextFunction) => {
+export const createPost = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const authReq = req as AuthenticatedRequest;
-    const userId = authReq.user.id;
+    const userId = req.user.id;
     const { content } = req.body;
     const files = req.files as Express.Multer.File[];
 
@@ -46,13 +45,12 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const getPosts = async (req: Request, res: Response, next: NextFunction) => {
+export const getPosts = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
     const userId = req.query.userId as string;
-    const authReq = req as AuthenticatedRequest;
-    const currentUserId = authReq.user.id;
+    const currentUserId = req.user.id;
 
     const result = await postService.getPosts(page, limit, userId, currentUserId);
 
@@ -87,10 +85,9 @@ export const getPost = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
-export const updatePost = async (req: Request, res: Response, next: NextFunction) => {
+export const updatePost = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const authReq = req as AuthenticatedRequest;
-    const userId = authReq.user.id;
+    const userId = req.user.id;
     const postId = req.params.postId;
     const { content } = req.body;
 
@@ -120,10 +117,9 @@ export const updatePost = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const deletePost = async (req: Request, res: Response, next: NextFunction) => {
+export const deletePost = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const authReq = req as AuthenticatedRequest;
-    const userId = authReq.user.id;
+    const userId = req.user.id;
     const postId = req.params.postId;
 
     if (!postId) {
@@ -144,10 +140,9 @@ export const deletePost = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const toggleLike = async (req: Request, res: Response, next: NextFunction) => {
+export const toggleLike = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const authReq = req as AuthenticatedRequest;
-    const userId = authReq.user.id;
+    const userId = req.user.id;
     const postId = req.params.postId;
 
     if (!postId) {
@@ -169,12 +164,11 @@ export const toggleLike = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const getTrendingPosts = async (req: Request, res: Response, next: NextFunction) => {
+export const getTrendingPosts = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
-    const authReq = req as AuthenticatedRequest;
-    const currentUserId = authReq.user.id;
+    const currentUserId = req.user.id;
 
     const result = await postService.getTrendingPosts(page, limit, currentUserId);
 
@@ -187,10 +181,9 @@ export const getTrendingPosts = async (req: Request, res: Response, next: NextFu
   }
 };
 
-export const getUserTopPosts = async (req: Request, res: Response, next: NextFunction) => {
+export const getUserTopPosts = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const authReq = req as AuthenticatedRequest;
-    const userId = authReq.user.id;
+    const userId = req.user.id;
 
     const result = await postService.getUserTopPosts(userId);
 
@@ -203,10 +196,9 @@ export const getUserTopPosts = async (req: Request, res: Response, next: NextFun
   }
 };
 
-export const getFollowersFeed = async (req: Request, res: Response, next: NextFunction) => {
+export const getFollowersFeed = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const authReq = req as AuthenticatedRequest;
-    const userId = authReq.user.id;
+    const userId = req.user.id;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
 

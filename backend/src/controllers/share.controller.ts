@@ -3,10 +3,9 @@ import { Request, Response, NextFunction } from 'express';
 import * as shareService from '@services/share.service.js';
 import type { AuthenticatedRequest } from '@/types/express.js';
 
-export const sharePost = async (req: Request, res: Response, next: NextFunction) => {
+export const sharePost = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const authReq = req as AuthenticatedRequest;
-    const userId = authReq.user.id;
+    const userId = req.user.id;
     const { postId } = req.params;
     const { sharedContent } = req.body;
 
@@ -36,10 +35,9 @@ export const sharePost = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-export const unsharePost = async (req: Request, res: Response, next: NextFunction) => {
+export const unsharePost = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const authReq = req as AuthenticatedRequest;
-    const userId = authReq.user.id;
+    const userId = req.user.id;
     const { postId } = req.params;
 
     if (!postId) {

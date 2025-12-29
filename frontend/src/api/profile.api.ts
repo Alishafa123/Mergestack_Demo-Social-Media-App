@@ -33,12 +33,12 @@ export interface SearchUsersResponse {
 }
 
 export const getProfile = async () => {
-  const res = await api.get('/profile/me');
+  const res = await api.get('/profile');
   return res.data;
 };
 
 export const getProfileById = async (userId: string) => {
-  const res = await api.get(`/profile/${userId}`);
+  const res = await api.get(`/profile/?userId=${userId}`);
   return res.data;
 };
 

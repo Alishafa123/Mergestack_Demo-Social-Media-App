@@ -4,10 +4,9 @@ import { USER_ERRORS } from '@constants/errors.js';
 import * as userService from '@services/user.service.js';
 import type { AuthenticatedRequest } from '@/types/express.js';
 
-export const followUser = async (req: Request, res: Response, next: NextFunction) => {
+export const followUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const authReq = req as AuthenticatedRequest;
-    const followerId = authReq.user.id;
+    const followerId = req.user.id;
     const followingId = req.params.userId;
 
     if (!followingId) {
@@ -28,10 +27,9 @@ export const followUser = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const unfollowUser = async (req: Request, res: Response, next: NextFunction) => {
+export const unfollowUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const authReq = req as AuthenticatedRequest;
-    const followerId = authReq.user.id;
+    const followerId = req.user.id;
     const followingId = req.params.userId;
 
     if (!followingId) {
@@ -76,10 +74,9 @@ export const getFollowers = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-export const checkFollowStatus = async (req: Request, res: Response, next: NextFunction) => {
+export const checkFollowStatus = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const authReq = req as AuthenticatedRequest;
-    const followerId = authReq.user.id;
+    const followerId = req.user.id;
     const followingId = req.params.userId;
 
     if (!followingId) {
