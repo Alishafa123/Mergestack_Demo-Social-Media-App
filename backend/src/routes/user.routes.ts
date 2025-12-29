@@ -17,6 +17,5 @@ router.get('/:userId/following', userController.getFollowing);
 router.get('/:userId/follow-status', userController.checkFollowStatus);
 
 router.get('/:userId/follow-stats', userController.getFollowStats);
-router.get('/suggestions/to-follow', userController.getUsersToFollow);
 
 export default router;

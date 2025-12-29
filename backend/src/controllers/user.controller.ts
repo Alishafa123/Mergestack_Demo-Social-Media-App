@@ -141,20 +141,3 @@ export const getFollowStats = async (req: Request, res: Response, next: NextFunc
     next(error);
   }
 };
-
-export const getUsersToFollow = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const currentUserId = req.user!.id;
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
-
-    const result = await userService.getUsersToFollow(currentUserId, page, limit);
-
-    res.json({
-      success: true,
-      ...result,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};

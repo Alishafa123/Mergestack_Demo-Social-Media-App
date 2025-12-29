@@ -51,12 +51,7 @@ export interface FollowingResponse {
   hasMore: boolean;
 }
 
-export interface SuggestionsResponse {
-  success: boolean;
-  users: UserProfile[];
-  total: number;
-  hasMore: boolean;
-}
+
 
 export const followUser = async (userId: string): Promise<FollowResponse> => {
   const res = await api.post(`/users/${userId}/follow`);
@@ -96,7 +91,4 @@ export const getFollowing = async (
   return res.data;
 };
 
-export const getUserSuggestions = async (page: number = 1, limit: number = 10): Promise<SuggestionsResponse> => {
-  const res = await api.get(`/users/suggestions/to-follow?page=${page}&limit=${limit}`);
-  return res.data;
-};
+

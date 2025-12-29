@@ -6,7 +6,6 @@ import {
   getFollowStats,
   getFollowers,
   getFollowing,
-  getUserSuggestions,
 } from '@api/user.api';
 import { showToast } from '@components/shared/toast';
 import { USER_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
@@ -16,7 +15,6 @@ export const FOLLOW_STATUS_QUERY_KEY = ['followStatus'];
 export const FOLLOW_STATS_QUERY_KEY = ['followStats'];
 export const FOLLOWERS_QUERY_KEY = ['followers'];
 export const FOLLOWING_QUERY_KEY = ['following'];
-export const USER_SUGGESTIONS_QUERY_KEY = ['userSuggestions'];
 export const RECENT_FOLLOWERS_QUERY_KEY = ['recentFollowers'];
 
 export const useFollowUser = () => {
@@ -103,14 +101,6 @@ export const useGetFollowing = (userId: string, page: number = 1, limit: number 
     queryFn: () => getFollowing(userId, page, limit),
     enabled: !!userId,
     staleTime: 5 * 60 * 1000,
-  });
-};
-
-export const useGetUserSuggestions = (page: number = 1, limit: number = 10) => {
-  return useQuery({
-    queryKey: [...USER_SUGGESTIONS_QUERY_KEY, { page, limit }],
-    queryFn: () => getUserSuggestions(page, limit),
-    staleTime: 10 * 60 * 1000,
   });
 };
 
