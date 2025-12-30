@@ -4,7 +4,7 @@
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
-    "build": "tsc && tsc-alias -p tsconfig-alias.json && find dist -name '*.js' -exec sed -i '' \"s/from '\\(\\.[^']*\\)'/from '\\1.js'/g; s/import '\\(\\.[^']*\\)'/import '\\1.js'/g\" {} \\;",
+    "build": "tsc && tsc-alias -p tsconfig-alias.json && node scripts/fix-imports.js",
     "start": "node dist/server.js",
     "dev": "nodemon src/server.js",
     "dev:nodemon": "nodemon --exec \"tsx --tsconfig tsconfig.json\" src/server.ts",
