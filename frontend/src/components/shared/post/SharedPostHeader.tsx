@@ -61,30 +61,31 @@ const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare
   }, [isDeleting, wasDeleting]);
 
   return (
-    <div className="bg-gray-50 border-b border-gray-200 px-4 py-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3 flex-1 min-w-0">
+    <div className="bg-gray-50 border-b border-gray-200 px-2 sm:px-4 py-2 sm:py-3">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start space-x-2 sm:space-x-3 flex-1 min-w-0">
+          <div className="flex-shrink-0">
+            <Avatar src={post.shared_by.profile?.profile_url} name={getDisplayName(post.shared_by)} size="xs" />
+          </div>
+          
           <div className="flex-1 min-w-0">
-            <div className="flex items-center space-x-2">
-              <div className="flex items-center space-x-2">
-                <Avatar src={post.shared_by.profile?.profile_url} name={getDisplayName(post.shared_by)} size="xs" />
+            <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+              <button
+                onClick={() => handleUserClick(post.shared_by!.id)}
+                className="font-medium text-gray-900 hover:text-blue-600 transition-colors text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none"
+                title={getDisplayName(post.shared_by)}
+              >
+                {getDisplayName(post.shared_by)}
+              </button>
 
-                <button
-                  onClick={() => handleUserClick(post.shared_by!.id)}
-                  className="font-medium text-gray-900 hover:text-blue-600 transition-colors text-sm"
-                >
-                  {getDisplayName(post.shared_by)}
-                </button>
-              </div>
+              <span className="text-gray-500 text-xs sm:text-sm whitespace-nowrap">shared this</span>
 
-              <span className="text-gray-500 text-sm">shared this</span>
-
-              <span className="text-gray-400 text-xs">{formatSharedTime(post.shared_at!)}</span>
+              <span className="text-gray-400 text-xs whitespace-nowrap">{formatSharedTime(post.shared_at!)}</span>
             </div>
 
             {post.shared_content && (
-              <div className="mt-2">
-                <p className="text-sm text-gray-700 bg-white rounded-lg px-3 py-2 border border-gray-200">
+              <div className="mt-1 sm:mt-2">
+                <p className="text-xs sm:text-sm text-gray-700 bg-white rounded-lg px-2 sm:px-3 py-1 sm:py-2 border border-gray-200 break-words">
                   {post.shared_content}
                 </p>
               </div>
@@ -92,7 +93,11 @@ const SharedPostHeader: React.FC<SharedPostHeaderProps> = ({ post, onDeleteShare
           </div>
         </div>
 
-        {currentUserId === post.shared_by?.id && onDeleteShare && <PostOptionsDropdown onDelete={handleDeleteShare} />}
+        {currentUserId === post.shared_by?.id && onDeleteShare && (
+          <div className="flex-shrink-0">
+            <PostOptionsDropdown onDelete={handleDeleteShare} />
+          </div>
+        )}
       </div>
 
       <DeleteConfirmModal
