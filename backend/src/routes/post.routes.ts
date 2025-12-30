@@ -14,7 +14,7 @@ router.post('/', uploadMultiple, postController.createPost);
 router.get('/', postController.getPosts);
 router.get('/trending', postController.getTrendingPosts);
 router.get('/followers', postController.getFollowersFeed);
-router.get('/top/me', postController.getUserTopPosts);
+router.get('/top', postController.getUserTopPosts);
 router.get('/:postId', postController.getPost);
 router.put('/:postId', postController.updatePost);
 router.delete('/:postId', postController.deletePost);

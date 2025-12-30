@@ -59,16 +59,11 @@ export const updateProfile = async (data: ProfileFormData & { profileImage?: Fil
     }
   });
 
-  const res = await api.put('/profile/me', formData, {
+  const res = await api.put('/profile/', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
-  return res.data;
-};
-
-export const deleteProfile = async () => {
-  const res = await api.delete('/profile/me');
   return res.data;
 };
 

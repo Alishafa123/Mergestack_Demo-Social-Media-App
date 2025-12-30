@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { StorageService } from '@services/storage.service.js';
 import type { AuthenticatedRequest } from '@/types/express.js';
-import { USER_ERRORS, PROFILE_ERRORS, SUCCESS_MESSAGES, GENERIC_ERRORS } from '@constants/errors.js';
+import { PROFILE_ERRORS, SUCCESS_MESSAGES, GENERIC_ERRORS } from '@constants/errors.js';
 import { uploadProfileImage } from '@services/storage.service.js';
+import { getProfile, getUserStatsData, searchUsersByName, updateProfileData } from '@/services/profile.service';
 
 export const getProfileData = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
@@ -12,7 +12,7 @@ export const getProfileData = async (req: AuthenticatedRequest, res: Response, n
     const paramUserId = req.query?.userId as string | undefined;
     const userId = paramUserId ?  paramUserId : req.user.id 
 
-    const user = await profileService.getProfile(userId);
+    const user = await getProfile(userId);
 
     res.json({
       success: true,
@@ -50,7 +50,7 @@ export const updateMyProfile = async (req: AuthenticatedRequest, res: Response, 
       }
     }
 
-    const user = await profileService.updateProfile(userId, profileData);
+    const user = await updateProfileData(userId, profileData);
 
     res.json({
       success: true,
@@ -61,21 +61,6 @@ export const updateMyProfile = async (req: AuthenticatedRequest, res: Response, 
         name: user.name,
         profile: user.profile,
       },
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const deleteMyProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.user.id;
-
-    const result = await profileService.deleteProfile(userId);
-
-    res.json({
-      success: true,
-      ...result,
     });
   } catch (error: any) {
     next(error);
@@ -93,7 +78,7 @@ export const getStats = async (req: Request, res: Response, next: NextFunction) 
       });
     }
 
-    const user = await profileService.getProfile(userId);
+    const user = await getProfile(userId);
 
     res.json({
       success: true,
@@ -141,7 +126,7 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
       }
     }
 
-    const user = await profileService.updateProfile(userId, profileData);
+    const user = await updateProfileData(userId, profileData);
 
     res.json({
       success: true,
@@ -158,33 +143,11 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-export const deleteProfile = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.params.userId;
-
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: 'User ID is required',
-      });
-    }
-
-    const result = await profileService.deleteProfile(userId);
-
-    res.json({
-      success: true,
-      ...result,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
 export const getUserStats = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.id;
 
-    const stats = await profileService.getUserStats(userId);
+    const stats = await getUserStatsData(userId);
 
     res.json({
       success: true,
@@ -206,7 +169,7 @@ export const getPublicUserStats = async (req: Request, res: Response, next: Next
       });
     }
 
-    const stats = await profileService.getUserStats(userId);
+    const stats = await getUserStatsData(userId);
 
     res.json({
       success: true,
@@ -238,7 +201,7 @@ export const searchUsers = async (req: AuthenticatedRequest, res: Response, next
       });
     }
 
-    const result = await profileService.searchUsersByName(query.trim(), page, limit, currentUserId);
+    const result = await searchUsersByName(query.trim(), page, limit, currentUserId);
 
     res.json({
       success: true,
