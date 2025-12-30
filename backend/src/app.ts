@@ -30,7 +30,7 @@ app.use('/api/users', userRoutes);
 app.use('/api', commentRoutes);
 app.use('/api', shareRoutes);
 
-app.get('/', (req, res) => res.json({ ok: true, env: process.env.NODE_ENV }));
+app.get('/test', (req, res) => res.json({ ok: true, env: process.env.NODE_ENV }));
 
 app.use(errorHandler);
 
