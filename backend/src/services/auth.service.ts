@@ -1,10 +1,11 @@
 import { supabase } from '@config/supabase.js';
 import { User, Profile } from '@models/index.js';
 import type { CustomError, LoginCredentials, SignupCredentials } from '@/types/index';
+import { AUTH_ERRORS, SUCCESS_MESSAGES } from '@constants/errors.js';
 
 export const login = async ({ email, password }: LoginCredentials) => {
   if (!email || !password) {
-    const err = new Error('Email and password are required') as CustomError;
+    const err = new Error(AUTH_ERRORS.EMAIL_PASSWORD_REQUIRED) as CustomError;
     err.status = 400;
     throw err;
   }
@@ -15,13 +16,13 @@ export const login = async ({ email, password }: LoginCredentials) => {
   });
 
   if (error) {
-    const err = new Error('Invalid credentials') as CustomError;
+    const err = new Error(AUTH_ERRORS.INVALID_CREDENTIALS) as CustomError;
     err.status = 401;
     throw err;
   }
 
   if (!data.user || !data.session) {
-    const err = new Error('Authentication failed') as CustomError;
+    const err = new Error(AUTH_ERRORS.AUTHENTICATION_FAILED) as CustomError;
     err.status = 401;
     throw err;
   }
@@ -45,7 +46,7 @@ export const login = async ({ email, password }: LoginCredentials) => {
 
 export const signup = async ({ email, password, name }: SignupCredentials) => {
   if (!email || !password || !name) {
-    const err = new Error('Email, password, and name are required') as CustomError;
+    const err = new Error(AUTH_ERRORS.EMAIL_PASSWORD_NAME_REQUIRED) as CustomError;
     err.status = 400;
     throw err;
   }
@@ -62,7 +63,7 @@ export const signup = async ({ email, password, name }: SignupCredentials) => {
 
   if (error) {
     if (error.message.includes('already registered')) {
-      const err = new Error('User already exists with this email') as CustomError;
+      const err = new Error(AUTH_ERRORS.USER_ALREADY_EXISTS) as CustomError;
       err.status = 409;
       throw err;
     }
@@ -72,20 +73,20 @@ export const signup = async ({ email, password, name }: SignupCredentials) => {
   }
 
   if (!data.user) {
-    const err = new Error('Registration failed') as CustomError;
+    const err = new Error(AUTH_ERRORS.REGISTRATION_FAILED) as CustomError;
     err.status = 400;
     throw err;
   }
 
   return {
     requiresEmailConfirmation: true,
-    message: 'Please check your email to confirm your account before logging in',
+    message: SUCCESS_MESSAGES.EMAIL_CONFIRMATION_REQUIRED,
   };
 };
 
 export const refreshToken = async (refreshToken: string) => {
   if (!refreshToken) {
-    const err = new Error('Refresh token is required') as CustomError;
+    const err = new Error(AUTH_ERRORS.REFRESH_TOKEN_REQUIRED) as CustomError;
     err.status = 400;
     throw err;
   }
@@ -95,7 +96,7 @@ export const refreshToken = async (refreshToken: string) => {
   });
 
   if (error || !data.session) {
-    const err = new Error('Invalid or expired refresh token') as CustomError;
+    const err = new Error(AUTH_ERRORS.INVALID_REFRESH_TOKEN) as CustomError;
     err.status = 401;
     throw err;
   }
@@ -113,7 +114,7 @@ export const handleEmailConfirmation = async (userId: string, email: string, nam
 
     if (existingUser) {
       console.log('User already exists in database:', userId);
-      return { success: true, message: 'User already exists' };
+      return { success: true, message: SUCCESS_MESSAGES.USER_ALREADY_EXISTS_MESSAGE };
     }
 
     await User.create({
@@ -129,7 +130,7 @@ export const handleEmailConfirmation = async (userId: string, email: string, nam
     });
 
     console.log('User and profile created after email confirmation:', userId);
-    return { success: true, message: 'User created successfully' };
+    return { success: true, message: SUCCESS_MESSAGES.USER_CREATED };
   } catch (error: any) {
     console.error('Error creating user after email confirmation:', error);
     throw error;
@@ -139,7 +140,7 @@ export const handleEmailConfirmation = async (userId: string, email: string, nam
 // Request password reset - sends email with reset link
 export const requestPasswordReset = async (email: string, redirectUrl: string) => {
   if (!email) {
-    const err = new Error('Email is required') as CustomError;
+    const err = new Error(AUTH_ERRORS.EMAIL_REQUIRED) as CustomError;
     err.status = 400;
     throw err;
   }
@@ -150,21 +151,21 @@ export const requestPasswordReset = async (email: string, redirectUrl: string) =
 
   if (error) {
     console.error('Password reset request error:', error);
-    const err = new Error('Failed to send password reset email') as CustomError;
+    const err = new Error(AUTH_ERRORS.PASSWORD_RESET_FAILED) as CustomError;
     err.status = 400;
     throw err;
   }
 
   return {
     success: true,
-    message: 'If an account exists with this email, you will receive a password reset link shortly',
+    message: SUCCESS_MESSAGES.PASSWORD_RESET_EMAIL_SENT,
   };
 };
 
 // Reset password with token from email
 export const resetPassword = async (accessToken: string, newPassword: string, refreshToken?: string) => {
   if (!accessToken || !newPassword) {
-    const err = new Error('Access token and new password are required') as CustomError;
+    const err = new Error(AUTH_ERRORS.ACCESS_TOKEN_PASSWORD_REQUIRED) as CustomError;
     err.status = 400;
     throw err;
   }
@@ -177,7 +178,7 @@ export const resetPassword = async (accessToken: string, newPassword: string, re
 
   if (sessionError || !sessionData.user) {
     console.error('Session error:', sessionError);
-    const err = new Error('Invalid or expired reset token') as CustomError;
+    const err = new Error(AUTH_ERRORS.INVALID_RESET_TOKEN) as CustomError;
     err.status = 401;
     throw err;
   }
@@ -189,13 +190,13 @@ export const resetPassword = async (accessToken: string, newPassword: string, re
 
   if (updateError) {
     console.error('Password update error:', updateError);
-    const err = new Error('Failed to update password') as CustomError;
+    const err = new Error(AUTH_ERRORS.PASSWORD_UPDATE_FAILED) as CustomError;
     err.status = 400;
     throw err;
   }
 
   return {
     success: true,
-    message: 'Password updated successfully. You can now login with your new password',
+    message: SUCCESS_MESSAGES.PASSWORD_UPDATED,
   };
 };

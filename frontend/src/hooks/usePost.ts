@@ -16,6 +16,7 @@ import {
   getFollowersFeed,
 } from '@api/post.api';
 import { showToast } from '@components/shared/toast';
+import { POST_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
 
 export const POST_QUERY_KEY = ['posts'];
 
@@ -28,11 +29,11 @@ export const useCreatePost = () => {
       queryClient.invalidateQueries({ queryKey: POST_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: FOLLOWERS_FEED_QUERY_KEY });
-      showToast.success('Post created successfully! 🎉');
+      showToast.success(SUCCESS_MESSAGES.POST_CREATED);
     },
     onError: (error: any) => {
       console.error('Post creation failed:', error);
-      const errorMessage = error?.response?.data?.message || 'Failed to create post. Please try again.';
+      const errorMessage = error?.response?.data?.message || POST_ERRORS.CREATE_FAILED;
       showToast.error(errorMessage);
     },
   });
@@ -76,11 +77,11 @@ export const useUpdatePost = () => {
       queryClient.invalidateQueries({ queryKey: TOP_POSTS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: FOLLOWERS_FEED_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: TRENDING_QUERY_KEY });
-      showToast.success('Post updated successfully! ✏️');
+      showToast.success(SUCCESS_MESSAGES.POST_UPDATED);
     },
     onError: (error: any) => {
       console.error('Post update failed:', error);
-      const errorMessage = error?.response?.data?.message || 'Failed to update post. Please try again.';
+      const errorMessage = error?.response?.data?.message || POST_ERRORS.UPDATE_FAILED;
       showToast.error(errorMessage);
     },
   });
@@ -97,11 +98,11 @@ export const useDeletePost = () => {
       queryClient.invalidateQueries({ queryKey: FOLLOWERS_FEED_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: TRENDING_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: USER_STATS_QUERY_KEY });
-      showToast.success('Post deleted successfully! 🗑️');
+      showToast.success(SUCCESS_MESSAGES.POST_DELETED);
     },
     onError: (error: any) => {
       console.error('Post deletion failed:', error);
-      const errorMessage = error?.response?.data?.message || 'Failed to delete post. Please try again.';
+      const errorMessage = error?.response?.data?.message || POST_ERRORS.DELETE_FAILED;
       showToast.error(errorMessage);
     },
   });
@@ -263,7 +264,7 @@ export const useToggleShare = () => {
         });
       }
       console.error('Share toggle failed:', err);
-      const errorMessage = err?.response?.data?.message || 'Failed to share post. Please try again.';
+      const errorMessage = err?.response?.data?.message || POST_ERRORS.SHARE_FAILED;
       showToast.error(errorMessage);
     },
     onSettled: (_data, error, variables) => {
@@ -275,7 +276,7 @@ export const useToggleShare = () => {
 
       // Show success toast only if no error
       if (!error) {
-        const message = variables.isCurrentlyShared ? 'Post unshared successfully! 📤' : 'Post shared successfully! 📢';
+        const message = variables.isCurrentlyShared ? SUCCESS_MESSAGES.POST_UNSHARED : SUCCESS_MESSAGES.POST_SHARED;
         showToast.success(message);
       }
     },

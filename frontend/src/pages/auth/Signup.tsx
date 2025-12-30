@@ -9,6 +9,7 @@ import Button from '@components/shared/buttons/Button';
 import { Input } from '@components/shared/form';
 import { signupSchema } from '@schemas/authSchemas';
 import type { SignupFormData } from '@schemas/authSchemas';
+import { LOADING_MESSAGES } from '@constants/errors';
 
 export default function Signup() {
   const signupMutation = useSignup();
@@ -25,7 +26,7 @@ export default function Signup() {
     signupMutation.mutate(data);
   };
 
-  const getButtonText = () => (signupMutation.isPending ? 'Creating account...' : 'Create Account');
+  const getButtonText = () => (signupMutation.isPending ? LOADING_MESSAGES.CREATING_ACCOUNT : 'Create Account');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">

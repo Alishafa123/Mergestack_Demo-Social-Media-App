@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 
 import type { CustomError } from '@/types/index';
 import { User, Profile, UserFollow } from '@models/index.js';
+import { USER_ERRORS, SUCCESS_MESSAGES } from '@constants/errors.js';
 
 export const followUser = async (
   followerId: string,
@@ -9,14 +10,14 @@ export const followUser = async (
 ): Promise<{ message: string; isFollowing: boolean }> => {
   try {
     if (followerId === followingId) {
-      const err = new Error('Cannot follow yourself') as CustomError;
+      const err = new Error(USER_ERRORS.CANNOT_FOLLOW_YOURSELF) as CustomError;
       err.status = 400;
       throw err;
     }
 
     const targetUser = await User.findByPk(followingId);
     if (!targetUser) {
-      const err = new Error('User not found') as CustomError;
+      const err = new Error(USER_ERRORS.USER_NOT_FOUND) as CustomError;
       err.status = 404;
       throw err;
     }
@@ -26,7 +27,7 @@ export const followUser = async (
     });
 
     if (existingFollow) {
-      const err = new Error('Already following this user') as CustomError;
+      const err = new Error(USER_ERRORS.ALREADY_FOLLOWING) as CustomError;
       err.status = 400;
       throw err;
     }
@@ -36,7 +37,7 @@ export const followUser = async (
       following_id: followingId,
     });
 
-    return { message: 'User followed successfully', isFollowing: true };
+    return { message: SUCCESS_MESSAGES.USER_FOLLOWED, isFollowing: true };
   } catch (error) {
     throw error;
   }
@@ -52,14 +53,14 @@ export const unfollowUser = async (
     });
 
     if (!followRelation) {
-      const err = new Error('Not following this user') as CustomError;
+      const err = new Error(USER_ERRORS.NOT_FOLLOWING) as CustomError;
       err.status = 400;
       throw err;
     }
 
     await followRelation.destroy();
 
-    return { message: 'User unfollowed successfully', isFollowing: false };
+    return { message: SUCCESS_MESSAGES.USER_UNFOLLOWED, isFollowing: false };
   } catch (error) {
     throw error;
   }
@@ -104,45 +105,6 @@ export const getFollowers = async (
   }
 };
 
-export const getFollowing = async (
-  userId: string,
-  page: number = 1,
-  limit: number = 10,
-): Promise<{ following: any[]; total: number; hasMore: boolean }> => {
-  try {
-    const offset = (page - 1) * limit;
-
-    const { count, rows } = await UserFollow.findAndCountAll({
-      where: { follower_id: userId },
-      include: [
-        {
-          model: User,
-          as: 'followingUser',
-          attributes: ['id', 'name', 'email'],
-          include: [
-            {
-              model: Profile,
-              as: 'profile',
-              attributes: ['first_name', 'last_name', 'profile_url', 'bio'],
-            },
-          ],
-        },
-      ],
-      limit,
-      offset,
-      order: [['createdAt', 'DESC']],
-    });
-
-    return {
-      following: rows.map((row) => row.toJSON()),
-      total: count,
-      hasMore: offset + limit < count,
-    };
-  } catch (error) {
-    throw error;
-  }
-};
-
 export const isFollowing = async (followerId: string, followingId: string): Promise<boolean> => {
   try {
     const followRelation = await UserFollow.findOne({
@@ -150,61 +112,6 @@ export const isFollowing = async (followerId: string, followingId: string): Prom
     });
 
     return !!followRelation;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const getFollowStats = async (userId: string): Promise<{ followersCount: number; followingCount: number }> => {
-  try {
-    const [followersCount, followingCount] = await Promise.all([
-      UserFollow.count({ where: { following_id: userId } }),
-      UserFollow.count({ where: { follower_id: userId } }),
-    ]);
-
-    return { followersCount, followingCount };
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const getUsersToFollow = async (
-  currentUserId: string,
-  page: number = 1,
-  limit: number = 10,
-): Promise<{ users: any[]; total: number; hasMore: boolean }> => {
-  try {
-    const offset = (page - 1) * limit;
-
-    const followingIds = await UserFollow.findAll({
-      where: { follower_id: currentUserId },
-      attributes: ['following_id'],
-    });
-
-    const excludeIds = [currentUserId, ...followingIds.map((f) => f.following_id)];
-
-    const { count, rows } = await User.findAndCountAll({
-      where: {
-        id: { [Op.notIn]: excludeIds },
-      },
-      include: [
-        {
-          model: Profile,
-          as: 'profile',
-          attributes: ['first_name', 'last_name', 'profile_url', 'bio'],
-        },
-      ],
-      attributes: ['id', 'name', 'email'],
-      limit,
-      offset,
-      order: [['createdAt', 'DESC']],
-    });
-
-    return {
-      users: rows.map((row) => row.toJSON()),
-      total: count,
-      hasMore: offset + limit < count,
-    };
   } catch (error) {
     throw error;
   }

@@ -11,14 +11,6 @@ export interface FollowStatusResponse {
   isFollowing: boolean;
 }
 
-export interface FollowStatsResponse {
-  success: boolean;
-  stats: {
-    followersCount: number;
-    followingCount: number;
-  };
-}
-
 export interface UserProfile {
   id: string;
   name: string;
@@ -41,23 +33,6 @@ export interface FollowersResponse {
   hasMore: boolean;
 }
 
-export interface FollowingResponse {
-  success: boolean;
-  following: Array<{
-    followingUser: UserProfile;
-    createdAt: string;
-  }>;
-  total: number;
-  hasMore: boolean;
-}
-
-export interface SuggestionsResponse {
-  success: boolean;
-  users: UserProfile[];
-  total: number;
-  hasMore: boolean;
-}
-
 export const followUser = async (userId: string): Promise<FollowResponse> => {
   const res = await api.post(`/users/${userId}/follow`);
   return res.data;
@@ -73,11 +48,6 @@ export const getFollowStatus = async (userId: string): Promise<FollowStatusRespo
   return res.data;
 };
 
-export const getFollowStats = async (userId: string): Promise<FollowStatsResponse> => {
-  const res = await api.get(`/users/${userId}/follow-stats`);
-  return res.data;
-};
-
 export const getFollowers = async (
   userId: string,
   page: number = 1,
@@ -87,16 +57,4 @@ export const getFollowers = async (
   return res.data;
 };
 
-export const getFollowing = async (
-  userId: string,
-  page: number = 1,
-  limit: number = 10,
-): Promise<FollowingResponse> => {
-  const res = await api.get(`/users/${userId}/following?page=${page}&limit=${limit}`);
-  return res.data;
-};
 
-export const getUserSuggestions = async (page: number = 1, limit: number = 10): Promise<SuggestionsResponse> => {
-  const res = await api.get(`/users/suggestions/to-follow?page=${page}&limit=${limit}`);
-  return res.data;
-};

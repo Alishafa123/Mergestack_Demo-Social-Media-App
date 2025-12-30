@@ -1,16 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 
+import { USER_ERRORS } from '@constants/errors.js';
 import * as userService from '@services/user.service.js';
+import type { AuthenticatedRequest } from '@/types/express.js';
 
-export const followUser = async (req: Request, res: Response, next: NextFunction) => {
+export const followUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const followerId = req.user!.id;
+    const followerId = req.user.id;
     const followingId = req.params.userId;
 
     if (!followingId) {
       return res.status(400).json({
         success: false,
-        message: 'User ID is required',
+        message: USER_ERRORS.USER_ID_REQUIRED,
       });
     }
 
@@ -25,15 +27,15 @@ export const followUser = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const unfollowUser = async (req: Request, res: Response, next: NextFunction) => {
+export const unfollowUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const followerId = req.user!.id;
+    const followerId = req.user.id;
     const followingId = req.params.userId;
 
     if (!followingId) {
       return res.status(400).json({
         success: false,
-        message: 'User ID is required',
+        message: USER_ERRORS.USER_ID_REQUIRED,
       });
     }
 
@@ -57,7 +59,7 @@ export const getFollowers = async (req: Request, res: Response, next: NextFuncti
     if (!userId) {
       return res.status(400).json({
         success: false,
-        message: 'User ID is required',
+        message: USER_ERRORS.USER_ID_REQUIRED,
       });
     }
 
@@ -72,39 +74,15 @@ export const getFollowers = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-export const getFollowing = async (req: Request, res: Response, next: NextFunction) => {
+export const checkFollowStatus = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const userId = req.params.userId;
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
-
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: 'User ID is required',
-      });
-    }
-
-    const result = await userService.getFollowing(userId, page, limit);
-
-    res.json({
-      success: true,
-      ...result,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const checkFollowStatus = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const followerId = req.user!.id;
+    const followerId = req.user.id;
     const followingId = req.params.userId;
 
     if (!followingId) {
       return res.status(400).json({
         success: false,
-        message: 'User ID is required',
+        message: USER_ERRORS.USER_ID_REQUIRED,
       });
     }
 
@@ -113,45 +91,6 @@ export const checkFollowStatus = async (req: Request, res: Response, next: NextF
     res.json({
       success: true,
       isFollowing,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const getFollowStats = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.params.userId;
-
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: 'User ID is required',
-      });
-    }
-
-    const stats = await userService.getFollowStats(userId);
-
-    res.json({
-      success: true,
-      stats,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const getUsersToFollow = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const currentUserId = req.user!.id;
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
-
-    const result = await userService.getUsersToFollow(currentUserId, page, limit);
-
-    res.json({
-      success: true,
-      ...result,
     });
   } catch (error: any) {
     next(error);

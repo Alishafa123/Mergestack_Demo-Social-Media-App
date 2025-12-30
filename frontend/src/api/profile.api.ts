@@ -33,12 +33,12 @@ export interface SearchUsersResponse {
 }
 
 export const getProfile = async () => {
-  const res = await api.get('/profile/me');
+  const res = await api.get('/profile');
   return res.data;
 };
 
 export const getProfileById = async (userId: string) => {
-  const res = await api.get(`/profile/${userId}`);
+  const res = await api.get(`/profile/?userId=${userId}`);
   return res.data;
 };
 
@@ -59,16 +59,11 @@ export const updateProfile = async (data: ProfileFormData & { profileImage?: Fil
     }
   });
 
-  const res = await api.put('/profile/me', formData, {
+  const res = await api.put('/profile/', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
-  return res.data;
-};
-
-export const deleteProfile = async () => {
-  const res = await api.delete('/profile/me');
   return res.data;
 };
 
@@ -86,12 +81,7 @@ export interface UserStatsResponse {
   stats: UserStats;
 }
 
-export const getUserStats = async (): Promise<UserStatsResponse> => {
-  const res = await api.get('/profile/stats/me');
-  return res.data;
-};
-
-export const getUserStatsById = async (userId: string): Promise<UserStatsResponse> => {
+export const getUserStatsById = async (userId: string ): Promise<UserStatsResponse> => {
   const res = await api.get(`/profile/stats/${userId}`);
   return res.data;
 };

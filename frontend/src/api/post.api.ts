@@ -169,7 +169,7 @@ export interface TopPostsResponse {
 }
 
 export const getUserTopPosts = async () => {
-  const res = await api.get('/posts/top/me');
+  const res = await api.get('/posts/top');
   return res.data as TopPostsResponse;
 };
 

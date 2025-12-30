@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 
+import type { AuthenticatedRequest } from '@/types/express.js';
 import * as commentService from '@services/comment.service.js';
 
-export const createComment = async (req: Request, res: Response, next: NextFunction) => {
+export const createComment = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user!.id;
+    const userId = req.user.id;
     const { postId } = req.params;
     const { content, parentCommentId } = req.body;
 
@@ -65,9 +66,9 @@ export const getPostComments = async (req: Request, res: Response, next: NextFun
   }
 };
 
-export const updateComment = async (req: Request, res: Response, next: NextFunction) => {
+export const updateComment = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user!.id;
+    const userId = req.user.id;
     const { commentId } = req.params;
     const { content } = req.body;
 
@@ -104,9 +105,9 @@ export const updateComment = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-export const deleteComment = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteComment = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user!.id;
+    const userId = req.user.id;
     const { commentId } = req.params;
 
     if (!commentId) {

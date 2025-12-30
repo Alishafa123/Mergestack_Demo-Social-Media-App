@@ -41,8 +41,6 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
       },
       {
         onSuccess: () => {
-          showToast.success('Post created successfully! 🎉');
-
           setTimeout(() => {
             handleClose();
           }, 1500);

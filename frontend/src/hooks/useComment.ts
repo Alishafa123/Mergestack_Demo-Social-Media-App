@@ -4,6 +4,7 @@ import { USER_STATS_QUERY_KEY } from '@hooks/useProfile';
 import type { CreateCommentData, CommentsResponse } from '@api/comment.api';
 import { getPostComments, createComment, updateComment, deleteComment } from '@api/comment.api';
 import { showToast } from '@components/shared/toast';
+import { COMMENT_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
 
 export const COMMENT_QUERY_KEY = ['comments'];
 
@@ -47,11 +48,11 @@ export const useCreateComment = () => {
         queryKey: USER_STATS_QUERY_KEY,
       });
 
-      showToast.success('Comment posted successfully! 💬');
+      showToast.success(SUCCESS_MESSAGES.COMMENT_CREATED);
     },
     onError: (error: any) => {
       console.error('Comment creation failed:', error);
-      const errorMessage = error?.response?.data?.message || 'Failed to post comment. Please try again.';
+      const errorMessage = error?.response?.data?.message || COMMENT_ERRORS.CREATE_FAILED;
       showToast.error(errorMessage);
     },
   });
@@ -64,11 +65,11 @@ export const useUpdateComment = () => {
     mutationFn: ({ commentId, content }: { commentId: string; content: string }) => updateComment(commentId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEY });
-      showToast.success('Comment updated successfully! ✏️');
+      showToast.success(SUCCESS_MESSAGES.COMMENT_UPDATED);
     },
     onError: (error: any) => {
       console.error('Comment update failed:', error);
-      const errorMessage = error?.response?.data?.message || 'Failed to update comment. Please try again.';
+      const errorMessage = error?.response?.data?.message || COMMENT_ERRORS.UPDATE_FAILED;
       showToast.error(errorMessage);
     },
   });
@@ -82,11 +83,11 @@ export const useDeleteComment = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: ['posts'] });
-      showToast.success('Comment deleted successfully! 🗑️');
+      showToast.success(SUCCESS_MESSAGES.COMMENT_DELETED);
     },
     onError: (error: any) => {
       console.error('Comment deletion failed:', error);
-      const errorMessage = error?.response?.data?.message || 'Failed to delete comment. Please try again.';
+      const errorMessage = error?.response?.data?.message || COMMENT_ERRORS.DELETE_FAILED;
       showToast.error(errorMessage);
     },
   });

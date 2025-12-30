@@ -1,13 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 
-import * as profileService from '@services/profile.service.js';
+import type { AuthenticatedRequest } from '@/types/express.js';
+import { PROFILE_ERRORS, SUCCESS_MESSAGES, GENERIC_ERRORS } from '@constants/errors.js';
 import { uploadProfileImage } from '@services/storage.service.js';
+import { getProfile, getUserStatsData, searchUsersByName, updateProfileData } from '@/services/profile.service';
 
-export const getMyProfile = async (req: Request, res: Response, next: NextFunction) => {
+export const getProfileData = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user!.id;
+    // If userId is provided in params and it's not "me", get profile for that user
+    // Otherwise, get profile for the authenticated user
+    const paramUserId = req.query?.userId as string | undefined;
+    const userId = paramUserId ?  paramUserId : req.user.id 
 
-    const user = await profileService.getProfile(userId);
+    const user = await getProfile(userId);
 
     res.json({
       success: true,
@@ -23,9 +28,9 @@ export const getMyProfile = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-export const updateMyProfile = async (req: Request, res: Response, next: NextFunction) => {
+export const updateMyProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user!.id;
+    const userId = req.user.id;
     let profileData = { ...req.body };
 
     if (!req.file) {
@@ -39,17 +44,17 @@ export const updateMyProfile = async (req: Request, res: Response, next: NextFun
       } catch (uploadError) {
         return res.status(400).json({
           success: false,
-          message: 'Failed to upload profile image',
-          error: uploadError instanceof Error ? uploadError.message : 'Unknown upload error',
+          message: PROFILE_ERRORS.PROFILE_IMAGE_UPLOAD_FAILED,
+          error: uploadError instanceof Error ? uploadError.message : GENERIC_ERRORS.UNKNOWN_UPLOAD_ERROR,
         });
       }
     }
 
-    const user = await profileService.updateProfile(userId, profileData);
+    const user = await updateProfileData(userId, profileData);
 
     res.json({
       success: true,
-      message: 'Profile updated successfully',
+      message: SUCCESS_MESSAGES.PROFILE_UPDATED,
       user: {
         id: user.id,
         email: user.email,
@@ -62,22 +67,7 @@ export const updateMyProfile = async (req: Request, res: Response, next: NextFun
   }
 };
 
-export const deleteMyProfile = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.user!.id;
-
-    const result = await profileService.deleteProfile(userId);
-
-    res.json({
-      success: true,
-      ...result,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const getProfile = async (req: Request, res: Response, next: NextFunction) => {
+export const getStats = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.params.userId;
 
@@ -88,7 +78,7 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
       });
     }
 
-    const user = await profileService.getProfile(userId);
+    const user = await getProfile(userId);
 
     res.json({
       success: true,
@@ -136,7 +126,7 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
       }
     }
 
-    const user = await profileService.updateProfile(userId, profileData);
+    const user = await updateProfileData(userId, profileData);
 
     res.json({
       success: true,
@@ -153,33 +143,11 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-export const deleteProfile = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.params.userId;
-
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: 'User ID is required',
-      });
-    }
-
-    const result = await profileService.deleteProfile(userId);
-
-    res.json({
-      success: true,
-      ...result,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
 export const getUserStats = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.id;
 
-    const stats = await profileService.getUserStats(userId);
+    const stats = await getUserStatsData(userId);
 
     res.json({
       success: true,
@@ -201,7 +169,7 @@ export const getPublicUserStats = async (req: Request, res: Response, next: Next
       });
     }
 
-    const stats = await profileService.getUserStats(userId);
+    const stats = await getUserStatsData(userId);
 
     res.json({
       success: true,
@@ -212,28 +180,28 @@ export const getPublicUserStats = async (req: Request, res: Response, next: Next
   }
 };
 
-export const searchUsers = async (req: Request, res: Response, next: NextFunction) => {
+export const searchUsers = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const { q: query } = req.query;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
-    const currentUserId = req.user?.id;
+    const currentUserId = req.user.id;
 
     if (!query || typeof query !== 'string') {
       return res.status(400).json({
         success: false,
-        message: 'Search query is required',
+        message: PROFILE_ERRORS.SEARCH_QUERY_REQUIRED,
       });
     }
 
     if (query.length < 2) {
       return res.status(400).json({
         success: false,
-        message: 'Search query must be at least 2 characters',
+        message: PROFILE_ERRORS.SEARCH_QUERY_TOO_SHORT,
       });
     }
 
-    const result = await profileService.searchUsersByName(query.trim(), page, limit, currentUserId);
+    const result = await searchUsersByName(query.trim(), page, limit, currentUserId);
 
     res.json({
       success: true,

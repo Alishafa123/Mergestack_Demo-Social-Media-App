@@ -3,18 +3,13 @@ import {
   followUser,
   unfollowUser,
   getFollowStatus,
-  getFollowStats,
   getFollowers,
-  getFollowing,
-  getUserSuggestions,
 } from '@api/user.api';
+import { showToast } from '@components/shared/toast';
+import { USER_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
 
 export const USER_QUERY_KEY = ['user'];
 export const FOLLOW_STATUS_QUERY_KEY = ['followStatus'];
-export const FOLLOW_STATS_QUERY_KEY = ['followStats'];
-export const FOLLOWERS_QUERY_KEY = ['followers'];
-export const FOLLOWING_QUERY_KEY = ['following'];
-export const USER_SUGGESTIONS_QUERY_KEY = ['userSuggestions'];
 export const RECENT_FOLLOWERS_QUERY_KEY = ['recentFollowers'];
 
 export const useFollowUser = () => {
@@ -28,13 +23,14 @@ export const useFollowUser = () => {
         isFollowing: data.isFollowing,
       });
 
-      queryClient.invalidateQueries({ queryKey: [...FOLLOW_STATS_QUERY_KEY, userId] });
-      queryClient.invalidateQueries({ queryKey: [...FOLLOWERS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: [...RECENT_FOLLOWERS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: ['userStats', userId] });
+      showToast.success(SUCCESS_MESSAGES.USER_FOLLOWED);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Follow user failed:', error);
+      const errorMessage = error?.response?.data?.message || USER_ERRORS.FOLLOW_FAILED;
+      showToast.error(errorMessage);
     },
   });
 };
@@ -51,13 +47,14 @@ export const useUnfollowUser = () => {
         isFollowing: data.isFollowing,
       });
 
-      queryClient.invalidateQueries({ queryKey: [...FOLLOW_STATS_QUERY_KEY, userId] });
-      queryClient.invalidateQueries({ queryKey: [...FOLLOWERS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: [...RECENT_FOLLOWERS_QUERY_KEY, userId] });
       queryClient.invalidateQueries({ queryKey: ['userStats', userId] });
+      showToast.success(SUCCESS_MESSAGES.USER_UNFOLLOWED);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Unfollow user failed:', error);
+      const errorMessage = error?.response?.data?.message || USER_ERRORS.UNFOLLOW_FAILED;
+      showToast.error(errorMessage);
     },
   });
 };
@@ -68,41 +65,6 @@ export const useGetFollowStatus = (userId: string) => {
     queryFn: () => getFollowStatus(userId),
     enabled: !!userId,
     staleTime: 2 * 60 * 1000,
-  });
-};
-
-export const useGetFollowStats = (userId: string) => {
-  return useQuery({
-    queryKey: [...FOLLOW_STATS_QUERY_KEY, userId],
-    queryFn: () => getFollowStats(userId),
-    enabled: !!userId,
-    staleTime: 2 * 60 * 1000,
-  });
-};
-
-export const useGetFollowers = (userId: string, page: number = 1, limit: number = 10) => {
-  return useQuery({
-    queryKey: [...FOLLOWERS_QUERY_KEY, userId, { page, limit }],
-    queryFn: () => getFollowers(userId, page, limit),
-    enabled: !!userId,
-    staleTime: 5 * 60 * 1000,
-  });
-};
-
-export const useGetFollowing = (userId: string, page: number = 1, limit: number = 10) => {
-  return useQuery({
-    queryKey: [...FOLLOWING_QUERY_KEY, userId, { page, limit }],
-    queryFn: () => getFollowing(userId, page, limit),
-    enabled: !!userId,
-    staleTime: 5 * 60 * 1000,
-  });
-};
-
-export const useGetUserSuggestions = (page: number = 1, limit: number = 10) => {
-  return useQuery({
-    queryKey: [...USER_SUGGESTIONS_QUERY_KEY, { page, limit }],
-    queryFn: () => getUserSuggestions(page, limit),
-    staleTime: 10 * 60 * 1000,
   });
 };
 

@@ -4,6 +4,7 @@ import sequelize from '@config/database.js';
 import type { CustomError, UserModel } from '@/types/index';
 import { deleteProfileImage } from '@services/storage.service.js';
 import { User, Profile, Post, UserFollow } from '@models/index.js';
+import { PROFILE_ERRORS } from '@constants/errors.js';
 
 export const getProfile = async (userId: string): Promise<UserModel> => {
   try {
@@ -18,7 +19,7 @@ export const getProfile = async (userId: string): Promise<UserModel> => {
     })) as UserModel | null;
 
     if (!user) {
-      const err = new Error('User not found') as CustomError;
+      const err = new Error(PROFILE_ERRORS.USER_NOT_FOUND) as CustomError;
       err.status = 404;
       throw err;
     }
@@ -29,7 +30,7 @@ export const getProfile = async (userId: string): Promise<UserModel> => {
   }
 };
 
-export const updateProfile = async (userId: string, profileData: any): Promise<UserModel> => {
+export const updateProfileData = async (userId: string, profileData: any): Promise<UserModel> => {
   try {
     const user = (await User.findOne({
       where: { id: userId },
@@ -42,7 +43,7 @@ export const updateProfile = async (userId: string, profileData: any): Promise<U
     })) as UserModel | null;
 
     if (!user) {
-      const err = new Error('User not found') as CustomError;
+      const err = new Error(PROFILE_ERRORS.USER_NOT_FOUND) as CustomError;
       err.status = 404;
       throw err;
     }
@@ -68,34 +69,12 @@ export const updateProfile = async (userId: string, profileData: any): Promise<U
   }
 };
 
-export const deleteProfile = async (userId: string): Promise<{ message: string }> => {
-  try {
-    const user = (await User.findOne({
-      where: { id: userId },
-    })) as UserModel | null;
-
-    if (!user) {
-      const err = new Error('User not found') as CustomError;
-      err.status = 404;
-      throw err;
-    }
-
-    await User.destroy({
-      where: { id: userId },
-    });
-
-    return { message: 'Profile deleted successfully' };
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const getUserStats = async (userId: string) => {
+export const getUserStatsData = async (userId: string) => {
   try {
     const user = await User.findByPk(userId);
 
     if (!user) {
-      const err = new Error('User not found') as CustomError;
+      const err = new Error(PROFILE_ERRORS.USER_NOT_FOUND) as CustomError;
       err.status = 404;
       throw err;
     }
