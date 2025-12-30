@@ -17,4 +17,20 @@ const sequelize = new Sequelize(databaseUrl, {
   },
 });
 
+// Lazy DB connection for serverless
+let isConnected = false;
+
+export const connectDB = async () => {
+  if (!isConnected) {
+    try {
+      await sequelize.authenticate();
+      isConnected = true;
+      console.log('✅ Database connected');
+    } catch (error) {
+      console.error('❌ Database connection failed:', error);
+      throw error;
+    }
+  }
+};
+
 export default sequelize;
