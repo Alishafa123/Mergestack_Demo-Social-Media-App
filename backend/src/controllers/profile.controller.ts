@@ -7,8 +7,6 @@ import { getProfile, getUserStatsData, searchUsersByName, updateProfileData } fr
 
 export const getProfileData = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    // If userId is provided in params and it's not "me", get profile for that user
-    // Otherwise, get profile for the authenticated user
     const paramUserId = req.query?.userId as string | undefined;
     const userId = paramUserId ?  paramUserId : req.user.id 
 
@@ -68,97 +66,6 @@ export const updateMyProfile = async (req: AuthenticatedRequest, res: Response, 
 };
 
 export const getStats = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.params.userId;
-
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: 'User ID is required',
-      });
-    }
-
-    const user = await getProfile(userId);
-
-    res.json({
-      success: true,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        profile: user.profile,
-      },
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const updateProfile = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.params.userId;
-
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: 'User ID is required',
-      });
-    }
-
-    let profileData = { ...req.body };
-
-    // Remove profile_url from form data if no file is uploaded
-    if (!req.file) {
-      delete profileData.profile_url;
-    }
-
-    // Handle profile image upload if file is present
-    if (req.file) {
-      try {
-        const imageUrl = await uploadProfileImage(userId, req.file);
-        profileData.profile_url = imageUrl;
-      } catch (uploadError) {
-        return res.status(400).json({
-          success: false,
-          message: 'Failed to upload profile image',
-          error: uploadError instanceof Error ? uploadError.message : 'Unknown upload error',
-        });
-      }
-    }
-
-    const user = await updateProfileData(userId, profileData);
-
-    res.json({
-      success: true,
-      message: 'Profile updated successfully',
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        profile: user.profile,
-      },
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const getUserStats = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.user!.id;
-
-    const stats = await getUserStatsData(userId);
-
-    res.json({
-      success: true,
-      stats,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const getPublicUserStats = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.params.userId;
 
