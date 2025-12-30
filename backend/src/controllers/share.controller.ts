@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
-import * as shareService from '@services/share.service.js';
-import type { AuthenticatedRequest } from '@/types/express.js';
+import * as shareService from '@services/share.service';
+import type { AuthenticatedRequest } from '@/types/express';
 
 export const sharePost = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {

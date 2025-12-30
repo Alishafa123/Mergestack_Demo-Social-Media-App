@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { supabase } from '@config/supabase.js';
-import type { CustomError } from '@/types/index.js';
-import type { AuthenticatedUser } from '@/types/express.js';
+import { supabase } from '@config/supabase';
+import type { CustomError } from '@/types/index';
+import type { AuthenticatedUser } from '@/types/express';
 
 export const authenticateSupabaseToken = async (req: Request, res: Response, next: NextFunction) => {
   try {

@@ -1,4 +1,4 @@
-import { Post, PostShare, User, Profile } from '@models/index.js';
+import { Post, PostShare, User, Profile } from '@models/index';
 import type { CustomError, PostShareModel, PostModel } from '@/types/index';
 
 export const sharePost = async (postId: string, userId: string, sharedContent?: string): Promise<PostShareModel> => {

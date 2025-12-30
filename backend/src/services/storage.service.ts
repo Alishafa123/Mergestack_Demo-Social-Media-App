@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { supabase } from '@config/supabase.js';
+import { supabase } from '@config/supabase';
 
 const PROFILE_BUCKET = 'profile-images';
 const POST_BUCKET = 'post-images';

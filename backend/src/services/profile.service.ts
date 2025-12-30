@@ -1,10 +1,10 @@
 import { Op } from 'sequelize';
 
-import sequelize from '@config/database.js';
+import sequelize from '@config/database';
 import type { CustomError, UserModel } from '@/types/index';
-import { deleteProfileImage } from '@services/storage.service.js';
-import { User, Profile, Post, UserFollow } from '@models/index.js';
-import { PROFILE_ERRORS } from '@constants/errors.js';
+import { deleteProfileImage } from '@services/storage.service';
+import { User, Profile, Post, UserFollow } from '@models/index';
+import { PROFILE_ERRORS } from '@constants/errors';
 
 export const getProfile = async (userId: string): Promise<UserModel> => {
   try {

@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
 
-import '@models/index.js';
-import app from '@/app.js';
-import sequelize from '@config/database.js';
+import '@models/index';
+import app from '@/app';
+import sequelize from '@config/database';
 
 dotenv.config();
 

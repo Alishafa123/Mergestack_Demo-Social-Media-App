@@ -1,11 +1,11 @@
-import Post from '@models/post.model.js';
-import User from '@models/user.model.js';
-import Profile from '@models/profile.model.js';
-import PostLike from '@models/post-like.model.js';
-import PostImage from '@models/post-image.model.js';
-import PostShare from '@models/post-share.model.js';
-import UserFollow from '@models/user-follow.model.js';
-import PostComment from '@models/post-comment.model.js';
+import Post from '@models/post.model';
+import User from '@models/user.model';
+import Profile from '@models/profile.model';
+import PostLike from '@models/post-like.model';
+import PostImage from '@models/post-image.model';
+import PostShare from '@models/post-share.model';
+import UserFollow from '@models/user-follow.model';
+import PostComment from '@models/post-comment.model';
 
 User.hasOne(Profile, {
   foreignKey: 'user_id',

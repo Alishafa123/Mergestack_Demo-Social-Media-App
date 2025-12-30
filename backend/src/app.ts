@@ -2,13 +2,13 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 
-import authRoutes from '@routes/auth.routes.js';
-import postRoutes from '@routes/post.routes.js';
-import userRoutes from '@routes/user.routes.js';
-import shareRoutes from '@routes/share.routes.js';
-import profileRoutes from '@routes/profile.routes.js';
-import commentRoutes from '@routes/comment.routes.js';
-import errorHandler from '@middleware/error.middleware.js';
+import authRoutes from '@routes/auth.routes';
+import postRoutes from '@routes/post.routes';
+import userRoutes from '@routes/user.routes';
+import shareRoutes from '@routes/share.routes';
+import profileRoutes from '@routes/profile.routes';
+import commentRoutes from '@routes/comment.routes';
+import errorHandler from '@middleware/error.middleware';
 
 dotenv.config();
 

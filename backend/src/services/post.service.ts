@@ -1,9 +1,9 @@
 import { Op } from 'sequelize';
 
 import type { CustomError, PostModel } from '@/types/index';
-import { deletePostImages } from '@services/storage.service.js';
-import { Post, PostImage, PostLike, PostShare, User, Profile, UserFollow } from '@models/index.js';
-import { POST_ERRORS, SUCCESS_MESSAGES } from '@constants/errors.js';
+import { deletePostImages } from '@services/storage.service';
+import { Post, PostImage, PostLike, PostShare, User, Profile, UserFollow } from '@models/index';
+import { POST_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
 
 // Helper function to build common post includes
 const buildPostIncludes = (currentUserId?: string) => {

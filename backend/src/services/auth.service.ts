@@ -1,7 +1,7 @@
-import { supabase } from '@config/supabase.js';
-import { User, Profile } from '@models/index.js';
+import { supabase } from '@config/supabase';
+import { User, Profile } from '@models/index';
 import type { CustomError, LoginCredentials, SignupCredentials } from '@/types/index';
-import { AUTH_ERRORS, SUCCESS_MESSAGES } from '@constants/errors.js';
+import { AUTH_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
 
 export const login = async ({ email, password }: LoginCredentials) => {
   if (!email || !password) {

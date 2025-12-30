@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 
-import * as postService from '@services/post.service.js';
-import type { AuthenticatedRequest } from '@/types/express.js';
-import { POST_ERRORS, SUCCESS_MESSAGES, GENERIC_ERRORS } from '@constants/errors.js';
-import { uploadPostImages } from '@services/storage.service.js';
+import * as postService from '@services/post.service';
+import type { AuthenticatedRequest } from '@/types/express';
+import { POST_ERRORS, SUCCESS_MESSAGES, GENERIC_ERRORS } from '@constants/errors';
+import { uploadPostImages } from '@services/storage.service';
 
 export const createPost = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {

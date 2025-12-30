@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
-import * as commentController from '@controllers/comment.controller.js';
-import { authenticateSupabaseToken } from '@middleware/supabase-auth.middleware.js';
+import * as commentController from '@controllers/comment.controller';
+import { authenticateSupabaseToken } from '@middleware/supabase-auth.middleware';
 
 const router = Router();
 

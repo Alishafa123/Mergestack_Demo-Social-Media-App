@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "outDir": "./dist",
+    "paths": {
+      "@/*": ["*"],
+      "@config/*": ["config/*"],
+      "@constants/*": ["constants/*"],
+      "@controllers/*": ["controllers/*"],
+      "@middleware/*": ["middleware/*"],
+      "@models/*": ["models/*"],
+      "@routes/*": ["routes/*"],
+      "@services/*": ["services/*"],
+      "@types/*": ["types/*"]
+    }
+  }
+}

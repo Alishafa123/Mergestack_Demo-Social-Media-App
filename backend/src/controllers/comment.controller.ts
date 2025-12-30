@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
-import type { AuthenticatedRequest } from '@/types/express.js';
-import * as commentService from '@services/comment.service.js';
+import type { AuthenticatedRequest } from '@/types/express';
+import * as commentService from '@services/comment.service';
 
 export const createComment = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {

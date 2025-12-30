@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { USER_ERRORS } from '@constants/errors.js';
-import * as userService from '@services/user.service.js';
-import type { AuthenticatedRequest } from '@/types/express.js';
+import { USER_ERRORS } from '@constants/errors';
+import * as userService from '@services/user.service';
+import type { AuthenticatedRequest } from '@/types/express';
 
 export const followUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {

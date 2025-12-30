@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
-import * as shareController from '@controllers/share.controller.js';
-import { authenticateSupabaseToken } from '@middleware/supabase-auth.middleware.js';
+import * as shareController from '@controllers/share.controller';
+import { authenticateSupabaseToken } from '@middleware/supabase-auth.middleware';
 
 const router = Router();
 

@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 
-import type { AuthenticatedRequest } from '@/types/express.js';
-import { PROFILE_ERRORS, SUCCESS_MESSAGES, GENERIC_ERRORS } from '@constants/errors.js';
-import { uploadProfileImage } from '@services/storage.service.js';
+import type { AuthenticatedRequest } from '@/types/express';
+import { PROFILE_ERRORS, SUCCESS_MESSAGES, GENERIC_ERRORS } from '@constants/errors';
+import { uploadProfileImage } from '@services/storage.service';
 import { getProfile, getUserStatsData, searchUsersByName, updateProfileData } from '@/services/profile.service';
 
 export const getProfileData = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {

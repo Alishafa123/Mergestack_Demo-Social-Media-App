@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 
 import type { CustomError, PostCommentModel } from '@/types/index';
-import { Post, PostComment, User, Profile } from '@models/index.js';
+import { Post, PostComment, User, Profile } from '@models/index';
 
 export const createComment = async (
   postId: string,

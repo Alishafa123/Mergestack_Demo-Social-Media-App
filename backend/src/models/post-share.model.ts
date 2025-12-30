@@ -1,6 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 
-import sequelize from '@config/database.js';
+import sequelize from '@config/database';
 import type { PostShareModel } from '@/types/index';
 
 interface PostShareCreationAttributes extends Optional<PostShareModel, 'id' | 'createdAt' | 'updatedAt'> {}
