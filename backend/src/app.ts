@@ -9,7 +9,6 @@ import shareRoutes from '@routes/share.routes';
 import profileRoutes from '@routes/profile.routes';
 import commentRoutes from '@routes/comment.routes';
 import errorHandler from '@middleware/error.middleware';
-import { ensureDBConnection } from '@middleware/db.middleware';
 
 dotenv.config();
 
@@ -23,9 +22,6 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Ensure DB connection for all API routes
-app.use('/api', ensureDBConnection);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
