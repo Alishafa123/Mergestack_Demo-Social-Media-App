@@ -59,7 +59,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ users, isLoading, query, 
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       {users.map((user) => {
         const displayName = getDisplayName(user);
 
@@ -75,17 +75,23 @@ const SearchResults: React.FC<SearchResultsProps> = ({ users, isLoading, query, 
 
             {/* User Info */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-center space-x-2">
-                <p className="font-semibold text-gray-900 truncate">{highlightQuery(displayName, query)}</p>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+                <p className="font-semibold text-gray-900 truncate text-sm sm:text-base">
+                  {highlightQuery(displayName, query)}
+                </p>
                 {user.profile?.city && (
-                  <div className="flex items-center text-gray-500 text-sm">
+                  <div className="flex items-center text-gray-500 text-xs sm:text-sm mt-1 sm:mt-0">
                     <MapPin size={12} className="mr-1" />
-                    <span>{user.profile.city}</span>
+                    <span className="truncate">{user.profile.city}</span>
                   </div>
                 )}
               </div>
 
-              {user.profile?.bio && <p className="text-gray-600 text-sm truncate mt-1">{user.profile.bio}</p>}
+              {user.profile?.bio && (
+                <p className="text-gray-600 text-xs sm:text-sm truncate mt-1 leading-tight">
+                  {user.profile.bio}
+                </p>
+              )}
 
               <p className="text-gray-400 text-xs mt-1">@{user.email.split('@')[0]}</p>
             </div>
@@ -96,9 +102,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({ users, isLoading, query, 
                   e.stopPropagation();
                   handleProfileClick(user.id);
                 }}
-                className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                className="px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
               >
-                View Profile
+                <span className="hidden sm:inline">View Profile</span>
+                <span className="sm:hidden">View</span>
               </button>
             </div>
           </div>

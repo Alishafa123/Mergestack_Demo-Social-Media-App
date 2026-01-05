@@ -65,7 +65,7 @@ export default function SearchBar({ onSearch, placeholder = 'Search...' }: Searc
   };
 
   return (
-    <div className="w-full max-w-2xl" ref={searchRef}>
+    <div className="w-full max-w-2xl px-2 sm:px-0" ref={searchRef}>
       <form onSubmit={handleSubmit} className="relative">
         <div
           className={`relative transition-all duration-200 rounded-full ${
@@ -93,11 +93,11 @@ export default function SearchBar({ onSearch, placeholder = 'Search...' }: Searc
         </div>
 
         {searchQuery && isFocused && (
-          <div className="absolute z-50 mt-2 w-full bg-white shadow-xl rounded-2xl border border-gray-100 max-h-96 overflow-hidden">
+          <div className="absolute z-50 mt-2 w-[calc(100vw-60px)] sm:w-full bg-white shadow-xl rounded-2xl border border-gray-100 max-h-96 overflow-hidden left-1/2 transform -translate-x-1/2 sm:left-0 sm:transform-none sm:translate-x-0">
             <div className="px-4 py-3 border-b border-gray-100">
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <Search size={16} />
-                <span>Search results for "{searchQuery}"</span>
+                <span className="truncate">Search results for "{searchQuery}"</span>
               </div>
             </div>
 
