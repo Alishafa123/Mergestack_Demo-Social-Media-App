@@ -7,11 +7,11 @@ import { useLogin } from '@hooks/useAuth';
 import { Input } from '@components/shared/form';
 import { loginSchema } from '@schemas/authSchemas';
 import { showToast } from '@components/shared/toast';
+import { LOADING_MESSAGES } from '@constants/errors';
 import Button from '@components/shared/buttons/Button';
 import AuthIcon from '@components/shared/Icons/AuthIcon';
 import type { LoginFormData } from '@schemas/authSchemas';
 import { BackgroundDesign } from '@components/shared/backgrounds';
-import { LOADING_MESSAGES } from '@constants/errors';
 
 export default function Login() {
   const {

@@ -3,13 +3,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Link } from 'react-router-dom';
 
 import { useSignup } from '@hooks/useAuth';
-import { BackgroundDesign } from '@components/shared/backgrounds';
-import AuthIcon from '@components/shared/Icons/AuthIcon';
-import Button from '@components/shared/buttons/Button';
 import { Input } from '@components/shared/form';
 import { signupSchema } from '@schemas/authSchemas';
-import type { SignupFormData } from '@schemas/authSchemas';
 import { LOADING_MESSAGES } from '@constants/errors';
+import Button from '@components/shared/buttons/Button';
+import AuthIcon from '@components/shared/Icons/AuthIcon';
+import type { SignupFormData } from '@schemas/authSchemas';
+import { BackgroundDesign } from '@components/shared/backgrounds';
 
 export default function Signup() {
   const signupMutation = useSignup();

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Heart, MessageCircle } from 'lucide-react';
 
 import type { Post } from '@api/post.api';
+import { formatRelativeTime } from '@utils/dateUtils';
 import Button from '@components/shared/buttons/Button';
 import UserHeader from '@components/shared/user/UserHeader';
 import { userProfileController } from '@jotai/userprofile.atom';
@@ -11,7 +12,6 @@ import CommentSection from '@components/shared/comment/CommentSection';
 import SharedPostHeader from '@components/shared/post/SharedPostHeader';
 import PostOptionsDropdown from '@components/shared/post/PostOptionsDropdown';
 import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
-import { formatRelativeTime } from '@utils/dateUtils';
 
 interface PostCardWithSliderProps {
   post: Post;

@@ -3,13 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { MapPin, Edit, Loader2, UserPlus, UserMinus } from 'lucide-react';
 
 import { userController } from '@jotai/user.atom';
+import Avatar from '@components/shared/ui/Avatar';
+import { formatLocalDate } from '@utils/dateUtils';
 import { useGetProfileById } from '@hooks/useProfile';
 import Button from '@components/shared/buttons/Button';
 import UserStats from '@components/shared/profile/UserStats';
 import { userProfileController } from '@jotai/userprofile.atom';
 import { useFollowUser, useUnfollowUser, useGetFollowStatus } from '@hooks/useUser';
-import { formatLocalDate } from '@utils/dateUtils';
-import Avatar from '@components/shared/ui/Avatar';
 
 const UserProfileCard: React.FC = () => {
   const navigate = useNavigate();

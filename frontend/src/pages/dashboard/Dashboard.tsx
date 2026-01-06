@@ -6,9 +6,9 @@ import Feed from '@components/shared/post/Feed';
 import Navbar from '@components/shared/navbar/Navbar';
 import Button from '@components/shared/buttons/Button';
 import { UserProfileCard } from '@components/shared/profile';
+import { StatsModal, LatestModal } from '@components/shared/modals';
 import CreatePostPrompt from '@components/shared/post/CreatePostPrompt';
 import { TopPostsCard, RecentFollowersCard } from '@components/shared/activity';
-import { StatsModal, LatestModal } from '@components/shared/modals';
 
 type FeedTab = 'home' | 'trending' | 'following';
 

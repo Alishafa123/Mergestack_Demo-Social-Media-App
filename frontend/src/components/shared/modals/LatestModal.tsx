@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, Clock } from 'lucide-react';
+
 import { TopPostsCard, RecentFollowersCard } from '@components/shared/activity';
 
 interface LatestModalProps {

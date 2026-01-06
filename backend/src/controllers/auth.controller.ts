@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 
 import * as authService from '@services/auth.service';
-import type { LoginCredentials, SignupCredentials } from '@/types/index';
 import { AUTH_ERRORS, GENERIC_ERRORS } from '@constants/errors';
+import type { LoginCredentials, SignupCredentials } from '@/types/index';
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {

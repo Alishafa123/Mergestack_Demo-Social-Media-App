@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, BarChart3 } from 'lucide-react';
+
 import { UserProfileCard } from '@components/shared/profile';
 
 interface StatsModalProps {

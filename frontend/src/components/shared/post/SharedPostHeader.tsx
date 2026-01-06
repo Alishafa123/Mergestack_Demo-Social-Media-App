@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 
 import type { Post } from '@api/post.api';
 import Avatar from '@components/shared/ui/Avatar';

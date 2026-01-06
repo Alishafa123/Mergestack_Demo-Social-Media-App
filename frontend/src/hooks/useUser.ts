@@ -1,12 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { showToast } from '@components/shared/toast';
+import { USER_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
 import {
   followUser,
   unfollowUser,
   getFollowStatus,
   getFollowers,
 } from '@api/user.api';
-import { showToast } from '@components/shared/toast';
-import { USER_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
 
 export const USER_QUERY_KEY = ['user'];
 export const FOLLOW_STATUS_QUERY_KEY = ['followStatus'];

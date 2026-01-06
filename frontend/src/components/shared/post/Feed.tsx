@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
 import { Loader2, TrendingUp, Users } from 'lucide-react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 import { showToast } from '@components/shared/toast';
 import Button from '@components/shared/buttons/Button';

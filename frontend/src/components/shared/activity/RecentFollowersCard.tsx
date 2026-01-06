@@ -2,10 +2,10 @@ import React from 'react';
 import { Users, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import Avatar from '@components/shared/ui/Avatar';
+import { formatRelativeTime } from '@utils/dateUtils';
 import { useGetRecentFollowers } from '@hooks/useUser';
 import { userProfileController } from '@jotai/userprofile.atom';
-import { formatRelativeTime } from '@utils/dateUtils';
-import Avatar from '@components/shared/ui/Avatar';
 
 interface RecentFollower {
   id: string;

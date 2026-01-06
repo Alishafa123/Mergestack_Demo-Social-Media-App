@@ -1,5 +1,3 @@
-import { Op } from 'sequelize';
-
 import type { CustomError } from '@/types/index';
 import { User, Profile, UserFollow } from '@models/index';
 import { USER_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';

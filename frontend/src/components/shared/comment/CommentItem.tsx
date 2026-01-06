@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { MoreHorizontal, Reply, Edit, Trash2 } from 'lucide-react';
+
+import type { Comment } from '@api/comment.api';
+import Avatar from '@components/shared/ui/Avatar';
+import { formatRelativeTime } from '@utils/dateUtils';
+import { userProfileController } from '@jotai/userprofile.atom';
 import CommentForm from '@components/shared/comment/CommentForm';
 import { useDeleteComment, useUpdateComment } from '@hooks/useComment';
-import { userProfileController } from '@jotai/userprofile.atom';
-import type { Comment } from '@api/comment.api';
-import { formatRelativeTime } from '@utils/dateUtils';
-import Avatar from '@components/shared/ui/Avatar';
 import DeleteConfirmModal from '@components/shared/modals/DeleteConfirmModal';
 
 interface CommentItemProps {

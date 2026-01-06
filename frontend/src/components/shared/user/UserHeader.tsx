@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import Avatar from '@components/shared/ui/Avatar';
 
 interface UserHeaderProps {

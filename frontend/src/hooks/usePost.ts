@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 
+import { showToast } from '@components/shared/toast';
 import { USER_STATS_QUERY_KEY } from '@hooks/useProfile';
+import { POST_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
 import type { CreatePostData, PostsResponse } from '@api/post.api';
 import {
   createPost,
@@ -15,8 +17,6 @@ import {
   getUserTopPosts,
   getFollowersFeed,
 } from '@api/post.api';
-import { showToast } from '@components/shared/toast';
-import { POST_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
 
 export const POST_QUERY_KEY = ['posts'];
 

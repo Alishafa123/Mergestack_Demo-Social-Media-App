@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 
+import { showToast } from '@components/shared/toast';
 import { USER_STATS_QUERY_KEY } from '@hooks/useProfile';
+import { COMMENT_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
 import type { CreateCommentData, CommentsResponse } from '@api/comment.api';
 import { getPostComments, createComment, updateComment, deleteComment } from '@api/comment.api';
-import { showToast } from '@components/shared/toast';
-import { COMMENT_ERRORS, SUCCESS_MESSAGES } from '@constants/errors';
 
 export const COMMENT_QUERY_KEY = ['comments'];
 

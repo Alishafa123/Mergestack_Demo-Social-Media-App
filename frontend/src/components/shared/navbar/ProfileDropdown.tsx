@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { useState, useRef, useEffect } from 'react';
 import { BarChart3, Clock } from 'lucide-react';
-import { userProfileController } from '@jotai/userprofile.atom';
+import { useState, useRef, useEffect } from 'react';
+
 import { useLogout } from '@hooks/useAuth';
 import Avatar from '@components/shared/ui/Avatar';
+import { userProfileController } from '@jotai/userprofile.atom';
 
 interface ProfileDropdownProps {
   onStatsClick?: () => void;

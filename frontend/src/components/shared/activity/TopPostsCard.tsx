@@ -2,11 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TrendingUp, Loader2 } from 'lucide-react';
 
+import TopPostItem from './TopPostItem';
 import { useGetUserTopPosts } from '@hooks/usePost';
 import { formatRelativeTime } from '@utils/dateUtils';
 import Button from '@components/shared/buttons/Button';
 import { userProfileController } from '@jotai/userprofile.atom';
-import TopPostItem from './TopPostItem';
 
 interface TopPost {
   id: string;
